@@ -1,114 +1,266 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import Button from '../components/Ui/Button';
+import Loading from '../components/Ui/Loading';
 
+interface ForgotPasswordResponse {
+  message?: string;
+}
 
 const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
+    // Password validation
     if (newPassword !== confirmPassword) {
-      alert("Password dan konfirmasi password harus sama.");
+      setErrorMessage('Password dan konfirmasi password harus sama.');
+      setShowErrorPopup(true);
       return;
     }
 
+    setIsLoading(true);
+    setShowErrorPopup(false);
+    setShowSuccessPopup(false);
+
     try {
-      const response = await fetch(
+      const { data } = await axios.put<ForgotPasswordResponse>(
         "https://api-sipa-capstone-production.up.railway.app/forgot-password",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, newPassword }),
+        { 
+          email, 
+          newPassword,
+          confirmPassword 
         }
       );
-
-      const data = await response.json();
-      if (response.ok) {
-        alert("Password berhasil diperbarui!");
+      
+      // Show success popup with server message or default message
+      setErrorMessage(data.message || 'Password berhasil diperbarui!');
+      setShowSuccessPopup(true);
+      
+      // Automatically navigate after a short delay
+      setTimeout(() => {
+        setShowSuccessPopup(false);
         navigate("/login");
-      } else {
-        alert(data.message || "Terjadi kesalahan.");
-      }
+      }, 2000);
+
     } catch (error) {
-      alert("Terjadi kesalahan saat menghubungi server. Coba lagi nanti.");
-      console.error("Error:", error);
+      // Type-safe error handling
+      if (axios.isAxiosError(error)) {
+        const errorMsg = 
+          error.response?.data?.message || 
+          error.message || 
+          "Gagal mereset password";
+        
+        setErrorMessage(errorMsg);
+        setShowErrorPopup(true);
+      } else {
+        setErrorMessage("Terjadi kesalahan tidak terduga");
+        setShowErrorPopup(true);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <motion.div
-      className="flex items-center justify-center min-h-screen bg-purple-200 px-4"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">
-          Lupa Password
-        </h2>
-        <p className="text-gray-500 text-sm mb-4 text-center">
-          Masukkan email yang terdaftar untuk reset password
-        </p>
-
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            placeholder="example@gmail.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-purple-500 focus:border-purple-500"
-            required
-            aria-label="Email"
-          />
-
-          <label htmlFor="newPassword" className="block text-gray-700 font-medium mb-2 mt-4">
-            Password Baru
-          </label>
-          <input
-            type="password"
-            id="newPassword"
-            placeholder="••••••••"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-purple-500 focus:border-purple-500"
-            required
-            aria-label="Password Baru"
-          />
-
-          <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2 mt-4">
-            Konfirmasi Password
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            placeholder="••••••••"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-purple-500 focus:border-purple-500"
-            required
-            aria-label="Konfirmasi Password"
-          />
-
-          <button
-            type="submit"
-            className="mt-4 w-full py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
+    <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed top-4 right-4 z-50"
           >
-            Kirim
-          </button>
-        </form>
+            <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl flex items-center">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-6 w-6 mr-2" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M5 13l4 4L19 7" 
+                />
+              </svg>
+              {errorMessage}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error Popup */}
+      <AnimatePresence>
+        {showErrorPopup && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed top-4 right-4 z-50"
+          >
+            <div className="bg-red-500 text-white px-6 py-4 rounded-lg shadow-xl flex items-center">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-6 w-6 mr-2" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                />
+              </svg>
+              {errorMessage}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Back to Login Button */}
+      <div className="absolute top-4 left-4 z-20">
+        <Button 
+          variant="secondary" 
+          size="sm" 
+          onClick={() => navigate('/login')}
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          }
+        >
+          Kembali ke Login
+        </Button>
       </div>
-    </motion.div>
+
+      {/* Rest of the form remains the same */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full space-y-8 relative z-10"
+      >
+        <div className="relative">
+          <div className="absolute -inset-4 bg-white/50 rounded-2xl blur-lg"></div>
+          <div className="bg-white p-8 rounded-xl shadow-xl relative">
+            <div className="text-center mb-6">
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-[#8B5CF6]/10 mb-4"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#8B5CF6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </motion.div>
+              <h2 className="text-3xl font-bold text-gray-900">Lupa Kata Sandi</h2>
+              <p className="mt-2 text-sm text-gray-600">
+                Masukkan email dan kata sandi baru Anda
+              </p>
+            </div>
+            
+            {isLoading && <Loading />}
+            
+            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+              {/* Form fields remain the same */}
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Alamat Email
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
+                      placeholder="email@contoh.com"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                    Kata Sandi Baru
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="newPassword"
+                      name="newPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                    Konfirmasi Kata Sandi
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Button 
+                  variant="primary" 
+                  type="submit" 
+                  className="w-full flex justify-center"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : null}
+                  {isLoading ? 'Memproses...' : 'Reset Kata Sandi'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
