@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaMapMarkerAlt, FaFileAlt, FaCamera, FaCheck, FaCopy, FaHome, FaSearch, FaUser } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaFileAlt, FaCheck, FaCopy, FaHome, FaSearch, FaUser } from 'react-icons/fa';
 import axios from 'axios';
 import Button from '../components/Ui/Button';
 import Navbar from '../components/Ui/Navbar';
@@ -20,7 +20,6 @@ const FormPengaduan: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [responseData, setResponseData] = useState<ResponseData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
   
@@ -38,8 +37,6 @@ const FormPengaduan: React.FC = () => {
   const [formData, setFormData] = useState({
     lokasi: '',
     kronologi: '',
-    bukti: null as File | null,
-    buktiPreview: '',
     tanggalLaporan: getCurrentDate(),
     umur: '',
     gender: ''
@@ -56,23 +53,6 @@ const FormPengaduan: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-  
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFormData(prev => ({
-        ...prev,
-        bukti: file,
-        buktiPreview: URL.createObjectURL(file)
-      }));
-    }
-  };
-  
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,7 +77,7 @@ const FormPengaduan: React.FC = () => {
           kronologi: formData.kronologi,
           tanggalLaporan: currentDate,
           tanggal: currentDate,
-          bukti: '', // Send an empty string if no file is selected
+          bukti: '', // Send an empty string for bukti field
           umur: parseInt(formData.umur), // Convert umur to number
           gender: formData.gender
         },
@@ -364,51 +344,6 @@ const FormPengaduan: React.FC = () => {
             Berikan informasi sejelas mungkin tentang apa yang terjadi, kapan terjadinya, dan siapa saja yang terlibat
           </p>
         </div>
-
-        <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-medium mb-2">
-            Bukti (Opsional)
-          </label>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            className="hidden"
-          />
-          
-          {formData.buktiPreview ? (
-            <div className="mt-2 relative">
-              <img 
-                src={formData.buktiPreview} 
-                alt="Preview" 
-                className="w-full max-h-48 object-cover rounded-lg border border-gray-300" 
-              />
-              <button
-                type="button"
-                onClick={() => setFormData(prev => ({ ...prev, bukti: null, buktiPreview: '' }))}
-                className="absolute top-2 right-2 bg-red-100 text-red-700 rounded-full p-1 hover:bg-red-200 transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          ) : (
-            <div 
-              onClick={triggerFileInput}
-              className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-purple-500 transition-colors"
-            >
-              <FaCamera className="mx-auto text-gray-400 text-3xl mb-2" />
-              <p className="text-sm text-gray-500">
-                Klik untuk mengunggah foto atau bukti visual lainnya
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
-                Format yang didukung: JPG, PNG, JPEG (max 5MB)
-              </p>
-            </div>
-          )}
-        </div>
       </>
     );
   };
@@ -449,19 +384,6 @@ const FormPengaduan: React.FC = () => {
             <h4 className="text-sm font-medium text-gray-500">KRONOLOGI</h4>
             <p className="text-gray-800 whitespace-pre-line">{formData.kronologi}</p>
           </div>
-          
-          {formData.buktiPreview && (
-            <div>
-              <h4 className="text-sm font-medium text-gray-500">BUKTI</h4>
-              <div className="mt-2">
-                <img 
-                  src={formData.buktiPreview} 
-                  alt="Bukti" 
-                  className="w-32 h-32 object-cover rounded-lg border border-gray-300" 
-                />
-              </div>
-            </div>
-          )}
         </div>
         
         <div className="bg-purple-50 px-6 py-4 border-t border-purple-100">

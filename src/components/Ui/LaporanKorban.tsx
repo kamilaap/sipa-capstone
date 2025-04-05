@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Eye, Edit2, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, Edit2, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import Sidebar from './SideBar';
 
 interface StatusPengaduan {
@@ -35,6 +35,10 @@ const LaporanKorban: React.FC = () => {
     const [keterangan, setKeterangan] = useState('');
     const [modalStatus, setModalStatus] = useState<'success' | 'error' | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
+    
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
 
     // Improved status mapping with more descriptive keterangan
     const STATUS_DESCRIPTIONS = {
@@ -72,6 +76,7 @@ const LaporanKorban: React.FC = () => {
                 }
             });
             setPengaduanList(response.data);
+            setCurrentPage(1); // Reset to first page when data is fetched
         } catch (error) {
             console.error('Error fetching pengaduan data:', error);
         }
@@ -135,12 +140,66 @@ const LaporanKorban: React.FC = () => {
         }
     };
 
+    // Pagination calculations
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = pengaduanList.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(pengaduanList.length / itemsPerPage);
+
+    // Pagination change handlers
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToPage = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    };
+
+    // Generate pagination numbers
+    const renderPaginationNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+        
+        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+        const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+        
+        if (endPage - startPage + 1 < maxPagesToShow) {
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(
+                <button
+                    key={i}
+                    onClick={() => goToPage(i)}
+                    className={`px-3 py-1 mx-1 rounded ${
+                        currentPage === i 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                >
+                    {i}
+                </button>
+            );
+        }
+        
+        return pageNumbers;
+    };
+
     const renderSuccessModal = () => {
         if (modalStatus !== 'success') return null;
 
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white p-8 rounded-2xl shadow-2xl w-[400px] text-center">
+                <div className="bg-white p-8 rounded-2xl shadow-2xl w-96 text-center">
                     <CheckCircle className="mx-auto mb-4 text-emerald-500" size={64} />
                     <h3 className="text-2xl font-bold text-gray-800 mb-2">Berhasil</h3>
                     <p className="text-gray-600">Status laporan berhasil diperbarui</p>
@@ -155,7 +214,7 @@ const LaporanKorban: React.FC = () => {
 
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white p-8 rounded-2xl shadow-2xl w-[400px] text-center">
+                <div className="bg-white p-8 rounded-2xl shadow-2xl w-96 text-center">
                     <XCircle className="mx-auto mb-4 text-red-500" size={64} />
                     <h3 className="text-2xl font-bold text-gray-800 mb-2">Gagal</h3>
                     <p className="text-gray-600">{errorMessage}</p>
@@ -321,7 +380,7 @@ const LaporanKorban: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {pengaduanList.map((pengaduan) => (
+                                {currentItems.map((pengaduan) => (
                                     <tr key={pengaduan.id} className="border-b hover:bg-gray-50">
                                         <td className="py-3 px-4">{pengaduan.kode}</td>
                                         <td className="py-3 px-4">{new Date(pengaduan.tanggal).toLocaleDateString()}</td>
@@ -350,8 +409,39 @@ const LaporanKorban: React.FC = () => {
                             </tbody>
                         </table>
                     </div>
+                    
+                    {/* Pagination Controls */}
+                    {pengaduanList.length > 0 && (
+                        <div className="flex items-center justify-between mt-6">
+                            <div className="text-sm text-gray-600">
+                                Menampilkan {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, pengaduanList.length)} dari {pengaduanList.length} laporan
+                            </div>
+                            <div className="flex items-center">
+                                <button 
+                                    onClick={goToPreviousPage} 
+                                    disabled={currentPage <= 1} 
+                                    className={`p-2 rounded-lg mr-2 ${currentPage <= 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                                >
+                                    <ChevronLeft size={16} />
+                                </button>
+                                
+                                <div className="flex">
+                                    {renderPaginationNumbers()}
+                                </div>
+                                
+                                <button 
+                                    onClick={goToNextPage} 
+                                    disabled={currentPage >= totalPages} 
+                                    className={`p-2 rounded-lg ml-2 ${currentPage >= totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                                >
+                                    <ChevronRight size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
-                {/* Modals remain the same */}
+                
+                {/* Modals */}
                 {selectedPengaduan && renderStatusUpdateModal()}
                 {detailPengaduan && renderDetailModal()}
                 {renderSuccessModal()}
