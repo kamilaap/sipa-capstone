@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FileText, BarChart2, LogOut, LayoutDashboard } from 'lucide-react';
+import { FileText, BarChart2, LogOut, LayoutDashboard, UserCheck } from 'lucide-react';
 
 interface User {
   id: number;
@@ -74,6 +74,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
       label: 'Laporan Tingkat Kekerasan',
       path: '/tingkat-kekerasan',
     },
+    {
+      icon: <UserCheck className="mr-3" size={20} />,
+      label: 'Manajemen Akun User',
+      path: '/manajemen-user',
+    },
   ];
 
   return (
@@ -106,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
                 md:translate-x-0
                 w-64 bg-purple-800 text-white 
                 transition-transform duration-300 ease-in-out
-                z-40 h-screen md:h-auto overflow-y-auto
+                z-40 h-screen md:h-auto overflow-y-auto bg-gradient-moving bg-400 animate-gradient-move
             `}
       >
         <div className="p-6">

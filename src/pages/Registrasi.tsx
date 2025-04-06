@@ -31,6 +31,14 @@ const Register: React.FC = () => {
       return;
     }
 
+    //user validasi gamil adn yahuuu
+    if (!email.endsWith("@gmail.com" && !email.endsWith("@yahoo.com"))) {
+      setErrorMessage("email Anda harus berakhiran dengan gmail.com atau yahoo.com !");
+      setIsLoading(false);
+      return;
+    }
+
+    
     try {
       await axios.post(
         'https://api-sipa-capstone-production.up.railway.app/register',

@@ -17,6 +17,7 @@ import HalamanBantuan from './pages/Bantuan';
 import Dashboard from './pages/AdminDashboard';
 import LaporanKorban from './components/Ui/LaporanKorban';
 import TingkatKekerasan from './components/Ui/TingkatKekerasan';
+import UserManajemen from './components/Ui/UserManajemen';
 
 const App: React.FC = () => {
   return (
@@ -44,6 +45,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/laporan-korban" element={<LaporanKorban />} />
           <Route path="/tingkat-kekerasan" element={<TingkatKekerasan />} />
+          <Route path="/manajemen-user" element={<UserManajemen />} />
         </Routes>
       </div>
     </Router>

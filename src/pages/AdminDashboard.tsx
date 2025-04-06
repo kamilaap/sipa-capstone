@@ -184,6 +184,18 @@ const Dashboard: React.FC = () => {
                   Analisis dan dokumentasi tingkat kekerasan
                 </p>
               </Link>
+
+              <Link
+                to="/manajemen-user"
+                className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  Tingkat Kekerasan
+                </h3>
+                <p className="text-gray-600 text-center">
+                  Analisis dan dokumentasi tingkat kekerasan
+                </p>
+              </Link>
             </div>
           </>
         )}

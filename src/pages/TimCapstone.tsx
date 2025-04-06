@@ -34,11 +34,11 @@ const TeamPage: React.FC = () => {
     {
       name: 'Sipa Sopiatul Patoni',
       role: 'Frontend Developer',
-      image: '/assets/tokdalang.jpg',
+      image: '/assets/sipa.png',
       github: 'https://github.com/Aleftu',
       linkedin: 'https://linkedin.com/in/rinawijaya',
-      email: 'rina@sipa.id',
-      instagram: 'https://instagram.com/sipasopiatul',
+      email: 'sopiatulpatonisipa@gmail.com',
+      instagram: 'https://instagram.com/sipasff',
       bio: 'UI/UX enthusiast. Passionate about creating accessible interfaces for social impact projects.',
     },
     {
