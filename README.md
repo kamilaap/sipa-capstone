@@ -91,6 +91,6 @@ Proyek ini terhubung dengan backend, berikut daftar endpoint utama:
 | PUT    | `/https://api-sipa-capstone-production.up.railway.app/forgot-password`                   | Untuk lupa password       |
 | GET    | `/https://api-sipa-capstone-production.up.railway.app/artikel`                           | Mengambil semua artikel   |
 
-## 💡 Kontribusi
+## ❗❗❗ ALert
 
-Jika ingin berkontribusi, silakan buat **pull request** atau laporkan bug di **Issues**.
+. Github ini dibuat public dengan tujuan transparansi, namun dilarang keras mengcopy paste dan plagiat projek selain tim capstone SIPA
