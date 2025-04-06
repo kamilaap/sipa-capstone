@@ -2,6 +2,10 @@
 
 > Sebuah aplikasi berbasis web yang mempermudah masyarakat dalam melaporkan kasus kekerasan terhadap ibu dan anak. Dibangun menggunakan **Vite + React.js + TypeScript** untuk tampilan antarmuka yang responsif dan user-friendly.
 
+## Link Deploy Projek
+
+https://sipa-capstone.vercel.app/
+
 ## 📢 Tentang Proyek
 
 Aplikasi Laporan Kekerasan Ibu dan Anak merupakan tugas capstone kami di **Coding Camp 2025** dengan tema **"Inclusivity for All"**.
