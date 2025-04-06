@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const StatusLaporan: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [bgColor, setBgColor] = useState("bg-white");
-  const [status, setStatus] = useState("Pending");
-  const [modalStatus, setModalStatus] = useState("Pending");
+  const [bgColor, setBgColor] = useState('bg-white');
+  const [status, setStatus] = useState('Pending');
+  const [modalStatus, setModalStatus] = useState('Pending');
 
   useEffect(() => {
     if (isModalOpen) {
-        setModalStatus(status);
+      setModalStatus(status);
     }
   }, [isModalOpen, status]);
 
-  const handleModalStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleModalStatusChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setModalStatus(event.target.value);
   };
 
@@ -25,11 +27,11 @@ const StatusLaporan: React.FC = () => {
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const status = event.target.value;
 
-    let newColor = "bg-white";
-    if (status === "Pending") newColor = "bg-blue-300";
-    else if (status === "Process") newColor = "bg-yellow-300";
-    else if (status === "Reject") newColor = "bg-red-300";
-    else if (status === "Accept") newColor = "bg-green-300";
+    let newColor = 'bg-white';
+    if (status === 'Pending') newColor = 'bg-blue-300';
+    else if (status === 'Process') newColor = 'bg-yellow-300';
+    else if (status === 'Reject') newColor = 'bg-red-300';
+    else if (status === 'Accept') newColor = 'bg-green-300';
 
     setBgColor(newColor);
   };
@@ -53,7 +55,7 @@ const StatusLaporan: React.FC = () => {
         <div className={`p-4 rounded shadow ${bgColor} transition-all`}>
           <label className="block text-gray-800 mb-1">Status</label>
           <select
-          value={modalStatus}
+            value={modalStatus}
             onChange={handleStatusChange}
             className="w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
           >
@@ -101,15 +103,15 @@ const StatusLaporan: React.FC = () => {
 
       {/* Modal */}
       <AnimatePresence>
-      {isModalOpen && (
-        <motion.div
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        transition={{ duration: 0.5 }} 
-      >
-         <div className="absolute inset-0 overflow-hidden">
+        {isModalOpen && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ duration: 0.5 }}
+          >
+            <div className="absolute inset-0 overflow-hidden">
               {[...Array(10)].map((_, i) => (
                 <motion.div
                   key={i}
@@ -121,72 +123,78 @@ const StatusLaporan: React.FC = () => {
                     left: `${Math.random() * 100}%`,
                   }}
                   animate={{
-                    y: ["0%", "-50%", "0%"],
-                    x: ["0%", "10%", "-10%", "0%"],
+                    y: ['0%', '-50%', '0%'],
+                    x: ['0%', '10%', '-10%', '0%'],
                   }}
                   transition={{
                     duration: Math.random() * 4 + 2,
                     repeat: Infinity,
-                    ease: "easeInOut",
+                    ease: 'easeInOut',
                   }}
                 />
               ))}
             </div>
-        <motion.div
-          className="bg-white p-6 m-10 shadow-lg w-96 rounded-md"
-          style={{ width: "400px", minHeight: "300px" }}
-          initial={{ opacity: 0, y: -20 }} 
-          animate={{ opacity: 1, y: 0 }}   
-          exit={{ opacity: 0, y: -20 }}    
-          transition={{ duration: 0.5 }}  
-        >
+            <motion.div
+              className="bg-white p-6 m-10 shadow-lg w-96 rounded-md"
+              style={{ width: '400px', minHeight: '300px' }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-6 m-10 shadow-lg w-96 rounded-md">
+                  <h3 className="text-xl font-semibold mb-4">
+                    Konfirmasi Edit
+                  </h3>
+                  <form className="grid">
+                    <div>
+                      <label className="block text-gray-800 ">Kode</label>
+                      <input
+                        type="number"
+                        className="w-24 p-2 mb-4 focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"
+                      />
+                    </div>
 
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 m-10 shadow-lg w-96 rounded-md">
-            <h3 className="text-xl font-semibold mb-4">Konfirmasi Edit</h3>
-            <form className="grid">
-              <div>
-                <label className="block text-gray-800 ">Kode</label>
-                <input
-                  type="number"
-                  className="w-24 p-2 mb-4 focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"
-                />
-              </div>
+                    <div
+                      className={`p-4 rounded shadow ${bgColor} transition-all mb-4`}
+                    >
+                      <label className="block text-gray-800">Status</label>
+                      <select
+                        onChange={handleModalStatusChange}
+                        className="w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-colors"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Process">Process</option>
+                        <option value="Reject">Reject</option>
+                        <option value="Accept">Accept</option>
+                      </select>
+                    </div>
 
-              <div className={`p-4 rounded shadow ${bgColor} transition-all mb-4`}>
-                <label className="block text-gray-800">Status</label>
-                <select
-                  onChange={handleModalStatusChange}
-                  className="w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-colors"
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Process">Process</option>
-                  <option value="Reject">Reject</option>
-                  <option value="Accept">Accept</option>
-                </select>
+                    <div>
+                      <label className="block text-gray-800 ">Keterangan</label>
+                      <textarea className="h-32 w-full focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"></textarea>
+                    </div>
+                  </form>
+                  <div className="flex justify-end mt-4">
+                    <button
+                      onClick={() => setModalOpen(false)}
+                      className="px-4 py-2 mr-24 bg-yellow-500 hover:bg-yellow-400 rounded-lg"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      onClick={saveChanges}
+                      className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+                    >
+                      Simpan Perubahan
+                    </button>
+                  </div>
+                </div>
               </div>
-
-              <div>
-                <label className="block text-gray-800 ">Keterangan</label>
-                <textarea className="h-32 w-full focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"></textarea>
-              </div>
-            </form>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setModalOpen(false)}
-                className="px-4 py-2 mr-24 bg-yellow-500 hover:bg-yellow-400 rounded-lg"
-              >
-                Batal
-              </button>
-              <button onClick={saveChanges}  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
-                Simpan Perubahan
-              </button>
-            </div>
-          </div>
-        </div>
-        </motion.div>
-  </motion.div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );

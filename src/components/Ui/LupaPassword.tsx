@@ -32,7 +32,7 @@ const ForgotPassword: React.FC = () => {
 
     // Password validation
     if (newPassword !== confirmPassword) {
-      setErrorMessage("Konfirmasi password tidak cocok");
+      setErrorMessage('Konfirmasi password tidak cocok');
       setShowErrorPopup(true);
       setIsLoading(false);
       return;
@@ -40,41 +40,41 @@ const ForgotPassword: React.FC = () => {
 
     try {
       const response: AxiosResponse<ForgotPasswordResponse> = await axios.put(
-        "https://api-sipa-capstone-production.up.railway.app/forgot-password", 
+        'https://api-sipa-capstone-production.up.railway.app/forgot-password',
         { email, newPassword, confirmPassword }
       );
-    
-      const successMessage = response.data.message || "Password berhasil diubah";
+
+      const successMessage =
+        response.data.message || 'Password berhasil diubah';
       console.log(successMessage); // Log the message
-    
+
       // Show success popup
       setShowSuccessPopup(true);
-      
+
       // Automatically navigate after a short delay
       setTimeout(() => {
         setShowSuccessPopup(false);
-        navigate("/login");
+        navigate('/login');
       }, 2000);
     } catch (error) {
       // Type-safe error handling
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ForgotPasswordResponse>;
-        const errorMsg = 
-          axiosError.response?.data?.message || 
-          axiosError.message || 
-          "Gagal mengubah password";
-        
+        const errorMsg =
+          axiosError.response?.data?.message ||
+          axiosError.message ||
+          'Gagal mengubah password';
+
         setErrorMessage(errorMsg);
         setShowErrorPopup(true);
       } else {
-        setErrorMessage("Terjadi kesalahan tidak terduga");
+        setErrorMessage('Terjadi kesalahan tidak terduga');
         setShowErrorPopup(true);
       }
     } finally {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -88,18 +88,18 @@ const ForgotPassword: React.FC = () => {
             className="fixed top-4 right-4 z-50"
           >
             <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl flex items-center">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-6 w-6 mr-2" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M5 13l4 4L19 7" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
                 />
               </svg>
               Password berhasil diubah!
@@ -118,18 +118,18 @@ const ForgotPassword: React.FC = () => {
             className="fixed top-4 right-4 z-50"
           >
             <div className="bg-red-500 text-white px-6 py-4 rounded-lg shadow-xl flex items-center">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-6 w-6 mr-2" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
               {errorMessage}
@@ -140,13 +140,24 @@ const ForgotPassword: React.FC = () => {
 
       {/* Back Button */}
       <div className="absolute top-4 left-4 z-20">
-        <Button 
-          variant="secondary" 
-          size="sm" 
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => navigate('/login')}
           icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
             </svg>
           }
         >
@@ -171,11 +182,24 @@ const ForgotPassword: React.FC = () => {
                 transition={{ duration: 0.3 }}
                 className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-[#8B5CF6]/10 mb-4"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#8B5CF6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-[#8B5CF6]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
                 </svg>
               </motion.div>
-              <h2 className="text-3xl font-bold text-gray-900">Lupa Password</h2>
+              <h2 className="text-3xl font-bold text-gray-900">
+                Lupa Password
+              </h2>
               <p className="mt-2 text-sm text-gray-600">
                 Masukkan email dan password baru Anda
               </p>
@@ -186,7 +210,10 @@ const ForgotPassword: React.FC = () => {
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Alamat Email
                   </label>
                   <div className="mt-1">
@@ -203,16 +230,19 @@ const ForgotPassword: React.FC = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Password Baru
                   </label>
                   <div className="mt-1 relative">
                     <input
                       id="password"
                       name="password"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       required
                       value={newPassword}
@@ -226,13 +256,40 @@ const ForgotPassword: React.FC = () => {
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800"
                     >
                       {showPassword ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                          />
                         </svg>
                       ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
                         </svg>
                       )}
                     </button>
@@ -240,7 +297,10 @@ const ForgotPassword: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="confirm-password"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Konfirmasi Password Baru
                   </label>
                   <div className="mt-1">
@@ -260,16 +320,32 @@ const ForgotPassword: React.FC = () => {
               </div>
 
               <div>
-                <Button 
-                  variant="primary" 
-                  type="submit" 
+                <Button
+                  variant="primary"
+                  type="submit"
                   className="w-full flex justify-center"
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                   ) : null}
                   {isLoading ? 'Memproses...' : 'Ubah Password'}

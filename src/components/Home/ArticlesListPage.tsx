@@ -24,7 +24,9 @@ const ArticleListPage: React.FC = () => {
     const fetchArticles = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<Article[]>('https://api-sipa-capstone-production.up.railway.app/artikel');
+        const response = await axios.get<Article[]>(
+          'https://api-sipa-capstone-production.up.railway.app/artikel'
+        );
         setArticles(response.data);
         setLoading(false);
       } catch (err) {
@@ -47,28 +49,32 @@ const ArticleListPage: React.FC = () => {
   };
 
   // Filter articles based on search query
-  const filteredArticles = articles.filter(article => 
-    article.judul.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    article.isi.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredArticles = articles.filter(
+    (article) =>
+      article.judul.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.isi.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Calculate pagination
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-  const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
+  const currentArticles = filteredArticles.slice(
+    indexOfFirstArticle,
+    indexOfLastArticle
+  );
   const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
 
   // Generate page numbers
   const pageNumbers = [];
   const maxPageButtons = 5;
-  
+
   let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
   const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
-  
+
   if (endPage - startPage + 1 < maxPageButtons) {
     startPage = Math.max(1, endPage - maxPageButtons + 1);
   }
-  
+
   for (let i = startPage; i <= endPage; i++) {
     pageNumbers.push(i);
   }
@@ -85,8 +91,19 @@ const ArticleListPage: React.FC = () => {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50">
         <div className="text-center text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-12 w-12 mx-auto mb-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           <h3 className="text-lg font-medium mb-2">{error}</h3>
           <button
@@ -105,21 +122,35 @@ const ArticleListPage: React.FC = () => {
       <div className="container mx-auto px-4">
         {/* Back to Home Button */}
         <div className="mb-6">
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="flex items-center text-gray-600 hover:text-purple-600 transition-colors"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Kembali ke Beranda
           </button>
         </div>
 
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Koleksi Artikel</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Koleksi Artikel
+          </h1>
           <p className="text-gray-600 max-w-xl mx-auto">
-            Jelajahi berbagai artikel informatif seputar kesehatan, edukasi, dan tips perlindungan ibu dan anak.
+            Jelajahi berbagai artikel informatif seputar kesehatan, edukasi, dan
+            tips perlindungan ibu dan anak.
           </p>
         </div>
 
@@ -135,8 +166,19 @@ const ArticleListPage: React.FC = () => {
                 className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-500 outline-none transition-all"
               />
               <div className="absolute left-3 top-2.5 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
             </div>
@@ -146,10 +188,23 @@ const ArticleListPage: React.FC = () => {
         {/* Articles */}
         {currentArticles.length === 0 ? (
           <div className="bg-white rounded-lg p-8 text-center shadow">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-12 w-12 mx-auto text-gray-400 mb-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
-            <h3 className="text-lg font-medium mb-2">Tidak ada artikel yang ditemukan</h3>
+            <h3 className="text-lg font-medium mb-2">
+              Tidak ada artikel yang ditemukan
+            </h3>
             <p className="text-gray-500">Coba ubah kata kunci pencarian Anda</p>
           </div>
         ) : (
@@ -163,35 +218,41 @@ const ArticleListPage: React.FC = () => {
                 className="bg-white rounded-lg shadow overflow-hidden"
               >
                 <div className="p-5">
-                  <h3 className="font-semibold text-lg mb-3 text-gray-800">{article.judul}</h3>
-                  
+                  <h3 className="font-semibold text-lg mb-3 text-gray-800">
+                    {article.judul}
+                  </h3>
+
                   <motion.div
-                    animate={{ height: expandedId === article.id ? 'auto' : '4.5rem' }}
+                    animate={{
+                      height: expandedId === article.id ? 'auto' : '4.5rem',
+                    }}
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
                     <p className="text-gray-600 text-sm">{article.isi}</p>
                   </motion.div>
-                  
+
                   <button
                     onClick={() => toggleExpand(article.id)}
                     className="mt-4 text-purple-500 hover:text-purple-700 text-sm font-medium flex items-center transition-colors"
                   >
-                    {expandedId === article.id ? 'Sembunyikan' : 'Baca selengkapnya'}
-                    <motion.svg 
+                    {expandedId === article.id
+                      ? 'Sembunyikan'
+                      : 'Baca selengkapnya'}
+                    <motion.svg
                       animate={{ rotate: expandedId === article.id ? 180 : 0 }}
                       transition={{ duration: 0.3 }}
-                      xmlns="http://www.w3.org/2000/svg" 
-                      className="h-4 w-4 ml-1" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 ml-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M19 9l-7 7-7-7" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
                       />
                     </motion.svg>
                   </button>
@@ -206,15 +267,26 @@ const ArticleListPage: React.FC = () => {
           <div className="flex justify-center mt-8">
             <nav className="flex items-center space-x-1">
               <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
                 className="px-3 py-1 rounded border bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
               </button>
-              
+
               {currentPage > 3 && totalPages > 5 && (
                 <>
                   <button
@@ -226,21 +298,21 @@ const ArticleListPage: React.FC = () => {
                   <span className="text-gray-500">...</span>
                 </>
               )}
-              
-              {pageNumbers.map(number => (
+
+              {pageNumbers.map((number) => (
                 <button
                   key={number}
                   onClick={() => setCurrentPage(number)}
                   className={`px-3 py-1 rounded border ${
-                    currentPage === number 
-                      ? 'bg-purple-500 text-white border-purple-500' 
+                    currentPage === number
+                      ? 'bg-purple-500 text-white border-purple-500'
                       : 'bg-white text-gray-600 hover:bg-gray-100'
                   }`}
                 >
                   {number}
                 </button>
               ))}
-              
+
               {currentPage < totalPages - 2 && totalPages > 5 && (
                 <>
                   <span className="text-gray-500">...</span>
@@ -252,14 +324,27 @@ const ArticleListPage: React.FC = () => {
                   </button>
                 </>
               )}
-              
+
               <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 rounded border bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </button>
             </nav>

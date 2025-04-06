@@ -19,12 +19,12 @@ const Loading: React.FC<LoadingProps> = ({ size = 'medium' }) => {
         <motion.div
           className="absolute inset-0 border-4 border-transparent border-t-purple-600 border-r-purple-600 rounded-full"
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
         />
         <motion.div
           className="absolute inset-2 border-4 border-transparent border-b-purple-400 border-l-purple-400 rounded-full"
           animate={{ rotate: -360 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
         />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-3 h-3 bg-purple-500 rounded-full" />

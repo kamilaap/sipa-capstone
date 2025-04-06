@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { 
-  FaQuestionCircle, 
-  FaInfoCircle, 
-  FaFileAlt, 
-  FaPhoneVolume, 
-  FaEnvelope, 
+import {
+  FaQuestionCircle,
+  FaInfoCircle,
+  FaFileAlt,
+  FaPhoneVolume,
+  FaEnvelope,
   FaMapMarkerAlt,
-  FaChevronDown 
+  FaChevronDown,
 } from 'react-icons/fa';
 import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
 import Button from '../components/Ui/Button';
 
-const FAQItem: React.FC<{ 
-  question: string; 
-  answer: string 
+const FAQItem: React.FC<{
+  question: string;
+  answer: string;
 }> = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="border-b border-gray-200 py-4">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex justify-between items-center text-left"
       >
@@ -30,10 +30,10 @@ const FAQItem: React.FC<{
           <FaQuestionCircle className="mr-3 text-purple-600" />
           {question}
         </span>
-        <FaChevronDown 
+        <FaChevronDown
           className={`transform transition-transform duration-300 ${
             isOpen ? 'rotate-180' : ''
-          } text-purple-600`} 
+          } text-purple-600`}
         />
       </button>
       {isOpen && (
@@ -53,27 +53,31 @@ const FAQItem: React.FC<{
 const HalamanBantuan: React.FC = () => {
   const faqData = [
     {
-      question: "Bagaimana cara membuat pengaduan?",
-      answer: "Untuk membuat pengaduan, kunjungi halaman 'Buat Pengaduan' dan lengkapi formulir dengan informasi yang diperlukan. Pastikan Anda memberikan detail yang jelas dan akurat tentang masalah yang ingin dilaporkan."
+      question: 'Bagaimana cara membuat pengaduan?',
+      answer:
+        "Untuk membuat pengaduan, kunjungi halaman 'Buat Pengaduan' dan lengkapi formulir dengan informasi yang diperlukan. Pastikan Anda memberikan detail yang jelas dan akurat tentang masalah yang ingin dilaporkan.",
     },
     {
-      question: "Berapa lama proses penanganan pengaduan?",
-      answer: "Waktu penanganan pengaduan bervariasi tergantung kompleksitas kasus. Umumnya, tim kami berusaha menindaklanjuti setiap pengaduan dalam waktu 3-7 hari kerja. Status pengaduan dapat Anda pantau melalui fitur 'Cek Status Pengaduan'."
+      question: 'Berapa lama proses penanganan pengaduan?',
+      answer:
+        "Waktu penanganan pengaduan bervariasi tergantung kompleksitas kasus. Umumnya, tim kami berusaha menindaklanjuti setiap pengaduan dalam waktu 3-7 hari kerja. Status pengaduan dapat Anda pantau melalui fitur 'Cek Status Pengaduan'.",
     },
     {
-      question: "Apa saja dokumen yang perlu dilampirkan?",
-      answer: "Sebaiknya sertakan bukti-bukti pendukung seperti foto, dokumen resmi, atau keterangan tambahan yang relevan dengan pengaduan Anda. Semakin lengkap informasi yang diberikan, semakin membantu kami dalam menindaklanjuti kasus."
+      question: 'Apa saja dokumen yang perlu dilampirkan?',
+      answer:
+        'Sebaiknya sertakan bukti-bukti pendukung seperti foto, dokumen resmi, atau keterangan tambahan yang relevan dengan pengaduan Anda. Semakin lengkap informasi yang diberikan, semakin membantu kami dalam menindaklanjuti kasus.',
     },
     {
-      question: "Apakah data saya akan dirahasiakan?",
-      answer: "Ya, kami menjamin kerahasiaan data dan identitas pelapor. Informasi pribadi Anda hanya akan digunakan untuk keperluan penanganan pengaduan dan tidak akan disebarluaskan tanpa izin Anda."
-    }
+      question: 'Apakah data saya akan dirahasiakan?',
+      answer:
+        'Ya, kami menjamin kerahasiaan data dan identitas pelapor. Informasi pribadi Anda hanya akan digunakan untuk keperluan penanganan pengaduan dan tidak akan disebarluaskan tanpa izin Anda.',
+    },
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      
+
       <div className="flex-grow pt-28 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -84,9 +88,12 @@ const HalamanBantuan: React.FC = () => {
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-8 sm:px-10">
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">Pusat Bantuan</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                Pusat Bantuan
+              </h1>
               <p className="mt-2 text-purple-100">
-                Temukan jawaban untuk pertanyaan umum dan informasi penting seputar sistem pengaduan
+                Temukan jawaban untuk pertanyaan umum dan informasi penting
+                seputar sistem pengaduan
               </p>
             </div>
 
@@ -111,7 +118,9 @@ const HalamanBantuan: React.FC = () => {
                   <FaMapMarkerAlt className="mr-4 mt-1 text-purple-600 text-2xl" />
                   <div>
                     <h3 className="font-medium text-gray-800">Alamat</h3>
-                    <p className="text-gray-600">Jl. Layanan Publik No. 123, Kota</p>
+                    <p className="text-gray-600">
+                      Jl. Layanan Publik No. 123, Kota
+                    </p>
                   </div>
                 </div>
               </div>
@@ -124,10 +133,10 @@ const HalamanBantuan: React.FC = () => {
                 Pertanyaan yang Sering Diajukan
               </h2>
               {faqData.map((faq, index) => (
-                <FAQItem 
-                  key={index} 
-                  question={faq.question} 
-                  answer={faq.answer} 
+                <FAQItem
+                  key={index}
+                  question={faq.question}
+                  answer={faq.answer}
                 />
               ))}
             </div>
@@ -140,7 +149,8 @@ const HalamanBantuan: React.FC = () => {
                     Butuh Bantuan Lebih Lanjut?
                   </h3>
                   <p className="text-purple-700">
-                    Tim kami siap membantu Anda dengan pertanyaan atau kendala yang dihadapi
+                    Tim kami siap membantu Anda dengan pertanyaan atau kendala
+                    yang dihadapi
                   </p>
                 </div>
                 <div className="flex space-x-4 mt-4 sm:mt-0">
@@ -149,9 +159,12 @@ const HalamanBantuan: React.FC = () => {
                       <FaFileAlt className="mr-2" /> Buat Pengaduan
                     </Button>
                   </Link>
-                  <Button 
+                  <Button
                     variant="secondary"
-                    onClick={() => window.location.href = 'mailto:bantuan@sistemPengaduan.id'}
+                    onClick={() =>
+                      (window.location.href =
+                        'mailto:bantuan@sistemPengaduan.id')
+                    }
                   >
                     <FaEnvelope className="mr-2" /> Hubungi Kami
                   </Button>
@@ -161,7 +174,7 @@ const HalamanBantuan: React.FC = () => {
           </motion.div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

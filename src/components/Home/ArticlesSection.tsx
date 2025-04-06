@@ -21,8 +21,10 @@ const Articles: React.FC = () => {
     const fetchArticles = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<Article[]>('https://api-sipa-capstone-production.up.railway.app/artikel');
-        
+        const response = await axios.get<Article[]>(
+          'https://api-sipa-capstone-production.up.railway.app/artikel'
+        );
+
         setArticles(response.data);
         setLoading(false);
       } catch (err) {
@@ -31,7 +33,7 @@ const Articles: React.FC = () => {
         console.error('Error fetching articles:', err);
       }
     };
-  
+
     fetchArticles();
   }, []);
 
@@ -51,8 +53,19 @@ const Articles: React.FC = () => {
     return (
       <div className="text-center text-red-500 py-16">
         <div className="mb-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-8 w-8 mx-auto"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         </div>
         {error}
@@ -72,7 +85,8 @@ const Articles: React.FC = () => {
           </h2>
           <div className="w-16 h-1 bg-purple-500 mx-auto mb-4"></div>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Temukan berbagai informasi terkini dan panduan berguna seputar perlindungan ibu dan anak.
+            Temukan berbagai informasi terkini dan panduan berguna seputar
+            perlindungan ibu dan anak.
           </p>
         </div>
 
@@ -83,7 +97,7 @@ const Articles: React.FC = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
             {displayedArticles.map((article) => (
-              <motion.div 
+              <motion.div
                 key={article.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -94,46 +108,49 @@ const Articles: React.FC = () => {
                   <h3 className="font-semibold text-lg mb-2 text-gray-800">
                     {article.judul}
                   </h3>
-                  
+
                   <motion.div
-                    animate={{ height: expandedId === article.id ? 'auto' : '4.5rem' }}
+                    animate={{
+                      height: expandedId === article.id ? 'auto' : '4.5rem',
+                    }}
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <p className="text-gray-600 text-sm">
-                      {article.isi}
-                    </p>
+                    <p className="text-gray-600 text-sm">{article.isi}</p>
                   </motion.div>
-                  
+
                   <div className="mt-4 flex justify-between items-center">
                     <button
                       onClick={() => toggleExpand(article.id)}
                       className="text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center focus:outline-none"
                     >
-                      {expandedId === article.id ? 'Tutup' : 'Baca selengkapnya'}
-                      <motion.svg 
-                        animate={{ rotate: expandedId === article.id ? 180 : 0 }}
+                      {expandedId === article.id
+                        ? 'Tutup'
+                        : 'Baca selengkapnya'}
+                      <motion.svg
+                        animate={{
+                          rotate: expandedId === article.id ? 180 : 0,
+                        }}
                         transition={{ duration: 0.3 }}
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="h-4 w-4 ml-1" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 ml-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
                         stroke="currentColor"
                       >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M19 9l-7 7-7-7" 
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
                         />
                       </motion.svg>
                     </button>
-                    
+
                     <Link
                       to={`/artikel/${article.id}`}
                       className="text-sm text-gray-500 hover:text-purple-600 transition-colors"
-                    >
-                    </Link>
+                    ></Link>
                   </div>
                 </div>
               </motion.div>
@@ -147,18 +164,18 @@ const Articles: React.FC = () => {
             className="inline-flex items-center px-5 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded transition-colors"
           >
             Lihat Semua Artikel
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-4 w-4 ml-2" 
-              fill="none" 
-              viewBox="0 0 24 24" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 ml-2"
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M9 5l7 7-7 7" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
               />
             </svg>
           </Link>

@@ -9,24 +9,24 @@ interface ButtonProps {
   icon?: React.ReactNode;
   disabled?: boolean;
   className?: string;
-  type?: "button" | "submit" | "reset";
+  type?: 'button' | 'submit' | 'reset';
 }
 
-const Button: React.FC<ButtonProps> = ({ 
-  children, 
-  variant, 
-  size = 'md', 
-  onClick, 
+const Button: React.FC<ButtonProps> = ({
+  children,
+  variant,
+  size = 'md',
+  onClick,
   fullWidth = false,
   icon,
   disabled = false,
   className = '',
-  type = "button"
+  type = 'button',
 }) => {
   const sizeClasses = {
-    sm: "px-4 py-1.5 text-sm",
-    md: "px-6 py-2 text-base",
-    lg: "px-8 py-3 text-lg"
+    sm: 'px-4 py-1.5 text-sm',
+    md: 'px-6 py-2 text-base',
+    lg: 'px-8 py-3 text-lg',
   };
 
   const baseStyle = `
@@ -48,12 +48,12 @@ const Button: React.FC<ButtonProps> = ({
     secondary: `${baseStyle} bg-white text-[#8B5CF6] border-2 border-[#8B5CF6] hover:bg-[#F3E8FF] shadow-sm hover:shadow-md`,
     outline: `${baseStyle} bg-yellow-400 text-purple-900 border-2 border-yellow-500 hover:bg-yellow-300 shadow-lg`,
     danger: `${baseStyle} bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg`,
-    success: `${baseStyle} bg-emerald-600 text-white hover:bg-emerald-700 shadow-md hover:shadow-lg`
+    success: `${baseStyle} bg-emerald-600 text-white hover:bg-emerald-700 shadow-md hover:shadow-lg`,
   };
 
   return (
-    <button 
-      className={`${styles[variant]} ${className}`} 
+    <button
+      className={`${styles[variant]} ${className}`}
       onClick={onClick}
       disabled={disabled}
       type={type}
