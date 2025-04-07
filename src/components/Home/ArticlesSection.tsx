@@ -3,45 +3,50 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 
-// Define a clear type for the API response
-interface Article {
+// Interface untuk data artikel dari API
+interface ArtikelData {
   id: number;
   judul: string;
   isi: string;
   kategori: string | null;
 }
 
-const Articles: React.FC = () => {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+const ArtikelTerbaru: React.FC = () => {
+  // State untuk menyimpan data dan status
+  const [daftarArtikel, setDaftarArtikel] = useState<ArtikelData[]>([]);
+  const [sedangMuat, setSedangMuat] = useState(true);
+  const [pesanError, setPesanError] = useState<string | null>(null);
+  const [artikelTerbuka, setArtikelTerbuka] = useState<number | null>(null);
 
+  // Ambil data artikel saat komponen dimuat
   useEffect(() => {
-    const fetchArticles = async () => {
+    const ambilDataArtikel = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get<Article[]>(
+        setSedangMuat(true);
+        // Link API bisa diganti sesuai kebutuhan project
+        const response = await axios.get<ArtikelData[]>(
           'https://api-sipa-capstone-production.up.railway.app/artikel'
         );
 
-        setArticles(response.data);
-        setLoading(false);
+        setDaftarArtikel(response.data);
+        setSedangMuat(false);
       } catch (err) {
-        setError('Gagal mengambil artikel');
-        setLoading(false);
-        console.error('Error fetching articles:', err);
+        setPesanError('Gagal mengambil artikel. Coba refresh halaman.');
+        setSedangMuat(false);
+        console.error('Error saat mengambil data:', err);
       }
     };
 
-    fetchArticles();
+    ambilDataArtikel();
   }, []);
 
-  const toggleExpand = (id: number) => {
-    setExpandedId(expandedId === id ? null : id);
+  // Fungsi untuk membuka/tutup artikel
+  const bukaArtikel = (id: number) => {
+    setArtikelTerbuka(artikelTerbuka === id ? null : id);
   };
 
-  if (loading) {
+  // Tampilan saat loading
+  if (sedangMuat) {
     return (
       <div className="flex justify-center items-center py-16">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500"></div>
@@ -49,7 +54,8 @@ const Articles: React.FC = () => {
     );
   }
 
-  if (error) {
+  // Tampilan ketika terjadi error
+  if (pesanError) {
     return (
       <div className="text-center text-red-500 py-16">
         <div className="mb-2">
@@ -68,16 +74,16 @@ const Articles: React.FC = () => {
             />
           </svg>
         </div>
-        {error}
+        {pesanError}
       </div>
     );
   }
 
-  // Display only the first 3 articles
-  const displayedArticles = articles.slice(0, 3);
+  // Hanya tampilkan 3 artikel teratas
+  const artikelDitampilkan = daftarArtikel.slice(0, 3);
 
   return (
-    <div id="articles-section" className="bg-white py-16">
+    <div id="bagian-artikel" className="bg-white py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-800 mb-3">
@@ -90,46 +96,46 @@ const Articles: React.FC = () => {
           </p>
         </div>
 
-        {displayedArticles.length === 0 ? (
+        {artikelDitampilkan.length === 0 ? (
           <div className="text-center text-gray-500 py-8">
-            Tidak ada artikel yang tersedia saat ini.
+            Belum ada artikel yang tersedia saat ini. Cek kembali nanti ya!
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
-            {displayedArticles.map((article) => (
+            {artikelDitampilkan.map((artikel) => (
               <motion.div
-                key={article.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                key={artikel.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow hover:shadow-md transition-shadow"
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow"
               >
                 <div className="p-5">
                   <h3 className="font-semibold text-lg mb-2 text-gray-800">
-                    {article.judul}
+                    {artikel.judul}
                   </h3>
 
                   <motion.div
                     animate={{
-                      height: expandedId === article.id ? 'auto' : '4.5rem',
+                      height: artikelTerbuka === artikel.id ? 'auto' : '4.5rem',
                     }}
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <p className="text-gray-600 text-sm">{article.isi}</p>
+                    <p className="text-gray-600 text-sm">{artikel.isi}</p>
                   </motion.div>
 
                   <div className="mt-4 flex justify-between items-center">
                     <button
-                      onClick={() => toggleExpand(article.id)}
-                      className="text-purple-600 hover:text-purple-700 text-sm font-medium flex items-center focus:outline-none"
+                      onClick={() => bukaArtikel(artikel.id)}
+                      className="text-purple-600 hover:text-purple-800 text-sm font-medium flex items-center focus:outline-none"
                     >
-                      {expandedId === article.id
+                      {artikelTerbuka === artikel.id
                         ? 'Tutup'
                         : 'Baca selengkapnya'}
                       <motion.svg
                         animate={{
-                          rotate: expandedId === article.id ? 180 : 0,
+                          rotate: artikelTerbuka === artikel.id ? 180 : 0,
                         }}
                         transition={{ duration: 0.3 }}
                         xmlns="http://www.w3.org/2000/svg"
@@ -148,9 +154,11 @@ const Articles: React.FC = () => {
                     </button>
 
                     <Link
-                      to={`/artikel/${article.id}`}
+                      to={`/artikel/${artikel.id}`}
                       className="text-sm text-gray-500 hover:text-purple-600 transition-colors"
-                    ></Link>
+                    >
+                      Detail
+                    </Link>
                   </div>
                 </div>
               </motion.div>
@@ -161,12 +169,12 @@ const Articles: React.FC = () => {
         <div className="text-center mt-12">
           <Link
             to="/artikel"
-            className="inline-flex items-center px-5 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-200"
           >
             Lihat Semua Artikel
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 ml-2"
+              className="h-5 w-5 ml-2"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -185,4 +193,4 @@ const Articles: React.FC = () => {
   );
 };
 
-export default Articles;
+export default ArtikelTerbaru;

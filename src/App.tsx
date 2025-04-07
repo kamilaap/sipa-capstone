@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/Home';
-import LearnMore from './pages/About';
+import LearnMore from './pages/PelajariLebihLanjut';
 import Login from './pages/Login';
 import ForgotPassword from './pages/LupaPassword';
 import Register from './pages/Registrasi';
@@ -9,7 +9,7 @@ import StatusPengaduan from './pages/StatusPengaduan';
 import TeamPage from './pages/TimCapstone';
 import FormPengaduan from './pages/FormPengaduan';
 import Terms from './components/Home/Terms';
-import Privacy from './components/Home/Privacy';
+import Privasi from './components/Home/Privacy';
 import AnimatedCursor from './components/Ui/Animated';
 import ArticleListPage from './components/Home/ArticlesListPage';
 import PelayananPage from './pages/Pelayanan';
@@ -36,7 +36,7 @@ const App: React.FC = () => {
           <Route path="/status-pengaduan" element={<StatusPengaduan />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/privacy" element={<Privasi />} />
 
           <Route path="/artikel" element={<ArticleListPage />} />
           <Route path="/pelayanan" element={<PelayananPage />} />

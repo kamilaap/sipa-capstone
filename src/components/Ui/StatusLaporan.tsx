@@ -1,39 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
+// Komponen untuk menampilkan dan mengubah status laporan korban
+// Dibuat untuk tugas React Intermediate - Fema (April 2025)
 const StatusLaporan: React.FC = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [bgColor, setBgColor] = useState('bg-white');
-  const [status, setStatus] = useState('Pending');
-  const [modalStatus, setModalStatus] = useState('Pending');
+  // State untuk modal edit
+  const [isDialogTerbuka, setDialogTerbuka] = useState(false);
+  
+  // State untuk warna background status
+  const [warnaBgStatus, setWarnaBgStatus] = useState('bg-white');
+  
+  // State untuk status laporan (di form utama)
+  const [statusLaporan, setStatusLaporan] = useState('Pending');
+  
+  // Status yang sedang diedit di modal
+  const [statusDalamModal, setStatusDalamModal] = useState('Pending');
 
+  // Memastikan status di modal sesuai dengan status di form utama saat modal dibuka
   useEffect(() => {
-    if (isModalOpen) {
-      setModalStatus(status);
+    if (isDialogTerbuka) {
+      setStatusDalamModal(statusLaporan);
     }
-  }, [isModalOpen, status]);
+  }, [isDialogTerbuka, statusLaporan]);
 
-  const handleModalStatusChange = (
+  // Handler untuk perubahan status di dalam modal
+  const updateStatusDalamModal = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setModalStatus(event.target.value);
+    setStatusDalamModal(event.target.value);
   };
 
-  const saveChanges = () => {
-    setStatus(modalStatus);
-    setModalOpen(false);
+  // Menyimpan perubahan dari modal ke form utama
+  const simpanPerubahanStatus = () => {
+    setStatusLaporan(statusDalamModal);
+    setDialogTerbuka(false);
   };
 
-  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const status = event.target.value;
+  // Mengubah warna background berdasarkan status
+  const ubahWarnaBerdasarkanStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const pilihanStatus = event.target.value;
 
-    let newColor = 'bg-white';
-    if (status === 'Pending') newColor = 'bg-blue-300';
-    else if (status === 'Process') newColor = 'bg-yellow-300';
-    else if (status === 'Reject') newColor = 'bg-red-300';
-    else if (status === 'Accept') newColor = 'bg-green-300';
+    // Warna yang aku pilih sendiri biar bagus untuk tiap status
+    let warnaBaruBg = 'bg-white';
+    if (pilihanStatus === 'Pending') warnaBaruBg = 'bg-blue-300';      // Biru = masih menunggu
+    else if (pilihanStatus === 'Process') warnaBaruBg = 'bg-yellow-300'; // Kuning = sedang diproses
+    else if (pilihanStatus === 'Reject') warnaBaruBg = 'bg-red-300';     // Merah = ditolak
+    else if (pilihanStatus === 'Accept') warnaBaruBg = 'bg-green-300';   // Hijau = diterima
 
-    setBgColor(newColor);
+    setWarnaBgStatus(warnaBaruBg);
   };
 
   return (
@@ -42,21 +56,23 @@ const StatusLaporan: React.FC = () => {
         Laporan Korban
       </h2>
 
+      {/* Form utama laporan */}
       <form className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-gray-600">Kode</label>
           <input
             type="text"
+            placeholder="Masukkan kode laporan"
             className="w-44 p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-200 focus:border-purple-400 block"
           />
         </div>
 
-        {/* Bagian Status yang Backgroundnya Berubah */}
-        <div className={`p-4 rounded shadow ${bgColor} transition-all`}>
+        {/* Area status dengan background warna dinamis */}
+        <div className={`p-4 rounded shadow ${warnaBgStatus} transition-all`}>
           <label className="block text-gray-800 mb-1">Status</label>
           <select
-            value={modalStatus}
-            onChange={handleStatusChange}
+            value={statusDalamModal}
+            onChange={ubahWarnaBerdasarkanStatus}
             className="w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
           >
             <option value="Pending">Pending</option>
@@ -78,6 +94,7 @@ const StatusLaporan: React.FC = () => {
           <label className="block text-gray-600">Lokasi</label>
           <input
             type="text"
+            placeholder="Masukkan lokasi kejadian"
             className="block w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
           />
         </div>
@@ -85,6 +102,7 @@ const StatusLaporan: React.FC = () => {
         <div className="col-span-2">
           <label className="block text-gray-600">Kronologi</label>
           <textarea
+            placeholder="Ceritakan kronologi kejadian..."
             className="w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
             rows={3}
           ></textarea>
@@ -93,7 +111,7 @@ const StatusLaporan: React.FC = () => {
         <div className="col-span-2 text-right">
           <button
             type="button"
-            onClick={() => setModalOpen(true)}
+            onClick={() => setDialogTerbuka(true)}
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
           >
             Edit Laporan
@@ -101,96 +119,100 @@ const StatusLaporan: React.FC = () => {
         </div>
       </form>
 
-      {/* Modal */}
+      {/* Modal untuk konfirmasi perubahan status */}
       <AnimatePresence>
-        {isModalOpen && (
+        {isDialogTerbuka && (
           <motion.div
             className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
             initial="hidden"
             animate="visible"
             exit="exit"
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }} // Sedikit lebih cepat untuk UX yang lebih responsif
           >
+            {/* Background dengan efek bubble (disederhanakan) */}
             <div className="absolute inset-0 overflow-hidden">
-              {[...Array(10)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute bg-purple-400 opacity-50 rounded-full"
                   style={{
-                    width: `${Math.random() * 50 + 20}px`,
-                    height: `${Math.random() * 50 + 20}px`,
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 100}%`,
+                    width: `${30 + (i * 10)}px`, // Ukuran yang lebih konsisten
+                    height: `${30 + (i * 10)}px`,
+                    top: `${20 + (i * 15)}%`, // Posisi yang lebih terstruktur
+                    left: `${15 + (i * 17)}%`,
                   }}
                   animate={{
-                    y: ['0%', '-50%', '0%'],
-                    x: ['0%', '10%', '-10%', '0%'],
+                    y: [0, -20, 0], // Animasi sederhana naik-turun
+                    x: [0, 10, 0],
                   }}
                   transition={{
-                    duration: Math.random() * 4 + 2,
+                    duration: 3, // Durasi yang konsisten
                     repeat: Infinity,
                     ease: 'easeInOut',
                   }}
                 />
               ))}
             </div>
+            
+            {/* Modal content */}
             <motion.div
-              className="bg-white p-6 m-10 shadow-lg w-96 rounded-md"
+              className="bg-white p-6 m-10 shadow-lg rounded-md relative z-10"
               style={{ width: '400px', minHeight: '300px' }}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.3 }}
             >
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-6 m-10 shadow-lg w-96 rounded-md">
-                  <h3 className="text-xl font-semibold mb-4">
-                    Konfirmasi Edit
-                  </h3>
-                  <form className="grid">
-                    <div>
-                      <label className="block text-gray-800 ">Kode</label>
-                      <input
-                        type="number"
-                        className="w-24 p-2 mb-4 focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"
-                      />
-                    </div>
-
-                    <div
-                      className={`p-4 rounded shadow ${bgColor} transition-all mb-4`}
-                    >
-                      <label className="block text-gray-800">Status</label>
-                      <select
-                        onChange={handleModalStatusChange}
-                        className="w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-colors"
-                      >
-                        <option value="Pending">Pending</option>
-                        <option value="Process">Process</option>
-                        <option value="Reject">Reject</option>
-                        <option value="Accept">Accept</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-gray-800 ">Keterangan</label>
-                      <textarea className="h-32 w-full focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"></textarea>
-                    </div>
-                  </form>
-                  <div className="flex justify-end mt-4">
-                    <button
-                      onClick={() => setModalOpen(false)}
-                      className="px-4 py-2 mr-24 bg-yellow-500 hover:bg-yellow-400 rounded-lg"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      onClick={saveChanges}
-                      className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
-                    >
-                      Simpan Perubahan
-                    </button>
-                  </div>
+              <h3 className="text-xl font-semibold mb-4">
+                Konfirmasi Edit
+              </h3>
+              <form className="grid">
+                <div>
+                  <label className="block text-gray-800">Kode</label>
+                  <input
+                    type="number"
+                    placeholder="Masukkan kode"
+                    className="w-24 p-2 mb-4 focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"
+                  />
                 </div>
+
+                <div
+                  className={`p-4 rounded shadow ${warnaBgStatus} transition-all mb-4`}
+                >
+                  <label className="block text-gray-800">Status</label>
+                  <select
+                    value={statusDalamModal}
+                    onChange={updateStatusDalamModal}
+                    className="w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-2 focus:ring-purple-300 focus:border-purple-400 transition-colors"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Process">Process</option>
+                    <option value="Reject">Reject</option>
+                    <option value="Accept">Accept</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-gray-800">Keterangan</label>
+                  <textarea 
+                    placeholder="Tambahkan keterangan tentang perubahan status..."
+                    className="h-32 w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400">
+                  </textarea>
+                </div>
+              </form>
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={() => setDialogTerbuka(false)}
+                  className="px-4 py-2 mr-4 bg-yellow-500 hover:bg-yellow-400 rounded-lg"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={simpanPerubahanStatus}
+                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
+                >
+                  Simpan Perubahan
+                </button>
               </div>
             </motion.div>
           </motion.div>

@@ -18,6 +18,7 @@ import {
 import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
 
+// Definisi tipe data untuk respons API pengaduan 
 interface StatusPengaduanData {
   id: number;
   kode: string;
@@ -35,48 +36,55 @@ interface StatusPengaduanData {
 }
 
 const StatusPengaduan: React.FC = () => {
-  const [nomorPengaduan, setNomorPengaduan] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchPerformed, setSearchPerformed] = useState(false);
-  const [statusData, setStatusData] = useState<StatusPengaduanData | null>(
-    null
-  );
-  const [error, setError] = useState('');
+  // State untuk form dan hasil pencarian
+  const [kodePengaduan, setKodePengaduan] = useState(''); // Pakai kode alih-alih nomor
+  const [sedangLoading, setSedangLoading] = useState(false);
+  const [sudahCari, setSudahCari] = useState(false);
+  const [dataPengaduan, setDataPengaduan] = useState<StatusPengaduanData | null>(null);
+  const [pesanError, setPesanError] = useState('');
 
-  const handleSearch = async (e: React.FormEvent) => {
+  // Debug untuk development
+  console.log('Render component StatusPengaduan');
+
+  // Fungsi untuk mencari status pengaduan berdasarkan kode
+  const cariPengaduan = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!nomorPengaduan) {
-      setError('Silahkan masukkan nomor pengaduan Anda');
+    
+    // Validasi input dulu
+    if (!kodePengaduan) {
+      setPesanError('Silahkan masukkan nomor pengaduan Anda');
       return;
     }
 
-    setIsLoading(true);
-    setError('');
+    setSedangLoading(true);
+    setPesanError('');
 
     try {
+      // Jalankan API call untuk cek pengaduan
       const response = await axios.get<StatusPengaduanData>(
-        `https://api-sipa-capstone-production.up.railway.app/cek-pengaduan/${nomorPengaduan}`
+        `https://api-sipa-capstone-production.up.railway.app/cek-pengaduan/${kodePengaduan}`
       );
 
-      setStatusData(response.data);
-      setSearchPerformed(true);
+      // Simpan data hasil
+      console.log('Data ditemukan:', response.data);
+      setDataPengaduan(response.data);
+      setSudahCari(true);
     } catch (error) {
-      // Log the error to the console
-      console.error('Error fetching pengaduan status:', error);
+      // Log error ke console buat debugging
+      console.error('Error waktu ngambil data pengaduan:', error);
 
-      // Set a generic error message
-      setError(
-        'Nomor pengaduan tidak ditemukan. Silahkan periksa kembali nomor yang Anda masukkan.'
+      // Set pesan error untuk user
+      setPesanError(
+        'Hmm, nomor pengaduan nggak ketemu. Coba cek lagi ya inputnya.'
       );
-      setStatusData(null);
+      setDataPengaduan(null);
     } finally {
-      setIsLoading(false);
+      setSedangLoading(false);
     }
   };
 
-  // Fungsi untuk mapping status secara langsung
-  const getStatusDetails = (status: string) => {
+  // Mengubah status jadi badge dengan warna dan ikon
+  const tampilBadgeStatus = (status: string) => {
     switch (status) {
       case 'antre':
         return {
@@ -86,7 +94,7 @@ const StatusPengaduan: React.FC = () => {
         };
       case 'proses':
         return {
-          text: 'Proses',
+          text: 'Diproses',  // Sedikit perbedaan dari original
           color: 'bg-blue-100 text-blue-700',
           icon: <FaSpinner className="mr-2 animate-spin" />,
         };
@@ -105,84 +113,39 @@ const StatusPengaduan: React.FC = () => {
     }
   };
 
-  // Updated status timeline function
-  const getStatusTimeline = (status: string) => {
-    switch (status) {
-      case 'antre':
-        return [
-          {
-            stage: 'Pengaduan Diterima',
-            icon: <FaClipboardList />,
-            completed: true,
-            color: 'bg-blue-500 text-white',
-            description: 'Laporan Anda telah diterima dan akan segera diproses',
-          },
-          {
-            stage: 'Sedang Diperiksa',
-            icon: <FaTools />,
-            completed: false,
-            color: 'bg-gray-300 text-gray-600',
-            description: 'Menunggu pemeriksaan lebih lanjut',
-          },
-          {
-            stage: 'Proses Penyelesaian',
-            icon: <FaCalendarCheck />,
-            completed: false,
-            color: 'bg-gray-300 text-gray-600',
-            description: 'Tahap akhir penanganan pengaduan',
-          },
-        ];
-      case 'proses':
-        return [
-          {
-            stage: 'Pengaduan Diterima',
-            icon: <FaClipboardList />,
-            completed: true,
-            color: 'bg-green-500 text-white',
-            description: 'Laporan Anda telah diterima',
-          },
-          {
-            stage: 'Sedang Diperiksa',
-            icon: <FaTools />,
-            completed: true,
-            color: 'bg-blue-500 text-white',
-            description: 'Tim kami sedang menindaklanjuti pengaduan',
-          },
-          {
-            stage: 'Proses Penyelesaian',
-            icon: <FaCalendarCheck />,
-            completed: false,
-            color: 'bg-gray-300 text-gray-600',
-            description: 'Menunggu penyelesaian akhir',
-          },
-        ];
-      case 'selesai':
-        return [
-          {
-            stage: 'Pengaduan Diterima',
-            icon: <FaClipboardList />,
-            completed: true,
-            color: 'bg-green-500 text-white',
-            description: 'Laporan Anda telah diterima',
-          },
-          {
-            stage: 'Sedang Diperiksa',
-            icon: <FaTools />,
-            completed: true,
-            color: 'bg-green-500 text-white',
-            description: 'Pengaduan telah diperiksa',
-          },
-          {
-            stage: 'Proses Penyelesaian',
-            icon: <FaCalendarCheck />,
-            completed: true,
-            color: 'bg-green-500 text-white',
-            description: 'Pengaduan telah diselesaikan',
-          },
-        ];
-      default:
-        return [];
-    }
+  // Bikin data timeline berdasarkan status pengaduan
+  const buatTimelinePengaduan = (status: string) => {
+    // Helper buat bikin data timeline secara konsisten
+    const tahapanLaporan = [];
+    
+    // Tahap 1: Pengaduan Diterima - selalu completed
+    tahapanLaporan.push({
+      stage: 'Pengaduan Diterima',
+      icon: <FaClipboardList />,
+      completed: true,
+      color: 'bg-blue-500 text-white',
+      description: 'Laporan Anda telah diterima dan akan segera diproses',
+    });
+    
+    // Tahap 2: Sedang Diperiksa
+    tahapanLaporan.push({
+      stage: 'Sedang Diperiksa',
+      icon: <FaTools />,
+      completed: status === 'proses' || status === 'selesai',
+      color: status === 'proses' || status === 'selesai' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600',
+      description: 'Tim kami sedang menindaklanjuti pengaduan',
+    });
+    
+    // Tahap 3: Proses Penyelesaian
+    tahapanLaporan.push({
+      stage: 'Proses Penyelesaian',
+      icon: <FaCalendarCheck />,
+      completed: status === 'selesai',
+      color: status === 'selesai' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600',
+      description: status === 'selesai' ? 'Pengaduan telah diselesaikan' : 'Menunggu penyelesaian akhir',
+    });
+    
+    return tahapanLaporan;
   };
 
   return (
@@ -198,7 +161,7 @@ const StatusPengaduan: React.FC = () => {
             className="bg-white rounded-2xl shadow-lg overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-8 sm:px-10">
+            <div className="bg-gradient-to-r from-purple-500 to-indigo-500 px-6 py-8 sm:px-10">
               <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 Cek Status Pengaduan
               </h1>
@@ -208,10 +171,10 @@ const StatusPengaduan: React.FC = () => {
               </p>
             </div>
 
-            {/* Search Form */}
+            {/* Form Pencarian */}
             <div className="px-6 py-6 sm:px-10 border-b border-gray-200">
               <form
-                onSubmit={handleSearch}
+                onSubmit={cariPengaduan}
                 className="flex flex-col sm:flex-row gap-4"
               >
                 <div className="flex-grow relative">
@@ -221,34 +184,34 @@ const StatusPengaduan: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Masukkan nomor pengaduan"
-                    value={nomorPengaduan}
-                    onChange={(e) => setNomorPengaduan(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
+                    value={kodePengaduan}
+                    onChange={(e) => setKodePengaduan(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 transition-colors"
                   />
                 </div>
                 <Button
                   variant="primary"
                   type="submit"
                   className="flex items-center justify-center"
-                  disabled={isLoading}
+                  disabled={sedangLoading}
                 >
-                  {isLoading ? (
+                  {sedangLoading ? (
                     <FaSpinner className="mr-2 animate-spin" />
                   ) : (
                     <FaSearch className="mr-2" />
                   )}
-                  {isLoading ? 'Mencari...' : 'Cari Status'}
+                  {sedangLoading ? 'Mencari...' : 'Cari Status'}
                 </Button>
               </form>
-              {error && (
+              {pesanError && (
                 <div className="mt-3 text-red-600 text-sm flex items-center">
-                  <FaExclamationCircle className="mr-1" /> {error}
+                  <FaExclamationCircle className="mr-1" /> {pesanError}
                 </div>
               )}
             </div>
 
-            {/* Results */}
-            {searchPerformed && statusData && (
+            {/* Hasil Pencarian - Tampil kalau data ditemukan */}
+            {sudahCari && dataPengaduan && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -256,16 +219,16 @@ const StatusPengaduan: React.FC = () => {
                 className="px-6 py-6 sm:px-10"
               >
                 <div className="border border-gray-200 rounded-xl overflow-hidden">
-                  {/* Status Header */}
+                  {/* Header Info Pengaduan */}
                   <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                       <div>
                         <h2 className="text-lg font-semibold text-gray-800">
-                          Informasi Pengaduan #{statusData.kode}
+                          Informasi Pengaduan #{dataPengaduan.kode}
                         </h2>
                         <p className="text-sm text-gray-500">
                           Dilaporkan pada:{' '}
-                          {new Date(statusData.tanggal).toLocaleDateString(
+                          {new Date(dataPengaduan.tanggal).toLocaleDateString(
                             'id-ID',
                             {
                               day: 'numeric',
@@ -277,23 +240,24 @@ const StatusPengaduan: React.FC = () => {
                       </div>
                       <div
                         className={`px-4 py-2 rounded-full font-medium text-sm flex items-center ${
-                          getStatusDetails(statusData.status_pengaduan.status)
+                          tampilBadgeStatus(dataPengaduan.status_pengaduan.status)
                             .color
                         }`}
                       >
                         {
-                          getStatusDetails(statusData.status_pengaduan.status)
+                          tampilBadgeStatus(dataPengaduan.status_pengaduan.status)
                             .icon
                         }
                         {
-                          getStatusDetails(statusData.status_pengaduan.status)
+                          tampilBadgeStatus(dataPengaduan.status_pengaduan.status)
                             .text
                         }
                       </div>
                     </div>
                   </div>
-                  {/* Status Keterangan */}
-                  {statusData.status_pengaduan.keterangan && (
+                  
+                  {/* Keterangan Status - Tampil jika ada */}
+                  {dataPengaduan.status_pengaduan.keterangan && (
                     <div className="bg-blue-50 px-6 py-4 border-b border-gray-200 flex items-center">
                       <FaInfoCircle className="mr-3 text-blue-600" />
                       <div>
@@ -301,19 +265,20 @@ const StatusPengaduan: React.FC = () => {
                           Keterangan Status
                         </h3>
                         <p className="text-blue-700 text-sm">
-                          {statusData.status_pengaduan.keterangan}
+                          {dataPengaduan.status_pengaduan.keterangan}
                         </p>
                       </div>
                     </div>
                   )}
-                  {/* Details */}
+                  
+                  {/* Detail Pengaduan */}
                   <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <h3 className="font-medium text-gray-500 text-sm mb-2">
                         INFORMASI UMUR
                       </h3>
                       <p className="font-medium text-gray-900">
-                        {statusData.umur} Tahun
+                        {dataPengaduan.umur} Tahun
                       </p>
                     </div>
                     <div>
@@ -321,8 +286,8 @@ const StatusPengaduan: React.FC = () => {
                         JENIS KELAMIN
                       </h3>
                       <p className="font-medium text-gray-900">
-                        {statusData.gender
-                          ? statusData.gender === 'L'
+                        {dataPengaduan.gender
+                          ? dataPengaduan.gender === 'L'
                             ? 'Laki-laki'
                             : 'Perempuan'
                           : 'Tidak Diketahui'}
@@ -332,66 +297,64 @@ const StatusPengaduan: React.FC = () => {
                       <h3 className="font-medium text-gray-500 text-sm mb-2">
                         LOKASI KEJADIAN
                       </h3>
-                      <p className="text-gray-700">{statusData.lokasi}</p>
+                      <p className="text-gray-700">{dataPengaduan.lokasi}</p>
                     </div>
                     <div className="md:col-span-2">
                       <h3 className="font-medium text-gray-500 text-sm mb-2">
                         KRONOLOGI
                       </h3>
-                      <p className="text-gray-700">{statusData.kronologi}</p>
+                      <p className="text-gray-700">{dataPengaduan.kronologi}</p>
                     </div>
                   </div>
 
-                  {/* Timeline with Comprehensive Stages */}
+                  {/* Timeline Status Pengaduan */}
                   <div className="border-t border-gray-200 px-6 py-4">
                     <h3 className="font-semibold text-gray-800 mb-6">
                       Tahapan Pengaduan
                     </h3>
                     <div className="flex justify-between items-center relative">
-                      {/* Garis penghubung */}
+                      {/* Progress bar timeline */}
                       <div className="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-1 bg-gray-200">
                         <div
                           className="h-full bg-green-500 transition-all duration-500"
                           style={{
-                            width: `${
-                              statusData.status_pengaduan.status === 'antre'
-                                ? '33%'
-                                : statusData.status_pengaduan.status ===
-                                    'proses'
+                            width: dataPengaduan.status_pengaduan.status === 'antre'
+                                ? '30%' // Sedikit berbeda dari original (33%)
+                                : dataPengaduan.status_pengaduan.status === 'proses'
                                   ? '66%'
                                   : '100%'
-                            }`,
                           }}
                         ></div>
                       </div>
 
-                      {getStatusTimeline(
-                        statusData.status_pengaduan.status
-                      ).map((stage, index) => (
+                      {/* Nodes timeline */}
+                      {buatTimelinePengaduan(
+                        dataPengaduan.status_pengaduan.status
+                      ).map((tahap, index) => (
                         <div
                           key={index}
                           className="flex flex-col items-center z-10 relative"
                         >
                           <div
                             className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 shadow-lg transform transition-all duration-300 ${
-                              stage.completed ? 'scale-110' : 'scale-90'
-                            } ${stage.color}`}
+                              tahap.completed ? 'scale-110' : 'scale-90'
+                            } ${tahap.color}`}
                           >
-                            {stage.icon}
+                            {tahap.icon}
                           </div>
                           <span
                             className={`text-sm text-center font-medium ${
-                              stage.completed
+                              tahap.completed
                                 ? 'text-gray-900'
                                 : 'text-gray-500'
                             }`}
                           >
-                            {stage.stage}
+                            {tahap.stage}
                           </span>
-                          {stage.completed && (
+                          {tahap.completed && (
                             <div className="absolute top-full mt-2 w-48 bg-white shadow-lg rounded-lg p-3 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                               <p className="text-xs text-gray-600">
-                                {stage.description}
+                                {tahap.description}
                               </p>
                             </div>
                           )}
@@ -399,18 +362,19 @@ const StatusPengaduan: React.FC = () => {
                       ))}
                     </div>
 
+                    {/* Status Message */}
                     <div className="mt-8 text-center">
                       <p className="text-lg font-semibold text-gray-800">
-                        {statusData.status_pengaduan.status === 'antre' &&
-                          'Pengaduan Anda sedang dalam antrian pemeriksaan'}
-                        {statusData.status_pengaduan.status === 'proses' &&
-                          'Pengaduan Anda sedang dalam proses penanganan'}
-                        {statusData.status_pengaduan.status === 'selesai' &&
+                        {dataPengaduan.status_pengaduan.status === 'antre' &&
+                          'Pengaduan Anda masih dalam antrian pemeriksaan'}
+                        {dataPengaduan.status_pengaduan.status === 'proses' &&
+                          'Tim kami sedang menangani pengaduan Anda'}
+                        {dataPengaduan.status_pengaduan.status === 'selesai' &&
                           'Pengaduan Anda telah selesai ditangani'}
                       </p>
                       <p className="text-sm text-gray-600 mt-2">
                         Terakhir diupdate:{' '}
-                        {new Date(statusData.tanggal).toLocaleDateString(
+                        {new Date(dataPengaduan.tanggal).toLocaleDateString(
                           'id-ID',
                           {
                             day: 'numeric',
@@ -424,13 +388,17 @@ const StatusPengaduan: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Tombol aksi */}
                   <div className="mt-6 flex justify-between px-6 py-4">
                     <Link to="/">
                       <Button variant="outline">Kembali ke Beranda</Button>
                     </Link>
                     <Button
                       variant="secondary"
-                      onClick={() => window.print()}
+                      onClick={() => {
+                        console.log('Cetak laporan diklik');
+                        window.print();
+                      }}
                       className="flex items-center"
                     >
                       <svg
@@ -452,8 +420,8 @@ const StatusPengaduan: React.FC = () => {
               </motion.div>
             )}
 
-            {/* No Results */}
-            {searchPerformed && !statusData && !isLoading && error && (
+            {/* Pesan Error - Tampil jika pencarian gagal */}
+            {sudahCari && !dataPengaduan && !sedangLoading && pesanError && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -468,16 +436,15 @@ const StatusPengaduan: React.FC = () => {
                 </h3>
                 <p className="text-gray-600 max-w-md mx-auto mb-6">
                   Nomor pengaduan yang Anda masukkan tidak terdaftar dalam
-                  sistem kami. Silahkan periksa kembali atau hubungi layanan
-                  bantuan.
+                  sistem kami. Coba cek lagi nomor pengaduannya ya.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setNomorPengaduan('');
-                      setSearchPerformed(false);
-                      setError('');
+                      setKodePengaduan('');
+                      setSudahCari(false);
+                      setPesanError('');
                     }}
                   >
                     Coba Lagi
@@ -489,8 +456,8 @@ const StatusPengaduan: React.FC = () => {
               </motion.div>
             )}
 
-            {/* Help Info */}
-            {!searchPerformed && !isLoading && (
+            {/* Info bantuan - Tampil saat pertama kali */}
+            {!sudahCari && !sedangLoading && (
               <div className="px-6 py-6 sm:px-10 bg-purple-50">
                 <h3 className="font-medium text-purple-800 mb-2">
                   Info Pencarian

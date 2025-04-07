@@ -190,10 +190,10 @@ const Dashboard: React.FC = () => {
                 className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
               >
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Tingkat Kekerasan
+                  Manajemen User
                 </h3>
                 <p className="text-gray-600 text-center">
-                  Analisis dan dokumentasi tingkat kekerasan
+                  Kelola pengguna dan hak akses
                 </p>
               </Link>
             </div>

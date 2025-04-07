@@ -15,7 +15,7 @@ import Button from '../components/Ui/Button';
 import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
 
-// Define an interface for the response data
+// Tipe data untuk response API
 interface ResponseData {
   pengaduan?: {
     kode?: string;
@@ -23,77 +23,107 @@ interface ResponseData {
   kode?: string;
 }
 
-const FormPengaduan: React.FC = () => {
-  const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [responseData, setResponseData] = useState<ResponseData | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+// Array bulan dalam bahasa Indonesia buat fallback
+const namaBulan = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
 
-  // Function to get current date formatted in Indonesian
-  const getCurrentDate = () => {
-    const now = new Date();
-    // Use Indonesian locale with full date formatting
-    return (
-      now.toLocaleDateString('id-ID', {
+const FormPengaduan: React.FC = () => {
+  const [tahapForm, setTahapForm] = useState(1);
+  const [sedangSubmit, setSedangSubmit] = useState(false);
+  const [berhasil, setBerhasil] = useState(false);
+  const [kodeTersalin, setKodeTersalin] = useState(false);
+  const [dataResponse, setDataResponse] = useState<ResponseData | null>(null);
+  const [pesanError, setPesanError] = useState<string>('');
+
+  // Fungsi buat format tanggal ala Indonesia (DD Bulan YYYY)
+  // TODO: Benerin bug di Firefox yang kadang ngga support locale
+  const ambilTanggalHariIni = () => {
+    const skrg = new Date();
+    try {
+      return skrg.toLocaleDateString('id-ID', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-      }) || new Date().toLocaleDateString()
-    ); // Fallback if something goes wrong
+      });
+    } catch  {
+      // Fallback kalau browser ngga support locale id-ID
+      // Using underscore (_) instead of 'e' as unused parameter
+      return `${skrg.getDate()} ${namaBulan[skrg.getMonth()]} ${skrg.getFullYear()}`;
+    }
   };
 
-  const [formData, setFormData] = useState({
+  const [dataLaporan, setDataLaporan] = useState({
     lokasi: '',
     kronologi: '',
-    tanggalLaporan: getCurrentDate(),
+    tanggalLaporan: ambilTanggalHariIni(),
     umur: '',
     gender: '',
   });
 
-  // Update date whenever component is mounted or re-rendered
+  // Update tanggal tiap kali komponen dimuat ulang
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      tanggalLaporan: getCurrentDate(),
+    setDataLaporan((data) => ({
+      ...data,
+      tanggalLaporan: ambilTanggalHariIni(),
     }));
   }, []);
 
-  const handleChange = (
+  // Handler untuk perubahan input
+  const updateFormInput = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setDataLaporan((data) => ({ ...data, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Cek kelengkapan data tiap tahap
+  const cekDataLengkap = () => {
+    if (tahapForm === 1) {
+      // Validasi data pribadi
+      return dataLaporan.umur && dataLaporan.gender && dataLaporan.lokasi;
+    } else if (tahapForm === 2) {
+      // Validasi kronologi (minimal 20 karakter)
+      return dataLaporan.kronologi && dataLaporan.kronologi.length >= 20;
+    }
+    return true;
+  };
+
+  // Handler submit form
+  const kirimLaporan = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (step < 3) {
-      setStep((prev) => prev + 1);
+    if (tahapForm < 3) {
+      if (!cekDataLengkap()) {
+        // Tampilkan pesan kesalahan
+        setPesanError("Data belum lengkap, mohon dilengkapi dulu ya!");
+        return;
+      }
+      setTahapForm((prev) => prev + 1);
       return;
     }
 
-    setIsSubmitting(true);
-    setErrorMessage('');
+    setSedangSubmit(true);
+    setPesanError('');
 
     try {
-      // Create a new Date object and convert to specific format
-      const currentDate = new Date().toISOString().split('T')[0];
+      // Bikin format tanggal yyyy-mm-dd buat API
+      const tanggalHariIni = new Date().toISOString().split('T')[0];
 
+      // Kirim ke API
       const response = await axios.post<{ pengaduan: ResponseData }>(
         'https://api-sipa-capstone-production.up.railway.app/pengaduan',
         {
-          lokasi: formData.lokasi,
-          kronologi: formData.kronologi,
-          tanggalLaporan: currentDate,
-          tanggal: currentDate,
-          bukti: '', // Send an empty string for bukti field
-          umur: parseInt(formData.umur), // Convert umur to number
-          gender: formData.gender,
+          lokasi: dataLaporan.lokasi,
+          kronologi: dataLaporan.kronologi,
+          tanggalLaporan: tanggalHariIni,
+          tanggal: tanggalHariIni,
+          bukti: '', // Kosong dulu, nanti bisa diupdate
+          umur: parseInt(dataLaporan.umur), // Ubah jadi angka
+          gender: dataLaporan.gender,
         },
         {
           headers: {
@@ -102,59 +132,65 @@ const FormPengaduan: React.FC = () => {
         }
       );
 
-      console.log('API Response:', response.data);
+      // Debug aja - nanti hapus kalau udah pasti work
+      console.log('Respon API:', response.data);
 
-      // Store the response data for display
+      // Simpan data response untuk ditampilkan
       if (response.data && response.data.pengaduan) {
-        setResponseData(response.data.pengaduan);
-        setIsSuccess(true);
+        setDataResponse(response.data.pengaduan);
+        setBerhasil(true);
       } else {
-        throw new Error('Invalid response format from server');
+        throw new Error('Format response dari server ngga valid');
       }
     } catch (error) {
-      let message =
-        'Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.';
+      // Default message
+      let message = 'Gagal mengirim laporan. Coba lagi ya!';
+
+      // Pesan error custom
+      const tipeError = {
+        network: "Koneksi internet lagi gangguan nih, coba lagi nanti ya!",
+        server: "Server lagi sibuk, tunggu bentar ya...",
+        validasi: "Ada data yang kurang tepat, cek lagi ya!",
+        lainnya: "Hmm ada yang aneh. Coba refresh dulu deh!",
+      };
 
       if (axios.isAxiosError(error)) {
         if (error.response) {
           console.log('Error data:', error.response.data);
-          console.log('Error status:', error.response.status);
-
-          if (
-            error.response.data &&
-            (error.response.data as { message?: string }).message
-          ) {
-            message = `Error: ${(error.response.data as { message: string }).message}`;
+          
+          if (error.response.status === 400) {
+            message = tipeError.validasi;
           } else if (error.response.status === 500) {
-            message = 'Server mengalami masalah. Silakan coba lagi nanti.';
+            message = tipeError.server;
           }
         } else if (error.request) {
-          message =
-            'Tidak ada respons dari server. Periksa koneksi internet Anda.';
+          message = tipeError.network;
         }
       } else if (error instanceof Error) {
         message = `Error: ${error.message}`;
       }
 
-      setErrorMessage(message);
+      setPesanError(message);
     } finally {
-      setIsSubmitting(false);
+      setSedangSubmit(false);
     }
   };
 
-  const handlePrevStep = () => {
-    setStep((prev) => Math.max(1, prev - 1));
+  // Kembali ke tahap sebelumnya
+  const kembaliTahapSebelum = () => {
+    setTahapForm((prev) => Math.max(1, prev - 1));
   };
 
-  const copyToClipboard = () => {
-    const kodePengaduan = responseData?.kode || '';
+  // Salin kode pengaduan
+  const salinKeClipboard = () => {
+    const kodePengaduan = dataResponse?.kode || '';
     navigator.clipboard.writeText(kodePengaduan);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setKodeTersalin(true);
+    setTimeout(() => setKodeTersalin(false), 2000);
   };
 
-  // Form progress indicator
-  const renderProgress = () => {
+  // Indikator progres form
+  const tampilkanProgres = () => {
     return (
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -162,7 +198,7 @@ const FormPengaduan: React.FC = () => {
             <div key={num} className="flex flex-col items-center">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${
-                  step >= num
+                  tahapForm >= num
                     ? 'bg-purple-600 text-white'
                     : 'bg-gray-200 text-gray-500'
                 }`}
@@ -183,15 +219,15 @@ const FormPengaduan: React.FC = () => {
           <div className="absolute top-0 left-[10%] right-[10%] h-1 bg-gray-200 rounded"></div>
           <div
             className="absolute top-0 left-[10%] h-1 bg-purple-600 rounded transition-all duration-300"
-            style={{ width: `${(step - 1) * 40}%` }}
+            style={{ width: `${(tahapForm - 1) * 40}%` }}
           ></div>
         </div>
       </div>
     );
   };
 
-  // Success message after form submission
-  const renderSuccessMessage = () => {
+  // Pesan sukses setelah pengiriman form
+  const pesanBerhasil = () => {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -203,28 +239,27 @@ const FormPengaduan: React.FC = () => {
           <FaCheck className="text-green-600 text-4xl" />
         </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Pengaduan Berhasil Dibuat
+          Laporan Berhasil Dibuat!
         </h2>
         <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          Pengaduan Anda telah diterima dan akan segera ditindaklanjuti oleh tim
-          kami. Silakan simpan kode pengaduan berikut untuk memantau status
-          kasus Anda.
+          Laporan kamu sudah kami terima dan akan segera ditindaklanjuti.
+          Simpan kode di bawah ini untuk cek status kasus kamu nanti ya.
         </p>
 
         <div className="mb-8">
           <div className="bg-gray-100 border border-gray-200 rounded-lg p-4 flex items-center justify-between max-w-xs mx-auto">
             <span className="text-2xl font-mono font-bold text-purple-700 tracking-wider">
-              {responseData?.kode || ''}
+              {dataResponse?.kode || ''}
             </span>
             <button
-              onClick={copyToClipboard}
+              onClick={salinKeClipboard}
               className="p-2 bg-purple-100 text-purple-700 rounded-md hover:bg-purple-200 transition-colors"
               aria-label="Copy code"
             >
-              {copied ? <FaCheck /> : <FaCopy />}
+              {kodeTersalin ? <FaCheck /> : <FaCopy />}
             </button>
           </div>
-          {copied && (
+          {kodeTersalin && (
             <p className="text-sm text-green-600 mt-2">
               Kode berhasil disalin!
             </p>
@@ -239,7 +274,7 @@ const FormPengaduan: React.FC = () => {
           </Link>
           <Link to="/status-pengaduan">
             <Button variant="primary" className="flex items-center">
-              <FaSearch className="mr-2" /> Lihat Status Pengaduan
+              <FaSearch className="mr-2" /> Lihat Status Laporan
             </Button>
           </Link>
         </div>
@@ -247,8 +282,8 @@ const FormPengaduan: React.FC = () => {
     );
   };
 
-  // Step 1: Initial Information
-  const renderStep1 = () => {
+  // Tahap 1: Info awal pelapor
+  const tahapIdentifikasi = () => {
     return (
       <>
         <div className="mb-6">
@@ -277,13 +312,13 @@ const FormPengaduan: React.FC = () => {
               id="tanggalLaporan"
               name="tanggalLaporan"
               type="text"
-              value={formData.tanggalLaporan}
+              value={dataLaporan.tanggalLaporan}
               readOnly
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
             />
           </div>
           <p className="mt-1 text-sm text-gray-500">
-            Tanggal laporan diisi otomatis dengan tanggal hari ini
+            Tanggal otomatis menggunakan hari ini
           </p>
         </div>
 
@@ -302,9 +337,9 @@ const FormPengaduan: React.FC = () => {
               id="umur"
               name="umur"
               type="number"
-              placeholder="Masukkan umur Anda"
-              value={formData.umur}
-              onChange={handleChange}
+              placeholder="Berapa umur kamu?"
+              value={dataLaporan.umur}
+              onChange={updateFormInput}
               required
               min="0"
               max="120"
@@ -323,8 +358,8 @@ const FormPengaduan: React.FC = () => {
           <select
             id="gender"
             name="gender"
-            value={formData.gender}
-            onChange={handleChange}
+            value={dataLaporan.gender}
+            onChange={updateFormInput}
             required
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 transition-colors"
           >
@@ -350,9 +385,9 @@ const FormPengaduan: React.FC = () => {
               id="lokasi"
               name="lokasi"
               type="text"
-              placeholder="Masukkan alamat lengkap kejadian"
-              value={formData.lokasi}
-              onChange={handleChange}
+              placeholder="Dimana kejadiannya? (alamat lengkap)"
+              value={dataLaporan.lokasi}
+              onChange={updateFormInput}
               required
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 transition-colors"
             />
@@ -362,8 +397,8 @@ const FormPengaduan: React.FC = () => {
     );
   };
 
-  // Step 2: Incident Details
-  const renderStep2 = () => {
+  // Tahap 2: Detail Kejadian
+  const tahapDetailKejadian = () => {
     return (
       <>
         <div className="mb-6">
@@ -381,30 +416,29 @@ const FormPengaduan: React.FC = () => {
               id="kronologi"
               name="kronologi"
               rows={6}
-              placeholder="Jelaskan kronologi kejadian secara detail"
-              value={formData.kronologi}
-              onChange={handleChange}
+              placeholder="Ceritakan kejadiannya secara detail"
+              value={dataLaporan.kronologi}
+              onChange={updateFormInput}
               required
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
             />
           </div>
           <p className="mt-1 text-sm text-gray-500">
-            Berikan informasi sejelas mungkin tentang apa yang terjadi, kapan
-            terjadinya, dan siapa saja yang terlibat
+            Jelasin apa yang terjadi, kapan, dan siapa aja yang terlibat
           </p>
         </div>
       </>
     );
   };
 
-  // Step 3: Review Information
-  const renderStep3 = () => {
+  // Tahap 3: Review Info
+  const tahapKonfirmasi = () => {
     return (
       <div className="border border-gray-200 rounded-lg overflow-hidden mb-6">
         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-          <h3 className="font-medium text-gray-700">Konfirmasi Pengaduan</h3>
+          <h3 className="font-medium text-gray-700">Cek Laporan Kamu</h3>
           <p className="text-sm text-gray-500">
-            Periksa kembali informasi yang Anda berikan sebelum mengirim laporan
+            Pastikan semua data udah bener sebelum dikirim ya
           </p>
         </div>
 
@@ -414,39 +448,38 @@ const FormPengaduan: React.FC = () => {
               TANGGAL LAPORAN
             </h4>
             <p className="font-medium text-gray-800">
-              {formData.tanggalLaporan}
+              {dataLaporan.tanggalLaporan}
             </p>
           </div>
 
           <div>
             <h4 className="text-sm font-medium text-gray-500">UMUR</h4>
-            <p className="font-medium text-gray-800">{formData.umur} tahun</p>
+            <p className="font-medium text-gray-800">{dataLaporan.umur} tahun</p>
           </div>
 
           <div>
             <h4 className="text-sm font-medium text-gray-500">JENIS KELAMIN</h4>
-            <p className="font-medium text-gray-800">{formData.gender}</p>
+            <p className="font-medium text-gray-800">{dataLaporan.gender}</p>
           </div>
 
           <div>
             <h4 className="text-sm font-medium text-gray-500">
               LOKASI KEJADIAN
             </h4>
-            <p className="font-medium text-gray-800">{formData.lokasi}</p>
+            <p className="font-medium text-gray-800">{dataLaporan.lokasi}</p>
           </div>
 
           <div>
             <h4 className="text-sm font-medium text-gray-500">KRONOLOGI</h4>
             <p className="text-gray-800 whitespace-pre-line">
-              {formData.kronologi}
+              {dataLaporan.kronologi}
             </p>
           </div>
         </div>
 
         <div className="bg-purple-50 px-6 py-4 border-t border-purple-100">
           <p className="text-sm text-purple-700">
-            Dengan mengirimkan pengaduan ini, Anda menyatakan bahwa informasi
-            yang diberikan adalah benar dan dapat dipertanggungjawabkan.
+            Dengan kirim laporan ini, kamu menyatakan bahwa info yang diberikan benar dan bisa dipertanggungjawabkan.
           </p>
         </div>
       </div>
@@ -468,38 +501,37 @@ const FormPengaduan: React.FC = () => {
             {/* Header */}
             <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-8 sm:px-10">
               <h1 className="text-2xl sm:text-3xl font-bold text-white">
-                Form Pengaduan
+                Form Laporan
               </h1>
               <p className="mt-2 text-purple-100">
-                Laporkan tindak kekerasan terhadap ibu dan anak untuk penanganan
-                cepat
+                Laporkan kekerasan terhadap ibu dan anak untuk penanganan cepat
               </p>
             </div>
 
             {/* Form */}
             <div className="px-6 py-8 sm:px-10">
-              {isSuccess ? (
-                renderSuccessMessage()
+              {berhasil ? (
+                pesanBerhasil()
               ) : (
-                <form onSubmit={handleSubmit}>
-                  {renderProgress()}
+                <form onSubmit={kirimLaporan}>
+                  {tampilkanProgres()}
 
-                  {errorMessage && (
+                  {pesanError && (
                     <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg">
-                      <p className="text-red-600 text-sm">{errorMessage}</p>
+                      <p className="text-red-600 text-sm">{pesanError}</p>
                     </div>
                   )}
 
-                  {step === 1 && renderStep1()}
-                  {step === 2 && renderStep2()}
-                  {step === 3 && renderStep3()}
+                  {tahapForm === 1 && tahapIdentifikasi()}
+                  {tahapForm === 2 && tahapDetailKejadian()}
+                  {tahapForm === 3 && tahapKonfirmasi()}
 
                   <div className="flex justify-between mt-8">
-                    {step > 1 ? (
+                    {tahapForm > 1 ? (
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={handlePrevStep}
+                        onClick={kembaliTahapSebelum}
                       >
                         Kembali
                       </Button>
@@ -512,10 +544,10 @@ const FormPengaduan: React.FC = () => {
                     <Button
                       type="submit"
                       variant="primary"
-                      disabled={isSubmitting}
+                      disabled={sedangSubmit}
                       className="relative"
                     >
-                      {isSubmitting && (
+                      {sedangSubmit && (
                         <span className="absolute inset-0 flex items-center justify-center">
                           <svg
                             className="animate-spin h-5 w-5 text-white"
@@ -539,8 +571,8 @@ const FormPengaduan: React.FC = () => {
                           </svg>
                         </span>
                       )}
-                      <span className={isSubmitting ? 'opacity-0' : ''}>
-                        {step < 3 ? 'Lanjutkan' : 'Kirim Pengaduan'}
+                      <span className={sedangSubmit ? 'opacity-0' : ''}>
+                        {tahapForm < 3 ? 'Lanjutkan' : 'Kirim Laporan'}
                       </span>
                     </Button>
                   </div>
@@ -549,7 +581,7 @@ const FormPengaduan: React.FC = () => {
             </div>
 
             {/* Help Info */}
-            {!isSuccess && (
+            {!berhasil && (
               <div className="px-6 py-6 sm:px-10 bg-blue-50 border-t border-blue-100">
                 <div className="flex">
                   <div className="flex-shrink-0">
@@ -568,12 +600,12 @@ const FormPengaduan: React.FC = () => {
                   </div>
                   <div className="ml-3 flex-1">
                     <p className="text-sm text-blue-700">
-                      Laporan Anda akan ditangani secara rahasia dan prioritas.
-                      Simpan kode pengaduan untuk memantau status penanganan.
+                      Laporan kamu akan ditangani secara rahasia dan prioritas.
+                      Simpan kode laporan buat cek status penanganan nanti.
                     </p>
                     <p className="mt-2 text-sm text-blue-700">
-                      <span className="font-medium">Butuh bantuan segera?</span>{' '}
-                      Hubungi hotline kami di{' '}
+                      <span className="font-medium">Butuh bantuan cepat?</span>{' '}
+                      Telepon hotline kami di{' '}
                       <span className="font-medium">0800-123-88888</span> (24
                       jam)
                     </p>

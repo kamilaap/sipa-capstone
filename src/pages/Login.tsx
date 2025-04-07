@@ -5,13 +5,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/Ui/Button';
 import Loading from '../components/Ui/Loading';
 
-// Add User interface definition
+// Definisi tipe data user
 interface User {
   email: string;
   role: 'admin' | 'user';
   token: string;
 }
 
+// Definisi format response dari server
 interface LoginResponse {
   user?: User;
   token?: string;
@@ -20,23 +21,27 @@ interface LoginResponse {
 }
 
 const Login: React.FC = () => {
+  // State untuk input form
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  const [ingatSaya, setIngatSaya] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  // Remove the unused 'user' state
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [showErrorPopup, setShowErrorPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [tampilPassword, setTampilPassword] = useState(false);
+  
+  // State untuk popup notifikasi
+  const [tampilPopupSukses, setTampilPopupSukses] = useState(false);
+  const [tampilPopupError, setTampilPopupError] = useState(false);
+  const [pesanError, setPesanError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Fungsi untuk memproses login
+  const prosesLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setShowErrorPopup(false);
+    setTampilPopupError(false);
 
     try {
+      // Kirim request ke API login
       const response: AxiosResponse<LoginResponse> = await axios.post(
         'https://api-sipa-capstone-production.up.railway.app/login',
         { email, password }
@@ -44,7 +49,7 @@ const Login: React.FC = () => {
 
       const data = response.data;
 
-      // Ensure data.user and data.token exist before processing
+      // Cek apakah data user dan token ada dari response
       if (data.user && data.token) {
         const userData: User = {
           email: data.user.email || email,
@@ -52,54 +57,55 @@ const Login: React.FC = () => {
           token: data.token,
         };
 
-        // Store user data in localStorage
+        // Simpan token dan role di localStorage untuk sesi
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', userData.role);
 
-        // Show success popup
-        setShowSuccessPopup(true);
+        // Tampilkan popup sukses
+        setTampilPopupSukses(true);
 
-        // Automatically navigate after a short delay
+        // Redirect otomatis setelah 1.8 detik
         setTimeout(() => {
-          setShowSuccessPopup(false);
+          setTampilPopupSukses(false);
           if (userData.role === 'admin') {
             navigate('/dashboard');
           } else {
             navigate('/');
           }
-        }, 2000);
+        }, 1800);
       } else {
-        throw new Error(data.message || 'Login gagal');
+        throw new Error(data.message || 'Login gagal, coba lagi ya');
       }
     } catch (error) {
-      // Type-safe error handling
+      // Handle berbagai jenis error
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<LoginResponse>;
         const errorMsg =
           axiosError.response?.data?.message ||
           axiosError.message ||
-          'Login gagal';
+          'Email atau password salah, cek lagi ya';
 
-        setErrorMessage(errorMsg);
-        setShowErrorPopup(true);
+        setPesanError(errorMsg);
+        setTampilPopupError(true);
       } else {
-        setErrorMessage('Terjadi kesalahan tidak terduga');
-        setShowErrorPopup(true);
+        setPesanError('Ups, ada masalah teknis. Coba refresh halaman');
+        setTampilPopupError(true);
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  // Toggle untuk memperlihatkan/menyembunyikan password
+  const gantiTampilan = () => {
+    setTampilPassword(!tampilPassword);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Success Popup */}
+      {/* Popup Sukses */}
       <AnimatePresence>
-        {showSuccessPopup && (
+        {tampilPopupSukses && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -121,15 +127,15 @@ const Login: React.FC = () => {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              Login Berhasil!
+              Yeay! Login Berhasil!
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Error Popup */}
+      {/* Popup Error */}
       <AnimatePresence>
-        {showErrorPopup && (
+        {tampilPopupError && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -151,13 +157,13 @@ const Login: React.FC = () => {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              {errorMessage}
+              {pesanError}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Rest of the existing login page code remains the same */}
+      {/* Tombol kembali ke beranda */}
       <div className="absolute top-4 left-4 z-20">
         <Button
           variant="secondary"
@@ -183,7 +189,8 @@ const Login: React.FC = () => {
           Kembali ke Beranda
         </Button>
       </div>
-      {/* Rest of the existing login page code */}
+      
+      {/* Form Login */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -229,7 +236,7 @@ const Login: React.FC = () => {
               </p>
             </div>
             {isLoading && <Loading />}
-            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <form className="mt-8 space-y-6" onSubmit={prosesLogin}>
               <div className="space-y-4">
                 <div>
                   <label
@@ -264,7 +271,7 @@ const Login: React.FC = () => {
                     <input
                       id="password"
                       name="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={tampilPassword ? 'text' : 'password'}
                       autoComplete="current-password"
                       required
                       value={password}
@@ -274,10 +281,10 @@ const Login: React.FC = () => {
                     />
                     <button
                       type="button"
-                      onClick={togglePasswordVisibility}
+                      onClick={gantiTampilan}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800"
                     >
-                      {showPassword ? (
+                      {tampilPassword ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"
@@ -325,8 +332,8 @@ const Login: React.FC = () => {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
+                    checked={ingatSaya}
+                    onChange={(e) => setIngatSaya(e.target.checked)}
                     className="h-4 w-4 text-[#8B5CF6] focus:ring-[#8B5CF6] border-gray-300 rounded"
                   />
                   <label

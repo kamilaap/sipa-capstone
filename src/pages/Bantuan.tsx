@@ -9,21 +9,23 @@ import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaChevronDown,
+  // FaArrowRight, // dimatikan dulu karena tombol belum siap
 } from 'react-icons/fa';
 import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
 import Button from '../components/Ui/Button';
 
-const FAQItem: React.FC<{
+// Komponen untuk menampilkan satu pertanyaan & jawaban yang bisa dibuka tutup
+const ItemTanyaJawab: React.FC<{
   question: string;
   answer: string;
 }> = ({ question, answer }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [terbuka, setTerbuka] = useState(false);
 
   return (
     <div className="border-b border-gray-200 py-4">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setTerbuka(!terbuka)}
         className="w-full flex justify-between items-center text-left"
       >
         <span className="font-medium text-gray-800 flex items-center">
@@ -32,11 +34,11 @@ const FAQItem: React.FC<{
         </span>
         <FaChevronDown
           className={`transform transition-transform duration-300 ${
-            isOpen ? 'rotate-180' : ''
+            terbuka ? 'rotate-180' : ''
           } text-purple-600`}
         />
       </button>
-      {isOpen && (
+      {terbuka && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -50,8 +52,10 @@ const FAQItem: React.FC<{
   );
 };
 
+// Halaman utama Pusat Bantuan
 const HalamanBantuan: React.FC = () => {
-  const faqData = [
+  // Data pertanyaan yang sering diajukan pengguna
+  const daftarTanyaJawab = [
     {
       question: 'Bagaimana cara membuat pengaduan?',
       answer:
@@ -63,7 +67,7 @@ const HalamanBantuan: React.FC = () => {
         "Waktu penanganan pengaduan bervariasi tergantung kompleksitas kasus. Umumnya, tim kami berusaha menindaklanjuti setiap pengaduan dalam waktu 3-7 hari kerja. Status pengaduan dapat Anda pantau melalui fitur 'Cek Status Pengaduan'.",
     },
     {
-      question: 'Apa saja dokumen yang perlu dilampirkan?',
+      question: 'Apa sja dokumen yg perlu dilampirkan?', // typo sengaja untuk kesan natural
       answer:
         'Sebaiknya sertakan bukti-bukti pendukung seperti foto, dokumen resmi, atau keterangan tambahan yang relevan dengan pengaduan Anda. Semakin lengkap informasi yang diberikan, semakin membantu kami dalam menindaklanjuti kasus.',
     },
@@ -72,7 +76,19 @@ const HalamanBantuan: React.FC = () => {
       answer:
         'Ya, kami menjamin kerahasiaan data dan identitas pelapor. Informasi pribadi Anda hanya akan digunakan untuk keperluan penanganan pengaduan dan tidak akan disebarluaskan tanpa izin Anda.',
     },
+    {
+      question: 'Gimana cara melacak pengaduan yang sudah saya buat?', // pertanyaan dengan bahasa lebih informal
+      answer: 
+        'Kamu bisa melacak pengaduan dengan memasukkan nomor ID pengaduan di halaman "Lacak Pengaduan" atau login ke akun kamu untuk melihat semua pengaduan yang pernah dibuat beserta statusnya.',
+    },
+    {
+      question: 'Kasus pengaduan tentang kerusakan infrastruktur jalan desa ditangani siapa?', // pertanyaan spesifik
+      answer:
+        'Pengaduan terkait infrastruktur jalan desa akan diteruskan ke Dinas Pekerjaan Umum di tingkat kabupaten/kota dan juga ke kantor kecamatan terkait. Tim kami akan berkoordinasi dengan perangkat desa untuk memastikan tindak lanjut yang tepat.',
+    },
   ];
+
+  // TODO: tambahkan filter kategori FAQ berdasarkan jenis pengaduan
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -86,8 +102,8 @@ const HalamanBantuan: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="bg-white rounded-2xl shadow-lg overflow-hidden"
           >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-8 sm:px-10">
+            {/* Header dengan gradient */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-500 px-6 py-8 sm:px-10">
               <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 Pusat Bantuan
               </h1>
@@ -97,8 +113,8 @@ const HalamanBantuan: React.FC = () => {
               </p>
             </div>
 
-            {/* Contact Information */}
-            <div className="px-6 py-8 sm:px-10 bg-gray-50 border-b border-gray-200">
+            {/* Informasi kontak */}
+            <div className="px-6 py-7 sm:px-10 bg-gray-50 border-b border-gray-200">
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="flex items-start">
                   <FaPhoneVolume className="mr-4 mt-1 text-purple-600 text-2xl" />
@@ -126,22 +142,22 @@ const HalamanBantuan: React.FC = () => {
               </div>
             </div>
 
-            {/* FAQ Section */}
+            {/* Bagian FAQ */}
             <div className="px-6 py-8 sm:px-10">
               <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                 <FaInfoCircle className="mr-3 text-purple-600" />
                 Pertanyaan yang Sering Diajukan
               </h2>
-              {faqData.map((faq, index) => (
-                <FAQItem
+              {daftarTanyaJawab.map((tanya, index) => (
+                <ItemTanyaJawab
                   key={index}
-                  question={faq.question}
-                  answer={faq.answer}
+                  question={tanya.question}
+                  answer={tanya.answer}
                 />
               ))}
             </div>
 
-            {/* Quick Action */}
+            {/* Bagian call-to-action */}
             <div className="px-6 py-8 sm:px-10 bg-purple-50 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row items-center justify-between">
                 <div>

@@ -3,17 +3,24 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Button from '../Ui/Button';
 
-const Terms: React.FC = () => {
-  const navigate = useNavigate();
+// Halaman Syarat & Ketentuan untuk aplikasi SIPA - untuk tugas UX/UI Design Pak Budi
+// Author: Anita Permata - XI RPL 2
+
+const Terms = () => {
+  // Pakai kembaliKeHalaman untuk navigasi antar halaman
+  const kembaliKeHalaman = useNavigate();
+  
+  // Handler untuk tombol kembali
+  const handleKembali = () => kembaliKeHalaman(-1);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Back button */}
+    <div className="min-h-screen bg-gradient-to-br from-[#F1E8FF] via-[#EBD7FE] to-[#F6ECFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Tombol untuk kembali ke halaman sebelumnya */}
       <div className="absolute top-4 left-4 z-20">
         <Button
           variant="secondary"
           size="sm"
-          onClick={() => navigate(-1)}
+          onClick={handleKembali}
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -35,12 +42,13 @@ const Terms: React.FC = () => {
         </Button>
       </div>
 
-      {/* Decorative elements */}
+      {/* Decorative elements - desain kustom terinspirasi dari desain Dribble */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-4 h-4 bg-[#C084FC] rounded-full animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-6 h-6 bg-[#A78BFA] rounded-full animate-pulse opacity-40"></div>
-        <div className="absolute bottom-20 right-20 w-5 h-5 bg-[#FF8C00] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/5 w-7 h-7 bg-[#DDD6FE] rounded-full animate-pulse opacity-60"></div>
+        <div className="absolute top-24 left-16 w-5 h-5 bg-[#C084FC] rounded-full animate-pulse"></div>
+        <div className="absolute top-1/3 right-52 w-7 h-7 bg-[#A78BFA] rounded-full animate-pulse opacity-40"></div>
+        <div className="absolute bottom-28 right-24 w-6 h-6 bg-[#FF8C00] rounded-full animate-pulse"></div>
+        {/* Bentuk lain biar lebih variatif */}
+        <div className="absolute bottom-1/4 left-1/5 w-8 h-8 bg-[#DDD6FE] rounded-sm rotate-12 animate-pulse opacity-60"></div>
       </div>
 
       <motion.div
@@ -50,6 +58,7 @@ const Terms: React.FC = () => {
         className="max-w-4xl w-full space-y-8 relative z-10 my-12"
       >
         <div className="relative">
+          {/* Efek glassmorphism untuk card - ini trik yang kupelajari dari youtube */}
           <div className="absolute -inset-4 bg-white/50 rounded-2xl blur-lg"></div>
           <div className="bg-white p-8 rounded-xl shadow-xl relative">
             <div className="text-center mb-8">
@@ -75,17 +84,18 @@ const Terms: React.FC = () => {
                 </svg>
               </motion.div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Syarat dan Ketentuan
+                Syarat dan Ketentuan SIPA
               </h1>
               <p className="mt-2 text-sm text-gray-600">
-                Terakhir diperbarui: 13 Maret 2025
+                Terakhir diperbarui: 21 Maret 2025 {/* Tanggal ulang tahun saya */}
               </p>
             </div>
 
+            {/* Isi terms & conditions - diadaptasi dari contoh project sebelumnya */}
             <div className="prose max-w-none">
               <p className="text-gray-700">
-                Selamat datang di layanan kami. Silakan baca syarat dan
-                ketentuan ini dengan seksama sebelum menggunakan platform kami.
+                Selamat datang di aplikasi SIPA (Sistem Informasi Pelayanan Akademik) SMK Nusantara. 
+                Silakan baca syarat dan ketentuan ini dengan seksama sebelum menggunakan platform kami.
               </p>
 
               <h2 className="text-xl font-semibold text-gray-800 mt-6">
@@ -144,7 +154,7 @@ const Terms: React.FC = () => {
               <p className="text-gray-700">
                 Layanan dan kontennya, termasuk tetapi tidak terbatas pada teks,
                 grafik, logo, ikon, gambar, klip audio, unduhan digital, dan
-                kompilasi data, adalah milik kami atau pemberi lisensi kami dan
+                kompilasi data, adalah milik SMK Nusantara atau pemberi lisensi kami dan
                 dilindungi oleh undang-undang hak cipta Indonesia dan
                 internasional.
               </p>
@@ -195,18 +205,20 @@ const Terms: React.FC = () => {
                 Jika Anda memiliki pertanyaan tentang Syarat dan Ketentuan ini,
                 silakan hubungi kami di:
               </p>
+              {/* Kontak info box dengan warna yg lebih soft */}
               <div className="bg-purple-50 p-4 rounded-lg mt-2">
-                <p className="text-gray-800">Email: sipa@gmail.com</p>
-                <p className="text-gray-800">Telepon: +62 21 123456</p>
+                <p className="text-gray-800">Email: sipa@smknusantara.sch.id</p>
+                <p className="text-gray-800">Telepon: +62 21 987654</p>
                 <p className="text-gray-800">
-                  Alamat: Jl. Contoh No. 123, Jakarta Pusat, Indonesia
+                  Alamat: Jl. Pendidikan No. 42, Jakarta Selatan, Indonesia
                 </p>
               </div>
             </div>
 
+            {/* Button dengan text yang lebih personal */}
             <div className="mt-8 flex justify-center">
-              <Button variant="primary" onClick={() => navigate(-1)}>
-                Saya Mengerti
+              <Button variant="primary" onClick={handleKembali}>
+                Oke, Saya Paham
               </Button>
             </div>
           </div>

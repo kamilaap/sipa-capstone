@@ -1,4 +1,3 @@
-// src/Components/Ui/Loading.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
 
