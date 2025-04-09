@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Button from './Button'; // Assuming you have a custom Button component
+import Button from './Button'; // Komponen Button kustom
 import {
   FaPhoneAlt,
   FaHospital,
@@ -17,15 +17,16 @@ import {
   FaCog,
 } from 'react-icons/fa';
 
-// Define interface for emergency contacts
-interface EmergencyContact {
-  name: string;
-  number: string;
+// Tipe data untuk kontak darurat
+// TODO: Nanti pindahin ke file types.ts terpisah
+interface KontakDarurat {
+  nama: string;
+  nomor: string;
   icon: React.ReactNode;
 }
 
-// Define props for MobileNavItem
-interface MobileNavItemProps {
+// Props untuk item navigasi mobile
+interface ItemNavMobileProps {
   to: string;
   icon: React.ReactNode;
   label: string;
@@ -33,136 +34,142 @@ interface MobileNavItemProps {
 }
 
 const Navbar: React.FC = () => {
-  // State variables
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string | null>(null);
+  // State vars
+  const [udahScroll, setUdahScroll] = useState(false);
+  const [menuMobileKebuka, setMenuMobileKebuka] = useState(false);
+  const [menuDaruratKebuka, setMenuDaruratKebuka] = useState(false);
+  const [menuUserKebuka, setMenuUserKebuka] = useState(false);
+  const [udahLogin, setUdahLogin] = useState(false);
+  const [roleUser, setRoleUser] = useState<string | null>(null);
+  const [namaUser, setNamaUser] = useState<string | null>(null);
 
-  // Refs for handling outside clicks
-  const emergencyDropdownRef = useRef<HTMLDivElement>(null);
-  const emergencyButtonRef = useRef<HTMLButtonElement>(null);
-  const userMenuRef = useRef<HTMLDivElement>(null);
-  const userButtonRef = useRef<HTMLButtonElement>(null);
+  // Refs buat deteksi klik diluar dropdown
+  // Harusnya bisa pake useClickOutside hook sih, tapi belum sempet bikin
+  const refDropdownDarurat = useRef<HTMLDivElement>(null);
+  const refButtonDarurat = useRef<HTMLButtonElement>(null);
+  const refMenuUser = useRef<HTMLDivElement>(null);
+  const refButtonUser = useRef<HTMLButtonElement>(null);
 
   // Get current location
-  const location = useLocation();
+  const lokasi = useLocation();
 
-  // Emergency contacts
-  const emergencyContacts: EmergencyContact[] = [
+  // List kontak penting - data dummy dulu, nanti dari API
+  const kontakDarurat: KontakDarurat[] = [
     {
-      name: 'Polisi',
-      number: '110',
+      nama: 'Polisi',
+      nomor: '110',
       icon: <FaShieldAlt className="text-blue-600" />,
     },
     {
-      name: 'Ambulans',
-      number: '118',
+      nama: 'Ambulans',
+      nomor: '118',
       icon: <FaHospital className="text-red-600" />,
     },
     {
-      name: 'Hotline Pengaduan Kekerasan',
-      number: '0800-123-456',
+      nama: 'Hotline Pengaduan Kekerasan', // tambah kontak KPAI nanti
+      nomor: '0800-123-456',
       icon: <FaHandsHelping className="text-purple-600" />,
     },
     {
-      name: 'Pusat Layanan Terpadu',
-      number: '0800-987-654',
+      nama: 'Pusat Layanan Terpadu',
+      nomor: '0800-987-654',
       icon: <FaPhoneAlt className="text-green-600" />,
     },
   ];
 
-  // Check login status on component mount and when location changes
+  // Cek status login saat komponen mount & lokasi berubah
   useEffect(() => {
+    // Ambil dari localStorage (sementara, nanti pake context)
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
-    const name = localStorage.getItem('userName');
+    const nama = localStorage.getItem('userName');
 
-    setIsLoggedIn(!!token);
-    setUserRole(role);
-    setUserName(name);
-  }, [location]);
+    setUdahLogin(!!token);
+    setRoleUser(role);
+    setNamaUser(nama);
+  }, [lokasi]);
 
-  // Handle scroll effect
+  // Handle efek scroll
   useEffect(() => {
+    // Fungsi ini ngedeteksi scroll buat styling navbar
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setUdahScroll(window.scrollY > 10);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle clicks outside dropdown menus
+  // Tutup dropdown kalo klik diluar
+  // Buatnya agak ribet, nanti coba pake custom hook aja
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // Close emergency dropdown
+    const tutupDropdownKaloClickDiluar = (event: MouseEvent) => {
+      // Tutup dropdown darurat
       if (
-        emergencyDropdownRef.current &&
-        !emergencyDropdownRef.current.contains(event.target as Node) &&
-        emergencyButtonRef.current &&
-        !emergencyButtonRef.current.contains(event.target as Node)
+        refDropdownDarurat.current &&
+        !refDropdownDarurat.current.contains(event.target as Node) &&
+        refButtonDarurat.current &&
+        !refButtonDarurat.current.contains(event.target as Node)
       ) {
-        setIsEmergencyOpen(false);
+        setMenuDaruratKebuka(false);
       }
 
-      // Close user menu
+      // Tutup menu user
       if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node) &&
-        userButtonRef.current &&
-        !userButtonRef.current.contains(event.target as Node)
+        refMenuUser.current &&
+        !refMenuUser.current.contains(event.target as Node) &&
+        refButtonUser.current &&
+        !refButtonUser.current.contains(event.target as Node)
       ) {
-        setIsUserMenuOpen(false);
+        setMenuUserKebuka(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', tutupDropdownKaloClickDiluar);
+    return () => document.removeEventListener('mousedown', tutupDropdownKaloClickDiluar);
   }, []);
 
-  // Check if current page is home page
-  const isHomePage = (): boolean => {
-    return location.pathname === '/';
+  // Cek apakah lagi di homepage
+  const cekHomePage = (): boolean => {
+    return lokasi.pathname === '/';
   };
 
-  // Handle articles section scrolling or navigation
-  const handleArticlesClick = (): void => {
-    if (isHomePage()) {
-      const articlesSection = document.getElementById('articles-section');
-      if (articlesSection) {
-        articlesSection.scrollIntoView({ behavior: 'smooth' });
+  // Handle klik section artikel (scroll ke bawah kalo di homepage)
+  const klikSectionArtikel = (): void => {
+    if (cekHomePage()) {
+      // Scroll otomatis kalo di home page
+      const sectionArtikel = document.getElementById('articles-section');
+      if (sectionArtikel) {
+        sectionArtikel.scrollIntoView({ behavior: 'smooth' });
       }
     }
-    setIsMobileMenuOpen(false);
+    setMenuMobileKebuka(false);
   };
 
-  // Logout handler
-  const handleLogout = (): void => {
+  // Fungsi logout - nanti ditambahin konfirmasi + toast
+  const keluarAplikasi = (): void => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('userName');
 
-    setIsLoggedIn(false);
-    setUserRole(null);
-    setUserName(null);
+    // Reset state
+    setUdahLogin(false);
+    setRoleUser(null);
+    setNamaUser(null);
 
-    // Redirect to home or login page
+    // Redirect ke home (nanti pake navigate dari useNavigate)
     window.location.href = '/';
   };
 
-  // Mobile Menu Navigation Item
-  const MobileNavItem: React.FC<MobileNavItemProps> = ({
+  // Komponen NavItem buat mobile - reusable biar gak repetitif
+  const ItemNavMobile: React.FC<ItemNavMobileProps> = ({
     to,
     icon,
     label,
     onClick,
   }) => {
     const handleClick = (): void => {
-      setIsMobileMenuOpen(false);
+      setMenuMobileKebuka(false);
       if (onClick) {
         onClick();
       }
@@ -182,21 +189,21 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Emergency Contact Floating Button */}
+      {/* Tombol Kontak Darurat */}
       <div
         className="fixed right-0 top-1/3 transform -translate-y-1/2 z-50"
-        ref={emergencyDropdownRef}
+        ref={refDropdownDarurat}
       >
         <button
-          ref={emergencyButtonRef}
-          onClick={() => setIsEmergencyOpen(!isEmergencyOpen)}
+          ref={refButtonDarurat}
+          onClick={() => setMenuDaruratKebuka(!menuDaruratKebuka)}
           className="group flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-medium transition-all duration-300 shadow-md rounded-l-md border-r-0"
           style={{
             minHeight: '45px',
             boxShadow: '0 3px 10px rgba(220, 38, 38, 0.3)',
             animation: 'subtle-pulse 3s infinite',
           }}
-          aria-label="Emergency Contact"
+          aria-label="Kontak Darurat"
         >
           <div className="flex flex-col items-center justify-center">
             <div className="relative">
@@ -207,8 +214,8 @@ const Navbar: React.FC = () => {
           </div>
         </button>
 
-        {/* Emergency Dropdown */}
-        {isEmergencyOpen && (
+        {/* Dropdown Darurat */}
+        {menuDaruratKebuka && (
           <div
             className="absolute right-0 top-full w-64 bg-white rounded-lg shadow-lg border border-gray-100 z-50 animate-fadeIn overflow-hidden mt-2"
             style={{
@@ -228,21 +235,21 @@ const Navbar: React.FC = () => {
             </div>
 
             <div className="py-1">
-              {emergencyContacts.map((contact, index) => (
+              {kontakDarurat.map((kontak, index) => (
                 <a
                   key={index}
-                  href={`tel:${contact.number.replace(/-/g, '')}`}
+                  href={`tel:${kontak.nomor.replace(/-/g, '')}`}
                   className="flex items-center px-3 py-2 hover:bg-red-50 transition-colors"
                 >
                   <div className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full mr-2">
-                    {contact.icon}
+                    {kontak.icon}
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-gray-800 text-sm">
-                      {contact.name}
+                      {kontak.nama}
                     </div>
                     <div className="text-xs text-gray-600">
-                      {contact.number}
+                      {kontak.nomor}
                     </div>
                   </div>
                   <div className="w-6 h-6 flex items-center justify-center bg-green-100 rounded-full hover:bg-green-200 transition-colors">
@@ -261,9 +268,9 @@ const Navbar: React.FC = () => {
         )}
       </div>
 
-      {/* Navigation Bar */}
+      {/* Navbar */}
       <nav
-        className={`fixed top-0 w-full z-40 transition-all duration-300 ${isScrolled ? 'py-3 bg-white/95 shadow-md backdrop-blur-md' : 'py-6 bg-transparent'}`}
+        className={`fixed top-0 w-full z-40 transition-all duration-300 ${udahScroll ? 'py-3 bg-white/95 shadow-md backdrop-blur-md' : 'py-6 bg-transparent'}`}
       >
         <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
           {/* Logo */}
@@ -274,7 +281,7 @@ const Navbar: React.FC = () => {
               className="w-12 h-12 mr-2"
             />
           </Link>
-          {/* Desktop Menu */}
+          {/* Menu Desktop */}
           <div className="hidden md:flex space-x-8">
             <Link
               to="/pelayanan"
@@ -289,15 +296,15 @@ const Navbar: React.FC = () => {
               Pengaduan
             </Link>
             <Link
-              to={isHomePage() ? '#articles-section' : '/artikel'}
-              onClick={handleArticlesClick}
+              to={cekHomePage() ? '#articles-section' : '/artikel'}
+              onClick={klikSectionArtikel}
               className="text-gray-700 font-medium hover:text-[#8B5CF6] transition-colors relative group"
             >
               Artikel
             </Link>
           </div>
 
-          {/* Desktop Login/Profile Section */}
+          {/* Tombol Login/Profile */}
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/status-pengaduan">
               <Button variant="outline" size="sm">
@@ -305,30 +312,30 @@ const Navbar: React.FC = () => {
               </Button>
             </Link>
 
-            {isLoggedIn ? (
+            {udahLogin ? (
               <div className="relative">
                 <button
-                  ref={userButtonRef}
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  ref={refButtonUser}
+                  onClick={() => setMenuUserKebuka(!menuUserKebuka)}
                   className="flex items-center justify-center w-10 h-10 bg-[#8B5CF6]/10 rounded-full hover:bg-[#8B5CF6]/20 transition-colors"
                 >
                   <FaUser className="text-[#8B5CF6] text-lg" />
                 </button>
 
-                {isUserMenuOpen && (
+                {menuUserKebuka && (
                   <div
-                    ref={userMenuRef}
+                    ref={refMenuUser}
                     className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-50 animate-fadeIn"
                   >
                     <div className="px-4 py-2 border-b border-gray-100 text-sm text-gray-700">
-                      {userRole === 'admin' ? 'Admin' : userName || 'Pengguna'}
+                      {roleUser === 'admin' ? 'Admin' : namaUser || 'Pengguna'}
                     </div>
 
-                    {userRole === 'admin' && (
+                    {roleUser === 'admin' && (
                       <Link
                         to="/dashboard"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        onClick={() => setIsUserMenuOpen(false)}
+                        onClick={() => setMenuUserKebuka(false)}
                       >
                         Dashboard
                       </Link>
@@ -337,13 +344,13 @@ const Navbar: React.FC = () => {
                     <Link
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      onClick={() => setIsUserMenuOpen(false)}
+                      onClick={() => setMenuUserKebuka(false)}
                     >
                       Profil Saya
                     </Link>
 
                     <button
-                      onClick={handleLogout}
+                      onClick={keluarAplikasi}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
                     >
                       Keluar
@@ -372,20 +379,20 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Toggle Menu Mobile */}
           <div className="md:hidden">
             <button
               className="text-gray-700 focus:outline-none"
-              onClick={(): void => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={(): void => setMenuMobileKebuka(!menuMobileKebuka)}
             >
               <FaBars className="w-6 h-6" />
             </button>
           </div>
 
-          {/* Mobile Menu - Slide-in Drawer Design */}
-          {isMobileMenuOpen && (
+          {/* Menu Mobile - Slide-in */}
+          {menuMobileKebuka && (
             <div className="fixed inset-0 bg-white z-50">
-              {/* Mobile Menu Header */}
+              {/* Header Menu Mobile */}
               <div className="bg-[#8B5CF6] text-white p-6 flex justify-between items-center">
                 <div className="flex items-center space-x-3">
                   <img
@@ -396,68 +403,68 @@ const Navbar: React.FC = () => {
                   <div>
                     <h2 className="font-bold text-lg">SIPA</h2>
                     <p className="text-xs text-[#8B5CF6]-100">
-                      {isLoggedIn
-                        ? `Selamat datang, ${userRole === 'admin' ? 'Admin' : userName || 'Pengguna'}`
+                      {udahLogin
+                        ? `Selamat datang, ${roleUser === 'admin' ? 'Admin' : namaUser || 'Pengguna'}`
                         : 'Sistem Informasi Perlindungan Anak'}
                     </p>
                   </div>
                 </div>
                 <button
-                  onClick={(): void => setIsMobileMenuOpen(false)}
+                  onClick={(): void => setMenuMobileKebuka(false)}
                   className="focus:outline-none"
                 >
                   <FaTimes className="w-6 h-6" />
                 </button>
               </div>
 
-              {/* Mobile Menu Navigation */}
+              {/* Navigasi Mobile */}
               <div className="p-4 space-y-2">
-                <MobileNavItem
+                <ItemNavMobile
                   to="/"
                   icon={<FaHome className="text-[#8B5CF6] w-5 h-5" />}
                   label="Beranda"
                 />
-                <MobileNavItem
+                <ItemNavMobile
                   to="/pelayanan"
                   icon={<FaClipboardList className="text-[#8B5CF6] w-5 h-5" />}
                   label="Pelayanan"
                 />
-                <MobileNavItem
+                <ItemNavMobile
                   to="/pengaduan"
                   icon={<FaNewspaper className="text-[#8B5CF6] w-5 h-5" />}
                   label="Pengaduan"
                 />
-                <MobileNavItem
-                  to={isHomePage() ? '#articles-section' : '/artikel'}
+                <ItemNavMobile
+                  to={cekHomePage() ? '#articles-section' : '/artikel'}
                   icon={<FaNewspaper className="text-[#8B5CF6] w-5 h-5" />}
                   label="Artikel"
-                  onClick={handleArticlesClick}
+                  onClick={klikSectionArtikel}
                 />
-                <MobileNavItem
+                <ItemNavMobile
                   to="/status-pengaduan"
                   icon={<FaCog className="text-[#8B5CF6] w-5 h-5" />}
                   label="Status Pengaduan"
                 />
               </div>
 
-              {/* Mobile User Action Buttons */}
+              {/* Tombol Aksi User Mobile */}
               <div className="p-4 border-t border-gray-100">
-                {isLoggedIn ? (
+                {udahLogin ? (
                   <div className="space-y-2">
-                    {userRole === 'admin' && (
-                      <MobileNavItem
+                    {roleUser === 'admin' && (
+                      <ItemNavMobile
                         to="/dashboard"
                         icon={<FaCog className="text-[#8B5CF6] w-5 h-5" />}
                         label="Dashboard"
                       />
                     )}
-                    <MobileNavItem
+                    <ItemNavMobile
                       to="/profile"
                       icon={<FaUser className="text-[#8B5CF6] w-5 h-5" />}
                       label="Profil Saya"
                     />
                     <button
-                      onClick={handleLogout}
+                      onClick={keluarAplikasi}
                       className="w-full flex items-center space-x-3 p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
                     >
                       <FaTimes className="w-5 h-5" />
@@ -466,12 +473,12 @@ const Navbar: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <MobileNavItem
+                    <ItemNavMobile
                       to="/register"
                       icon={<FaUserPlus className="text-[#8B5CF6] w-5 h-5" />}
                       label="Registrasi"
                     />
-                    <MobileNavItem
+                    <ItemNavMobile
                       to="/login"
                       icon={<FaUser className="text-[#8B5CF6] w-5 h-5" />}
                       label="Login"
@@ -484,7 +491,7 @@ const Navbar: React.FC = () => {
         </div>
       </nav>
 
-      {/* Styling for Animations */}
+      {/* Styling untuk Animasi */}
       <style>
         {`
           @keyframes fadeIn {

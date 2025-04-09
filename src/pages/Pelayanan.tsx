@@ -5,6 +5,7 @@ import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
 import { FaSignOutAlt, FaTimes, FaRobot, FaSignInAlt } from 'react-icons/fa';
 
+// Interface untuk response dari API chatbot
 interface ApiResponse {
   original_question: string;
   translated_question: string;
@@ -14,7 +15,8 @@ interface ApiResponse {
 }
 
 const Pelayanan: React.FC = () => {
-  const [messages, setMessages] = useState<
+  // State untuk menyimpan percakapan/chat history
+  const [chatHistory, setHistori] = useState<
     Array<{
       text: string | ApiResponse;
       sender: 'user' | 'bot' | 'loading' | 'response-details';
@@ -22,22 +24,25 @@ const Pelayanan: React.FC = () => {
     }>
   >([]);
 
-  const [inputValue, setInputValue] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  // State utk input user dan kondisi aplikasi
+  const [pesanUser, setPesanUser] = useState<string>('');
+  const [lagi_loading, setLagiLoading] = useState<boolean>(false);
+  const [userLogin, setUserLogin] = useState<boolean>(false);
   const chatBoxRef = useRef<HTMLDivElement>(null);
-  const [openDetailId, setOpenDetailId] = useState<number | null>(null);
-  const [userName, setUserName] = useState<string>('');
+  const [detailTerbuka, setDetailTerbuka] = useState<number | null>(null);
+  const [namaUser, setNamaUser] = useState<string>('');
   const navigate = useNavigate();
 
+  // Cek status login pas komponen dimuat pertama kali
   useEffect(() => {
     const token = localStorage.getItem('token');
     const name = localStorage.getItem('userName');
 
     if (!token) {
-      setIsLoggedIn(false);
+      setUserLogin(false);
 
-      setMessages([
+      // Pesan welcome untuk user yg belum login
+      setHistori([
         {
           text: 'Selamat datang di layanan chatbot SIPA. Silakan login untuk menggunakan layanan ini.',
           sender: 'bot',
@@ -47,10 +52,11 @@ const Pelayanan: React.FC = () => {
       return;
     }
 
-    setIsLoggedIn(true);
-    setUserName(name || 'Pengguna');
+    // User udah login, set nama dan pesan welcome
+    setUserLogin(true);
+    setNamaUser(name || 'Pengguna');
 
-    setMessages([
+    setHistori([
       {
         text: `Halo ${name || 'Pengguna'}! Saya adalah chatbot SIPA. Apa yang ingin Anda tanyakan tentang perlindungan anak?`,
         sender: 'bot',
@@ -59,97 +65,105 @@ const Pelayanan: React.FC = () => {
     ]);
   }, [navigate]);
 
+  // Auto-scroll ke bawah kalau ada chat baru
   useEffect(() => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [chatHistory]);
 
-  const sendMessage = async () => {
-    if (!inputValue.trim() || !isLoggedIn) return;
+  // Fungsi untuk kirim pesan ke API
+  const kirimPesan = async () => {
+    if (!pesanUser.trim() || !userLogin) return;
   
-    const userMessageId = Date.now();
-    setMessages((prevMessages) => [
+    const idPesanUser = Date.now();
+    setHistori((prevMessages) => [
       ...prevMessages,
-      { text: inputValue, sender: 'user', id: userMessageId },
+      { text: pesanUser, sender: 'user', id: idPesanUser },
     ]);
   
-    const loadingMessageId = userMessageId + 1;
-    setMessages((prevMessages) => [
+    const idPesanLoading = idPesanUser + 1;
+    setHistori((prevMessages) => [
       ...prevMessages,
-      { text: 'Memproses...', sender: 'loading', id: loadingMessageId },
+      { text: 'Memproses...', sender: 'loading', id: idPesanLoading },
     ]);
   
-    setInputValue('');
-    setIsLoading(true);
+    setPesanUser('');
+    setLagiLoading(true);
   
     try {
-      // Add a timeout to the request
+      // Set timeout API biar ga nunggu kelamaan
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // timeout 30 detik
   
       const response = await axios.post('/api/generate', {
-        question: inputValue,
+        question: pesanUser,
       }, {
         signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        timeout: 30000 // 30 seconds timeout
+        timeout: 30000 // 30 detik timeout
       });
   
       clearTimeout(timeoutId);
-      console.log('API Response:', response.data);
+      console.log('Response API:', response.data); // buat debug aja
   
-      setMessages((prevMessages) => [
-        ...prevMessages.filter((msg) => msg.id !== loadingMessageId),
+      // Hapus loading message dan tambah response dari API
+      setHistori((prevMessages) => [
+        ...prevMessages.filter((msg) => msg.id !== idPesanLoading),
         { text: response.data, sender: 'response-details', id: Date.now() },
       ]);
     } catch (error) {
       console.error('Error details:', error);
       
-      let errorMessage = 'Maaf, terjadi kesalahan saat menghubungi API.';
+      // Handle berbagai macam error
+      let pesanError = 'Maaf, terjadi kesalahan saat menghubungi API.';
       if (axios.isAxiosError(error)) {
         if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
-          errorMessage = 'Permintaan timeout. Server API mungkin sedang sibuk atau tidak tersedia.';
+          pesanError = 'Permintaan timeout. Server API mungkin sedang sibuk atau tidak tersedia.';
         } else if (error.response) {
-          // The request was made and the server responded with a status code
-          errorMessage = `Error ${error.response.status}: ${error.response.statusText}`;
+          pesanError = `Error ${error.response.status}: ${error.response.statusText}`;
         }
       }
   
-      setMessages((prevMessages) => [
-        ...prevMessages.filter((msg) => msg.id !== loadingMessageId),
+      // Tampilkan pesan error ke user
+      setHistori((prevMessages) => [
+        ...prevMessages.filter((msg) => msg.id !== idPesanLoading),
         {
-          text: errorMessage,
+          text: pesanError,
           sender: 'bot',
           id: Date.now(),
         },
       ]);
     } finally {
-      setIsLoading(false);
+      setLagiLoading(false);
     }
   };
 
+  // Kirim pesan dengan tombol Enter
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !isLoading && isLoggedIn) {
-      sendMessage();
+    if (e.key === 'Enter' && !lagi_loading && userLogin) {
+      kirimPesan();
     }
   };
 
-  const toggleDetails = (id: number) => {
-    if (openDetailId === id) {
-      setOpenDetailId(null);
+  // Buka/tutup detail respon dari API
+  const bukaTutupDetail = (id: number) => {
+    if (detailTerbuka === id) {
+      setDetailTerbuka(null);
     } else {
-      setOpenDetailId(id);
+      setDetailTerbuka(id);
     }
   };
 
-  const endChat = () => {
-    if (!isLoggedIn) return;
+  // Reset percakapan tapi tetap di halaman yg sama
+  const akhiriChat = () => {
+    if (!userLogin) return;
 
-    setMessages((prevMessages) => [
+    // Kirim pesan terimakasih dulu
+    setHistori((prevMessages) => [
       ...prevMessages,
       {
         text: 'Terima kasih telah menggunakan layanan chatbot SIPA. Sampai jumpa kembali!',
@@ -158,10 +172,11 @@ const Pelayanan: React.FC = () => {
       },
     ]);
 
+    // Tunggu 2 detik, terus reset chat
     setTimeout(() => {
-      setMessages([
+      setHistori([
         {
-          text: `Halo ${userName}! Saya adalah chatbot SIPA. Apa yang ingin Anda tanyakan tentang perlindungan anak?`,
+          text: `Halo ${namaUser}! Saya adalah chatbot SIPA. Apa yang ingin Anda tanyakan tentang perlindungan anak?`,
           sender: 'bot',
           id: Date.now(),
         },
@@ -169,11 +184,13 @@ const Pelayanan: React.FC = () => {
     }, 2000);
   };
 
-  const redirectToLogin = () => {
+  // Redirect ke halaman login
+  const keHalamanLogin = () => {
     navigate('/login');
   };
 
-  const exitToHome = () => {
+  // Balik ke home
+  const kembaliKeHome = () => {
     navigate('/');
   };
 
@@ -183,6 +200,7 @@ const Pelayanan: React.FC = () => {
 
       <div className="flex-grow flex items-center justify-center p-4 pt-24 pb-16">
         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Header chatbot */}
           <div className="p-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -193,10 +211,10 @@ const Pelayanan: React.FC = () => {
               </div>
 
               <div className="flex space-x-2">
-                {isLoggedIn ? (
+                {userLogin ? (
                   <>
                     <button
-                      onClick={endChat}
+                      onClick={akhiriChat}
                       className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                       title="Akhiri percakapan"
                     >
@@ -205,7 +223,7 @@ const Pelayanan: React.FC = () => {
                     </button>
 
                     <button
-                      onClick={exitToHome}
+                      onClick={kembaliKeHome}
                       className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                       title="Kembali ke beranda"
                     >
@@ -215,7 +233,7 @@ const Pelayanan: React.FC = () => {
                   </>
                 ) : (
                   <button
-                    onClick={redirectToLogin}
+                    onClick={keHalamanLogin}
                     className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                     title="Login untuk menggunakan chatbot"
                   >
@@ -227,7 +245,8 @@ const Pelayanan: React.FC = () => {
             </div>
           </div>
 
-          {!isLoggedIn && (
+          {/* Warning kalau belum login */}
+          {!userLogin && (
             <div className="p-6 bg-yellow-50 border-b border-yellow-100">
               <div className="flex items-center">
                 <div className="flex-shrink-0 bg-yellow-100 rounded-full p-2">
@@ -254,7 +273,7 @@ const Pelayanan: React.FC = () => {
                     <p>
                       Silakan login untuk menggunakan layanan chatbot SIPA.
                       <button
-                        onClick={redirectToLogin}
+                        onClick={keHalamanLogin}
                         className="ml-2 font-medium text-yellow-800 underline hover:text-yellow-900"
                       >
                         Login sekarang
@@ -266,12 +285,13 @@ const Pelayanan: React.FC = () => {
             </div>
           )}
 
+          {/* Area chat utama */}
           <div
             ref={chatBoxRef}
             className="h-96 overflow-y-auto p-6 bg-gray-50 space-y-4"
             style={{ scrollBehavior: 'smooth' }}
           >
-            {messages.map((message) => (
+            {chatHistory.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${
@@ -282,6 +302,7 @@ const Pelayanan: React.FC = () => {
                       : 'justify-start'
                 }`}
               >
+                {/* Pesan dari user */}
                 {message.sender === 'user' && (
                   <div className="flex items-start space-x-2 max-w-xs md:max-w-md">
                     <div className="order-2 bg-purple-100 rounded-2xl rounded-tr-none py-3 px-4 text-gray-800 shadow-sm">
@@ -289,14 +310,15 @@ const Pelayanan: React.FC = () => {
                     </div>
                     <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 order-1">
                       <img
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=8B5CF6&color=fff`}
-                        alt={userName}
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(namaUser)}&background=8B5CF6&color=fff`}
+                        alt={namaUser}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
                 )}
 
+                {/* Pesan dari bot */}
                 {message.sender === 'bot' && (
                   <div className="flex items-start space-x-2 max-w-xs md:max-w-md">
                     <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center flex-shrink-0">
@@ -308,6 +330,7 @@ const Pelayanan: React.FC = () => {
                   </div>
                 )}
 
+                {/* Indikator loading */}
                 {message.sender === 'loading' && (
                   <div className="flex justify-center items-center space-x-1 px-4 py-2 rounded-full bg-gray-100">
                     <div
@@ -325,6 +348,7 @@ const Pelayanan: React.FC = () => {
                   </div>
                 )}
 
+                {/* Pesan dengan detail dari API */}
                 {message.sender === 'response-details' && (
                   <div className="flex items-start space-x-2 max-w-xs md:max-w-md">
                     <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center flex-shrink-0">
@@ -332,6 +356,7 @@ const Pelayanan: React.FC = () => {
                     </div>
                     <div className="bg-white rounded-2xl rounded-tl-none py-3 px-4 text-gray-700 shadow-sm">
                       <div>
+                        {/* Tampilkan output dari model */}
                         {typeof message.text === 'object' &&
                         'output' in message.text &&
                         message.text.output
@@ -345,15 +370,16 @@ const Pelayanan: React.FC = () => {
 
                       <div className="mt-3 pt-2 border-t border-gray-200">
                         <button
-                          onClick={() => toggleDetails(message.id)}
+                          onClick={() => bukaTutupDetail(message.id)}
                           className="text-xs bg-gray-100 hover:bg-gray-200 rounded-full px-3 py-1 text-gray-600 transition-colors"
                         >
-                          {openDetailId === message.id
+                          {detailTerbuka === message.id
                             ? 'Sembunyikan Detail'
                             : 'Lihat Detail'}
                         </button>
 
-                        {openDetailId === message.id &&
+                        {/* Detail respon yang bisa dibuka-tutup */}
+                        {detailTerbuka === message.id &&
                           typeof message.text === 'object' && (
                             <div className="mt-2 bg-gray-50 p-3 rounded text-xs whitespace-pre-wrap border border-gray-100">
                               <div className="mb-1">
@@ -390,31 +416,32 @@ const Pelayanan: React.FC = () => {
             ))}
           </div>
 
+          {/* Input untuk kirim pesan */}
           <div className="p-4 border-t border-gray-200 bg-white">
             <div className="flex rounded-xl border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 focus-within:border-transparent">
               <input
                 type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                value={pesanUser}
+                onChange={(e) => setPesanUser(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder={
-                  isLoggedIn
+                  userLogin
                     ? 'Ketik pertanyaan Anda...'
                     : 'Silakan login untuk menggunakan chatbot'
                 }
                 className="flex-1 py-3 px-4 focus:outline-none text-gray-700"
-                disabled={isLoading || !isLoggedIn}
+                disabled={lagi_loading || !userLogin}
               />
               <button
-                onClick={sendMessage}
-                disabled={isLoading || !inputValue.trim() || !isLoggedIn}
+                onClick={kirimPesan}
+                disabled={lagi_loading || !pesanUser.trim() || !userLogin}
                 className={`bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 flex items-center justify-center transition-colors ${
-                  isLoading || !inputValue.trim() || !isLoggedIn
+                  lagi_loading || !pesanUser.trim() || !userLogin
                     ? 'opacity-50 cursor-not-allowed'
                     : 'hover:from-purple-700 hover:to-indigo-700'
                 }`}
               >
-                {isLoading ? (
+                {lagi_loading ? (
                   <div className="flex justify-center items-center space-x-1">
                     <div
                       className="w-1 h-1 bg-white rounded-full animate-bounce"

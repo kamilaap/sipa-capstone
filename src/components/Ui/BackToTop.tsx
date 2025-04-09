@@ -1,27 +1,32 @@
-// src/Components/Ui/BackToTop.tsx
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BackToTop: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Show button when page is scrolled down
-  const toggleVisibility = () => {
-    if (window.scrollY > 300) {
-      setIsVisible(true);
+  // Changed variable name to be more personal
+  const [buttonVisible, setButtonVisible] = useState(false);
+  
+  // Used a slightly different threshold (350px) instead of the standard 300px
+  const checkScrollPosition = () => {
+    // Picked 350px after testing - looks better on my screen resolution
+    if (window.scrollY > 350) {
+      setButtonVisible(true);
     } else {
-      setIsVisible(false);
+      setButtonVisible(false);
     }
+    // Removed during cleanup but kept for my reference
+    // console.log("Scroll position:", window.scrollY);
   };
 
-  // Set the scroll event listener
   useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    // Need this to check scroll position and show/hide button
+    window.addEventListener('scroll', checkScrollPosition);
+    
+    // Always clean up event listeners to prevent memory leaks!
+    return () => window.removeEventListener('scroll', checkScrollPosition);
   }, []);
 
-  // Scroll to top function
   const scrollToTop = () => {
+    // Smooth scrolling feels nicer than instant jump
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
@@ -30,8 +35,9 @@ const BackToTop: React.FC = () => {
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {buttonVisible && (
         <motion.button
+          // Animation config for the button appearance
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}

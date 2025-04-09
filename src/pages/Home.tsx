@@ -3,12 +3,13 @@ import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
 import Hero from '../components/Home/HeroSection';
 import Features from '../components/Home/FeaturesSection';
-import ArticlesPage from '../components/Home/ArticlesSection';
+import ArtikelTerbaru from '../components/Home/ArticlesSection';
 import Loading from '../components/Ui/Loading';
 import BackToTop from '../components/Ui/BackToTop';
+import HalamanStatistik from '../components/Home/StatisticsSection';
 
 const Home: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Simulate loading for 1 second
@@ -28,7 +29,8 @@ const Home: React.FC = () => {
       <Navbar />
       <Hero />
       <Features />
-      <ArticlesPage />
+      <HalamanStatistik />
+      <ArtikelTerbaru />
       <Footer />
       <BackToTop />
     </div>

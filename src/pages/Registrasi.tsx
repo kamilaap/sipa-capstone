@@ -32,11 +32,18 @@ const Register: React.FC = () => {
     }
 
     //user validasi gamil adn yahuuu
-    if (!email.endsWith("@gmail.com" && !email.endsWith("@yahoo.com"))) {
+    if (!email.endsWith("@gmail.com") && !email.endsWith("@yahoo.com")) {
       setErrorMessage("email Anda harus berakhiran dengan gmail.com atau yahoo.com !");
       setIsLoading(false);
       return;
     }
+    
+
+    // if (!email.endsWith("@gmail.com" && !email.endsWith("@yahoo.com"))) {
+    //   setErrorMessage("email Anda harus berakhiran dengan gmail.com atau yahoo.com !");
+    //   setIsLoading(false);
+    //   return;
+    // }
 
     
     try {

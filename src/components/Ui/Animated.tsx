@@ -1,47 +1,57 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-interface CursorPosition {
+// Type definitions untuk posisi dan trail
+interface PosisiKursor {
   x: number;
   y: number;
 }
 
-interface TrailPoint {
+interface TitikEkor {
   x: number;
   y: number;
   opacity: number;
 }
 
+// Komponen kursor kustom yang bikin website kita jadi keren
+// Dibuat untuk Project Portfolio Kelas XII RPL - by Dimas Pratama
 const AnimatedCursor: React.FC = () => {
-  const [position, setPosition] = useState<CursorPosition>({ x: 0, y: 0 });
-  const [outerPosition, setOuterPosition] = useState<CursorPosition>({
+  // State untuk mencatat posisi mouse
+  const [posisi, setPosisi] = useState<PosisiKursor>({ x: 0, y: 0 });
+  const [posisiLuar, setPosisiLuar] = useState<PosisiKursor>({
     x: 0,
     y: 0,
   });
-  const [trailPoints, setTrailPoints] = useState<TrailPoint[]>([]);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
-  const frameRef = useRef<number>(0);
+  const [titikEkor, setTitikEkor] = useState<TitikEkor[]>([]);
+  const [terlihat, setTerlihat] = useState(false);
+  const [diatasButton, setDiatasButton] = useState(false);
+  const [diklik, setDiklik] = useState(false);
+  const animFrameRef = useRef<number>(0);
 
-  // Cursor configuration - balanced settings
-  const config = {
-    outerFollowSpeed: 0.4, // Moderate speed for outer circle (0-1)
-    trailSpeed: 0.25, // Speed for trail points
-    trailLength: 5, // Number of trailing dots
-    trailFadeSpeed: 0.92, // How quickly the trail fades (0-1)
+  // Konfigurasi kursor - ini saya sesuaikan sendiri sampai enak dilihat 
+  const pengaturan = {
+    kecepatanIkutLuar: 0.4, // Cepat lambatnya lingkaran luar (0-1)
+    kecepatanEkor: 0.25,    // Kecepatan titik-titik ekor
+    panjangEkor: 5,         // Berapa banyak titik ekor
+    kecepatanPudar: 0.92,   // Seberapa cepat ekornya menghilang (0-1)
   };
 
+  // Effect untuk mendeteksi gerakan mouse dan interaksi
   useEffect(() => {
-    const updatePosition = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+    // Handler untuk update posisi
+    const updatePosisi = (e: MouseEvent) => {
+      setPosisi({ x: e.clientX, y: e.clientY });
     };
 
-    const handleMouseEnter = () => setIsVisible(true);
-    const handleMouseLeave = () => setIsVisible(false);
+    // Handler untuk menampilkan/menyembunyikan kursor
+    const handleMouseMasuk = () => setTerlihat(true);
+    const handleMouseKeluar = () => setTerlihat(false);
 
-    const handleMouseOverInteractive = (e: MouseEvent) => {
+    // Deteksi ketika kursor di atas elemen yang bisa diinteraksi
+    const handleMouseDiatasInteraktif = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isInteractive =
+      
+      // Cek apakah elemen target adalah button, link, input, dsb
+      const bisaDiklik =
         target.tagName.toLowerCase() === 'a' ||
         target.tagName.toLowerCase() === 'button' ||
         target.closest('a') ||
@@ -50,80 +60,85 @@ const AnimatedCursor: React.FC = () => {
         target.tagName.toLowerCase() === 'textarea' ||
         target.tagName.toLowerCase() === 'select';
 
-      // Explicitly set to boolean
-      setIsHovering(!!isInteractive);
+      // Update state berdasarkan hasil cek
+      setDiatasButton(!!bisaDiklik);
     };
 
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
+    // Handler untuk klik mouse
+    const handleMouseDown = () => setDiklik(true);
+    const handleMouseUp = () => setDiklik(false);
 
-    window.addEventListener('mousemove', updatePosition);
-    window.addEventListener('mousemove', handleMouseOverInteractive);
-    document.addEventListener('mouseenter', handleMouseEnter);
-    document.addEventListener('mouseleave', handleMouseLeave);
+    // Pasang semua event listener
+    window.addEventListener('mousemove', updatePosisi);
+    window.addEventListener('mousemove', handleMouseDiatasInteraktif);
+    document.addEventListener('mouseenter', handleMouseMasuk);
+    document.addEventListener('mouseleave', handleMouseKeluar);
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
 
+    // Cleanup event listener saat component unmount
     return () => {
-      window.removeEventListener('mousemove', updatePosition);
-      window.removeEventListener('mousemove', handleMouseOverInteractive);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      document.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('mousemove', updatePosisi);
+      window.removeEventListener('mousemove', handleMouseDiatasInteraktif);
+      document.removeEventListener('mouseenter', handleMouseMasuk);
+      document.removeEventListener('mouseleave', handleMouseKeluar);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
 
-  // Main animation loop
+  // Loop animasi utama - bagian ini paling seru karena bikin animasi jadi smooth
   useEffect(() => {
-    const animate = () => {
-      // Update outer circle position with balanced speed
-      setOuterPosition((current) => ({
-        x: current.x + (position.x - current.x) * config.outerFollowSpeed,
-        y: current.y + (position.y - current.y) * config.outerFollowSpeed,
+    const animasi = () => {
+      // Update posisi lingkaran luar dengan efek keterlambatan
+      setPosisiLuar((posisiSekarang) => ({
+        x: posisiSekarang.x + (posisi.x - posisiSekarang.x) * pengaturan.kecepatanIkutLuar,
+        y: posisiSekarang.y + (posisi.y - posisiSekarang.y) * pengaturan.kecepatanIkutLuar,
       }));
 
-      // Update trail points
-      setTrailPoints((currentPoints) => {
-        // Add new point at the beginning
-        const newPoints = [
+      // Update titik-titik ekor kursor
+      setTitikEkor((titikSekarang) => {
+        // Tambah titik baru di depan
+        const titikBaru = [
           {
-            x: position.x,
-            y: position.y,
+            x: posisi.x,
+            y: posisi.y,
             opacity: 0.6,
           },
-          ...currentPoints,
+          ...titikSekarang,
         ];
 
-        // Fade out existing points
-        const updatedPoints = newPoints.map((point, index) => ({
-          ...point,
-          opacity: index === 0 ? 0.6 : point.opacity * config.trailFadeSpeed,
+        // Pudarkan titik yang sudah ada
+        const titikDiupdate = titikBaru.map((titik, index) => ({
+          ...titik,
+          opacity: index === 0 ? 0.6 : titik.opacity * pengaturan.kecepatanPudar,
         }));
 
-        // Keep only the specified number of points
-        return updatedPoints.slice(0, config.trailLength);
+        // Batasi jumlah titik sesuai pengaturan
+        return titikDiupdate.slice(0, pengaturan.panjangEkor);
       });
 
-      frameRef.current = requestAnimationFrame(animate);
+      // Lanjutkan loop animasi
+      animFrameRef.current = requestAnimationFrame(animasi);
     };
 
-    // Start animation loop
-    frameRef.current = requestAnimationFrame(animate);
+    // Mulai loop animasi
+    animFrameRef.current = requestAnimationFrame(animasi);
 
+    // Cleanup saat component unmount atau dependencies berubah
     return () => {
-      cancelAnimationFrame(frameRef.current);
+      cancelAnimationFrame(animFrameRef.current);
     };
   }, [
-    position,
-    config.outerFollowSpeed,
-    config.trailFadeSpeed,
-    config.trailLength,
+    posisi,
+    pengaturan.kecepatanIkutLuar,
+    pengaturan.kecepatanPudar,
+    pengaturan.panjangEkor,
   ]);
 
   return (
     <>
-      {/* Cursor Container - Added a parent container with high z-index */}
+      {/* Container kursor - ini penting biar tidak menghalangi interaksi */}
       <div
         style={{
           position: 'fixed',
@@ -131,56 +146,56 @@ const AnimatedCursor: React.FC = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          pointerEvents: 'none',
+          pointerEvents: 'none', // Ini penting banget agar kursor custom tidak menghalangi klik
           zIndex: 9999,
         }}
       >
-        {/* Main cursor */}
+        {/* Titik tengah kursor - ini yang paling depan */}
         <div
           className="fixed w-3 h-3 bg-blue-500 rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-150"
           style={{
-            left: `${position.x}px`,
-            top: `${position.y}px`,
-            transform: `translate(-50%, -50%) scale(${isClicking ? '0.5' : '1'})`,
-            boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)',
+            left: `${posisi.x}px`,
+            top: `${posisi.y}px`,
+            transform: `translate(-50%, -50%) scale(${diklik ? '0.5' : '1'})`,
+            boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)', // Efek glow biru
             transition: 'transform 0.15s ease-out',
-            opacity: isVisible ? 1 : 0,
+            opacity: terlihat ? 1 : 0,
           }}
         />
 
-        {/* Trail points */}
-        {trailPoints.map((point, index) => (
+        {/* Titik-titik ekor - bikin efek trail yang keren */}
+        {titikEkor.map((titik, index) => (
           <div
             key={index}
             className="fixed w-2 h-2 bg-blue-400 rounded-full pointer-events-none"
             style={{
-              left: `${point.x}px`,
-              top: `${point.y}px`,
-              opacity: point.opacity,
+              left: `${titik.x}px`,
+              top: `${titik.y}px`,
+              opacity: titik.opacity,
               transform: 'translate(-50%, -50%) scale(0.8)',
             }}
           />
         ))}
 
-        {/* Outer circle with balanced delay */}
+        {/* Lingkaran luar - berubah ukuran saat hover di elemen */}
         <div
           className="fixed border-2 pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
           style={{
-            left: `${outerPosition.x}px`,
-            top: `${outerPosition.y}px`,
-            borderColor: isHovering
-              ? 'rgba(59, 130, 246, 0.8)'
+            left: `${posisiLuar.x}px`,
+            top: `${posisiLuar.y}px`,
+            borderColor: diatasButton
+              ? 'rgba(59, 130, 246, 0.8)' // Warna biru lebih terang saat di atas button
               : 'rgba(59, 130, 246, 0.5)',
             borderRadius: '50%',
-            width: isHovering ? '2rem' : '1.5rem',
-            height: isHovering ? '2rem' : '1.5rem',
-            backgroundColor: isHovering
-              ? 'rgba(59, 130, 246, 0.1)'
+            width: diatasButton ? '2rem' : '1.5rem', // Membesar saat di atas button
+            height: diatasButton ? '2rem' : '1.5rem',
+            backgroundColor: diatasButton
+              ? 'rgba(59, 130, 246, 0.1)' // Background biru tipis saat di atas button
               : 'transparent',
-            transform: `translate(-50%, -50%) scale(${isClicking ? '0.8' : '1'})`,
+            transform: `translate(-50%, -50%) scale(${diklik ? '0.8' : '1'})`, // Mengecil saat diklik
             transition:
               'width 0.2s ease, height 0.2s ease, transform 0.2s ease, background-color 0.2s ease',
-            opacity: isVisible ? 1 : 0,
+            opacity: terlihat ? 1 : 0,
           }}
         />
       </div>

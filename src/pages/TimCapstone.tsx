@@ -16,101 +16,105 @@ import BackToTop from '../components/Ui/BackToTop';
 import { motion } from 'framer-motion';
 import TeamNotification from '../components/Ui/TeamNotification';
 
-interface TeamMemberProps {
-  name: string;
-  role: string;
-  image: string;
+// Interface untuk properties anggota tim
+interface AnggotaTimProps {
+  nama: string;
+  posisi: string;
+  foto: string;
   github?: string;
   linkedin?: string;
   email?: string;
   instagram?: string;
-  bio: string;
+  biodata: string;
 }
 
 const TeamPage: React.FC = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  // State untuk menyimpan foto yang diperbesar
+  const [fotoTerpilih, setFotoTerpilih] = useState<string | null>(null);
 
-  const teamMembers: TeamMemberProps[] = [
+  // Data anggota tim capstone project
+  const timPengembang: AnggotaTimProps[] = [
     {
-      name: 'Sipa Sopiatul Patoni',
-      role: 'Frontend Developer',
-      image: '/assets/sipa.png',
+      nama: 'Sipa Sopiatul Patoni',
+      posisi: 'Frontend Developer',
+      foto: '/assets/sipa.png',
       github: 'https://github.com/Aleftu',
       linkedin: 'https://linkedin.com/in/rinawijaya',
       email: 'sopiatulpatonisipa@gmail.com',
       instagram: 'https://instagram.com/sipasff',
-      bio: 'UI/UX enthusiast. Passionate about creating accessible interfaces for social impact projects.',
+      biodata: 'UI/UX enthusiast. Passionate about creating accessible interfaces for social impact projects.',
     },
     {
-      name: 'Kamila Putri Herlambang',
-      role: 'Frontend Developer',
-      image: '/assets/kamila.jpg',
+      nama: 'Kamila Putri Herlambang', // ini aku, hehehe
+      posisi: 'Frontend Developer',
+      foto: '/assets/kamila.jpg',
       github: 'https://github.com/kamilaap',
       linkedin: 'https://www.linkedin.com/in/kamila-putri-herlambang',
       email: 'kp.herlambang@gmail.com',
       instagram: 'https://instagram.com/kamilaputrih',
-      bio: 'React js. Suka nyanyi, membaca buku, dan suka dia yang gak suka aku.',
+      biodata: 'React js. Suka nyanyi, membaca buku, dan suka dia yang gak suka aku.',
     },
     {
-      name: 'Elgiva Rasyad Aditya Putra',
-      role: 'Backend Developer',
-      image: '/assets/tokdalang.jpg',
+      nama: 'Elgiva Rasyad Aditya Putra',
+      posisi: 'Backend Developer',
+      foto: '/assets/tokdalang.jpg', // foto placeholder, nanti diganti
       github: 'https://github.com/Rasyaditya13',
       linkedin: 'https://linkedin.com/in/dewilestari',
       email: 'rasyadelgiva@gmail.com',
       instagram: 'https://instagram.com/elgivarasyad',
-      bio: 'Node.js developer with experience in secure API development and database architecture.',
+      biodata: 'Node.js developer with experience in secure API development and database architecture.',
     },
     {
-      name: 'Thomas Christian Kuntolukito',
-      role: 'Backend Developer',
-      image: '/assets/tokdalang.jpg',
+      nama: 'Thomas Christian Kuntolukito',
+      posisi: 'Backend Developer',
+      foto: '/assets/tokdalang.jpg', // belum ada fotonya
       github: 'https://github.com/agussupriyanto',
       linkedin: 'https://linkedin.com/in/agussupriyanto',
       email: 'thomas@sipa.id',
       instagram: 'https://instagram.com/thomaschristian',
-      bio: 'Specializes in server optimization, authentication systems, and creating robust backend architectures.',
+      biodata: 'Specializes in server optimization, authentication systems, and creating robust backend architectures.',
     },
     {
-      name: 'Bintang Raga Pratama',
-      role: 'Machine Learning Engineer',
-      image: '/assets/tokdalang.jpg',
+      nama: 'Bintang Raga Pratama',
+      posisi: 'Machine Learning Engineer',
+      foto: '/assets/tokdalang.jpg', // nanti diupdate
       github: 'https://github.com/SuryakandaRagaWistara',
       linkedin: 'https://linkedin.com/in/anitarahman',
-      email: 'bintang@sipa.id',
+      email: 'bintang@sipa.id', 
       instagram: 'https://instagram.com/bintangraga',
-      bio: 'Data scientist focused on NLP and sentiment analysis for identifying cases of violence in text reports.',
+      biodata: 'Data scientist focused on NLP and sentiment analysis for identifying cases of violence in text reports.',
     },
     {
-      name: 'Yogi Kautsar Alnandeta',
-      role: 'Machine Learning Engineer',
-      image: '/assets/tokdalang.jpg',
+      nama: 'Yogi Kautsar Alnandeta',
+      posisi: 'Machine Learning Engineer',
+      foto: '/assets/tokdalang.jpg', // masih pake placeholder
       github: 'https://github.com/farhanabdullah',
       linkedin: 'https://linkedin.com/in/yogikautsar',
       email: 'yogi@sipa.id',
       instagram: 'https://instagram.com/yogikautsar',
-      bio: 'ML engineer with expertise in pattern recognition and classification algorithms for early detection systems.',
+      biodata: 'ML engineer with expertise in pattern recognition and classification algorithms for early detection systems.',
     },
   ];
 
-  // Scroll to top when component mounts
+  // Scroll ke atas dan set judul halaman ketika halaman dimuat
   useEffect(() => {
-    // Set document title
+    // Set judul tab browser
     document.title = 'Tim Pengembang | Sipa';
 
-    // Scroll to top of page
+    // Scroll otomatis ke atas halaman
     window.scrollTo(0, 0);
   }, []);
 
-  const TeamMember: React.FC<TeamMemberProps> = ({
-    name,
-    role,
-    image,
+  // Komponen untuk menampilkan profil per anggota tim
+  const AnggotaTim: React.FC<AnggotaTimProps> = ({
+    nama,
+    posisi,
+    foto,
     github,
     linkedin,
     email,
     instagram,
-    bio,
+    biodata,
   }) => {
     return (
       <motion.div
@@ -120,34 +124,40 @@ const TeamPage: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="bg-white rounded-xl shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg border border-purple-100"
       >
+        {/* Foto profil yang bisa diklik untuk diperbesar */}
         <div
           className="relative h-48 w-full overflow-hidden cursor-pointer"
-          onClick={() => setSelectedImage(image)}
+          onClick={() => setFotoTerpilih(foto)}
         >
-          <img src={image} alt={name} className="w-full h-full object-cover" />
+          <img src={foto} alt={nama} className="w-full h-full object-cover" />
         </div>
         <div className="p-6">
-          <h3 className="font-bold text-xl text-purple-800">{name}</h3>
+          <h3 className="font-bold text-xl text-purple-800">{nama}</h3>
           <div className="flex items-center mt-1 mb-3">
-            {role === 'Frontend Developer' && (
+            {/* Icon sesuai dengan posisi di tim */}
+            {posisi === 'Frontend Developer' && (
               <FaCode className="text-purple-600 mr-2" />
             )}
-            {role === 'Backend Developer' && (
+            {posisi === 'Backend Developer' && (
               <FaServer className="text-purple-600 mr-2" />
             )}
-            {role === 'Machine Learning Engineer' && (
+            {posisi === 'Machine Learning Engineer' && (
               <FaBrain className="text-purple-600 mr-2" />
             )}
-            <p className="text-sm font-medium text-purple-600">{role}</p>
+            <p className="text-sm font-medium text-purple-600">{posisi}</p>
           </div>
-          <p className="text-gray-600 text-sm mb-4">{bio}</p>
-          <div className="flex space-x-3">
+          {/* Biodata singkat */}
+          <p className="text-gray-600 text-sm mb-4">{biodata}</p>
+          
+          {/* Link sosmed - sengaja dibedain styling biar gak terlalu kaku */}
+          <div className="flex space-x-2">
             {github && (
               <a
                 href={github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-purple-100 p-2 rounded-full text-purple-600 hover:bg-purple-200 transition duration-200"
+                title="GitHub"
               >
                 <FaGithub size={18} />
               </a>
@@ -157,7 +167,8 @@ const TeamPage: React.FC = () => {
                 href={linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-purple-100 p-2 rounded-full text-purple-600 hover:bg-purple-200 transition duration-200"
+                className="bg-blue-100 p-2 rounded-full text-blue-600 hover:bg-blue-200 transition duration-200"
+                title="LinkedIn"
               >
                 <FaLinkedin size={18} />
               </a>
@@ -167,7 +178,8 @@ const TeamPage: React.FC = () => {
                 href={instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-purple-100 p-2 rounded-full text-purple-600 hover:bg-purple-200 transition duration-200"
+                className="bg-pink-100 p-2 rounded-full text-pink-600 hover:bg-pink-200 transition duration-200"
+                title="Instagram"
               >
                 <FaInstagram size={18} />
               </a>
@@ -175,7 +187,8 @@ const TeamPage: React.FC = () => {
             {email && (
               <a
                 href={`mailto:${email}`}
-                className="bg-purple-100 p-2 rounded-full text-purple-600 hover:bg-purple-200 transition duration-200"
+                className="bg-green-100 p-2 rounded-full text-green-600 hover:bg-green-200 transition duration-200"
+                title="Email"
               >
                 <FaEnvelope size={18} />
               </a>
@@ -192,8 +205,9 @@ const TeamPage: React.FC = () => {
       <TeamNotification />
 
       <main className="flex-grow">
-        {/* Hero Section */}
+        {/* Hero Section - Judul halaman tim */}
         <div className="relative w-full bg-purple-100 py-20 px-4 overflow-hidden">
+          {/* Background patterns */}
           <div className="absolute top-0 left-0 w-full h-full">
             <div className="absolute top-0 left-0 w-32 h-32 bg-white opacity-5 rounded-full -ml-16 -mt-16"></div>
             <div className="absolute bottom-0 right-0 w-40 h-40 bg-white opacity-5 rounded-full -mr-20 -mb-20"></div>
@@ -236,7 +250,7 @@ const TeamPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Team Members */}
+        {/* Bagian tampilan anggota tim */}
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <motion.div
@@ -256,14 +270,25 @@ const TeamPage: React.FC = () => {
             </motion.div>
           </div>
 
+          {/* Grid untuk menampilkan kartu anggota tim */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <TeamMember key={index} {...member} />
+            {timPengembang.map((anggota, index) => (
+              <AnggotaTim 
+                key={index} 
+                nama={anggota.nama}
+                posisi={anggota.posisi}
+                foto={anggota.foto}
+                github={anggota.github}
+                linkedin={anggota.linkedin}
+                email={anggota.email}
+                instagram={anggota.instagram}
+                biodata={anggota.biodata}
+              />
             ))}
           </div>
         </div>
 
-        {/* About Project Section */}
+        {/* Bagian tentang proyek Sipa */}
         <div className="bg-white py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
@@ -284,6 +309,7 @@ const TeamPage: React.FC = () => {
                 </p>
               </motion.div>
 
+              {/* Latar belakang proyek */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -311,6 +337,7 @@ const TeamPage: React.FC = () => {
                 </p>
               </motion.div>
 
+              {/* Teknologi yang dipakai */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -345,6 +372,7 @@ const TeamPage: React.FC = () => {
                 </ul>
               </motion.div>
 
+              {/* Visi dan tujuan */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -386,24 +414,24 @@ const TeamPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Image Modal */}
-        {selectedImage && (
+        {/* Modal untuk memperbesar foto - muncul ketika foto diklik */}
+        {fotoTerpilih && (
           <div
             className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-8"
-            onClick={() => setSelectedImage(null)} // Close when clicking background
+            onClick={() => setFotoTerpilih(null)} // Tutup modal ketika klik background
           >
             <div
               className="relative max-w-2xl w-full max-h-[80vh] bg-white rounded-lg overflow-hidden shadow-xl"
               onClick={(e: React.MouseEvent<HTMLDivElement>) =>
                 e.stopPropagation()
-              } // Prevent closing when clicking on container
+              } // Mencegah modal tertutup saat klik gambar
             >
               <div className="p-2 bg-white flex justify-between items-center border-b">
                 <h3 className="text-lg font-medium text-purple-800">
                   Tim Member
                 </h3>
                 <button
-                  onClick={() => setSelectedImage(null)}
+                  onClick={() => setFotoTerpilih(null)}
                   className="bg-purple-100 rounded-full p-2 text-purple-800 hover:bg-purple-200 transition"
                   aria-label="Close image"
                 >
@@ -412,8 +440,8 @@ const TeamPage: React.FC = () => {
               </div>
               <div className="p-4">
                 <img
-                  src={selectedImage}
-                  alt="Team member"
+                  src={fotoTerpilih}
+                  alt="Foto anggota tim"
                   className="w-full h-auto max-h-[60vh] object-contain"
                 />
               </div>
