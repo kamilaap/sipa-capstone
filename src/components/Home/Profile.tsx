@@ -483,7 +483,6 @@ const Profile: React.FC = () => {
                           
                           <div className="pt-4 border-t border-gray-100">
                             <h4 className="font-medium text-gray-800 mb-3">Ubah Password</h4>
-                            <p className="text-sm text-gray-500 mb-3">Biarkan kosong jika tidak ingin mengubah password</p>
                             
                             <div className="space-y-3">
                               <FormInput
