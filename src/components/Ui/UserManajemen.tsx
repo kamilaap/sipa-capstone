@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Trash } from 'lucide-react';
+import { Trash, Edit2 } from 'lucide-react';
 import Sidebar from './SideBar';
-import { div } from 'framer-motion/client';
 
 interface AkunUser {
   id: number;
   nama: string;
   email: string;
+  role?: string;
 }
 
 const UserManajemen: React.FC = () => {
   const [users, setUsers] = useState<AkunUser[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUserId, setSelectedUSerId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [editRoleUser, setEditRoleUser] = useState<AkunUser | null>(null);
   const itemsPerPage = 5;
 
   const fetchUsers = async () => {
@@ -31,16 +32,29 @@ const UserManajemen: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     console.log('Menghapus user dengan ID:', id);
-    alert('Apakah Anda yakin ingin menghapus akun ini?');
     try {
       await axios.delete(
         `https://api-sipa-capstone-production.up.railway.app/users/${id}`
       );
       setUsers((prev) => prev.filter((user) => user.id !== id));
+      setSelectedUserId(null);
     } catch (error) {
-      console.error('Gagal menghapus user:', error);
+      console.log('Error detail:', error?.response?.data || error.message);
     }
   };
+
+  const handleEditRole = async (user: AkunUser) => {
+    try {
+      await axios.put(`https://api-sipa-capstone-production.up.railway.app/edit-role/${user.id}`, {
+        role: user.role, // pastikan ada role-nya
+      });
+      setEditRoleUser(null);
+      fetchUsers(); // refresh data
+    } catch (error) {
+      console.log('Error detail:', error?.response?.data || error.message);
+    }
+  };
+  
 
   useEffect(() => {
     fetchUsers();
@@ -98,13 +112,22 @@ const UserManajemen: React.FC = () => {
                   <td className="py-3 px-4">{user.nama}</td>
                   <td className="py-3 px-4">{user.email}</td>
                   <td className="py-3 px-4">
-                    <button
-                      onClick={() => setSelectedUSerId(user.id)}
-                      className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition"
-                      title="Hapus"
-                    >
-                      <Trash size={16} />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setSelectedUserId(user.id)}
+                        className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition flex items-center"
+                        title="Hapus"
+                      >
+                        <Trash size={16} />
+                      </button>
+                      <button
+                        onClick={() => setEditRoleUser(user)}
+                        className="bg-emerald-500 text-white p-2 rounded-lg hover:bg-emerald-600 transition flex items-center"
+                        title="Ubah Status"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -120,14 +143,12 @@ const UserManajemen: React.FC = () => {
                 </p>
                 <div className="flex justify-center gap-4">
                   <button
-                    onClick={() => {
-                      handleDelete(selectedUserId);
-                      setSelectedUserId(null);
-                    }}
+                    onClick={() => handleDelete(selectedUserId)}
                     className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
                   >
                     Ya, Hapus
                   </button>
+
                   <button
                     onClick={() => setSelectedUserId(null)}
                     className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition"
@@ -135,6 +156,58 @@ const UserManajemen: React.FC = () => {
                     Batal
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {editRoleUser && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
+                <h2 className="text-xl font-semibold mb-4 text-center">
+                  Edit User
+                </h2>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (editRoleUser) {
+                      handleEditRole(editRoleUser);
+                    }
+                  }}
+                >
+                  <div className="mb-4">
+                    <label className="block text-sm text-gray-600 mb-1">
+                      Role
+                    </label>
+                    <input
+                      type="text"
+                      value={(editRoleUser as any).role || ''}
+                      onChange={(e) =>
+                        setEditRoleUser({
+                          ...editRoleUser!,
+                          role: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg"
+                    />
+                  </div>
+
+                  {/* Bisa tambahkan input email, role, dll seterah mau tambah apa */}
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditRoleUser(null)}
+                      className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition"
+                    >
+                      Simpan
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}
