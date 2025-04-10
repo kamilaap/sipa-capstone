@@ -7,6 +7,7 @@ import Loading from '../components/Ui/Loading';
 
 // Definisi tipe data user
 interface User {
+  id?: number;
   email: string;
   role: 'admin' | 'user';
   token: string;
@@ -28,15 +29,56 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [tampilPassword, setTampilPassword] = useState(false);
   
+  // State untuk validasi
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
+  
   // State untuk popup notifikasi
   const [tampilPopupSukses, setTampilPopupSukses] = useState(false);
   const [tampilPopupError, setTampilPopupError] = useState(false);
   const [pesanError, setPesanError] = useState('');
   const navigate = useNavigate();
 
+  // Validasi form sebelum submit
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {
+      email: '',
+      password: '',
+    };
+
+    // Validasi email
+    if (!email) {
+      newErrors.email = 'Email harus diisi';
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'Format email tidak valid';
+      valid = false;
+    }
+
+    // Validasi password
+    if (!password) {
+      newErrors.password = 'Password harus diisi';
+      valid = false;
+    } else if (password.length < 8) {
+      newErrors.password = 'Password minimal 8 karakter';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   // Fungsi untuk memproses login
   const prosesLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsLoading(true);
     setTampilPopupError(false);
 
@@ -52,15 +94,22 @@ const Login: React.FC = () => {
       // Cek apakah data user dan token ada dari response
       if (data.user && data.token) {
         const userData: User = {
+          id: data.user.id,
           email: data.user.email || email,
           role: data.user.role || 'user',
           token: data.token,
         };
-
-        // Simpan token dan role di localStorage untuk sesi
+        
+        // Store token and role in localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', userData.role);
 
+        if (data.user.id) {
+          localStorage.setItem('userId', data.user.id.toString());
+        }
+        
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
         // Tampilkan popup sukses
         setTampilPopupSukses(true);
 
@@ -74,23 +123,32 @@ const Login: React.FC = () => {
           }
         }, 1800);
       } else {
-        throw new Error(data.message || 'Login gagal, coba lagi ya');
+        throw new Error(data.message || 'Login gagal, silakan coba lagi');
       }
     } catch (error) {
       // Handle berbagai jenis error
+      let errorMessage = 'Terjadi kesalahan saat login';
+      
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<LoginResponse>;
-        const errorMsg =
-          axiosError.response?.data?.message ||
-          axiosError.message ||
-          'Email atau password salah, cek lagi ya';
-
-        setPesanError(errorMsg);
-        setTampilPopupError(true);
-      } else {
-        setPesanError('Ups, ada masalah teknis. Coba refresh halaman');
-        setTampilPopupError(true);
+        
+        // Handle error response dari server
+        if (axiosError.response) {
+          errorMessage = axiosError.response.data?.message || 
+                         (axiosError.response.status === 401 ? 
+                          'Email atau password salah' : 
+                          'Terjadi kesalahan pada server');
+        } else if (axiosError.request) {
+          errorMessage = 'Tidak ada respon dari server';
+        } else {
+          errorMessage = 'Gagal membuat permintaan login';
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
+      
+      setPesanError(errorMessage);
+      setTampilPopupError(true);
     } finally {
       setIsLoading(false);
     }
@@ -253,10 +311,16 @@ const Login: React.FC = () => {
                       autoComplete="email"
                       required
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
-                      placeholder="email@contoh.com"
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setErrors({...errors, email: ''});
+                      }}
+                      className={`appearance-none block w-full px-3 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors`}
+                      placeholder="email@gmail.com"
                     />
+                    {errors.email && (
+                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                    )}
                   </div>
                 </div>
 
@@ -275,8 +339,11 @@ const Login: React.FC = () => {
                       autoComplete="current-password"
                       required
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors pr-10"
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setErrors({...errors, password: ''});
+                      }}
+                      className={`appearance-none block w-full px-3 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors pr-10`}
                       placeholder="••••••••"
                     />
                     <button
@@ -323,6 +390,9 @@ const Login: React.FC = () => {
                       )}
                     </button>
                   </div>
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                  )}
                 </div>
               </div>
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Trash } from 'lucide-react';
 import Sidebar from './SideBar';
-import { div } from 'framer-motion/client';
 
 interface AkunUser {
   id: number;
@@ -13,7 +12,7 @@ interface AkunUser {
 const UserManajemen: React.FC = () => {
   const [users, setUsers] = useState<AkunUser[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedUserId, setSelectedUSerId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null); // Fixed typo in variable name
   const itemsPerPage = 5;
 
   const fetchUsers = async () => {
@@ -22,12 +21,6 @@ const UserManajemen: React.FC = () => {
     );
     setUsers(response.data);
   };
-
-  // const handleDelete = async (id: number) => {
-  //   await axios.delete(`https://api-sipa-capstone-production.up.railway.app/users/id${id}`);
-  //   console.log("ID yang dikirim:", id);
-  //   fetchUsers();
-  // };
 
   const handleDelete = async (id: number) => {
     console.log('Menghapus user dengan ID:', id);
@@ -99,7 +92,7 @@ const UserManajemen: React.FC = () => {
                   <td className="py-3 px-4">{user.email}</td>
                   <td className="py-3 px-4">
                     <button
-                      onClick={() => setSelectedUSerId(user.id)}
+                      onClick={() => setSelectedUserId(user.id)}
                       className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition"
                       title="Hapus"
                     >

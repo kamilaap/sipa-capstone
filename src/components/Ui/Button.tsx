@@ -53,12 +53,12 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      type={type}
       className={`${styles[variant]} ${className}`}
       onClick={onClick}
       disabled={disabled}
-      type={type}
     >
-      {icon && <span className="flex-shrink-0">{icon}</span>}
+      {icon && icon}
       {children}
     </button>
   );

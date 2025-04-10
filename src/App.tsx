@@ -11,6 +11,7 @@ import FormPengaduan from './pages/FormPengaduan';
 import Terms from './components/Home/Terms';
 import Privasi from './components/Home/Privacy';
 import AnimatedCursor from './components/Ui/Animated';
+import Profile from './components/Home/Profile'
 import ArticleListPage from './components/Home/ArticlesListPage';
 import PelayananPage from './pages/Pelayanan';
 import HalamanBantuan from './pages/Bantuan';
@@ -46,6 +47,7 @@ const App: React.FC = () => {
           <Route path="/laporan-korban" element={<LaporanKorban />} />
           <Route path="/tingkat-kekerasan" element={<TingkatKekerasan />} />
           <Route path="/manajemen-user" element={<UserManajemen />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
     </Router>
