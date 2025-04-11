@@ -37,12 +37,11 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [adminName, setAdminName] = useState<string>('Admin');
   const [reportStats, setReportStats] = useState<MonthlyReportStats[]>([]);
-  const [activeMenu, setActiveMenu] = useState<string>('laporan');
+  const [activeMenu, setActiveMenu] = useState<string>('dashboard');
 
   // Function to handle menu click from Sidebar
   const handleMenuClick = (menu: string) => {
     setActiveMenu(menu);
-    // Additional logic if needed when menu changes
   };
 
   // Function to process reports and group by month
@@ -85,18 +84,36 @@ const Dashboard: React.FC = () => {
       return;
     }
 
-    // Retrieve user information from localStorage
+    // Check for direct user info in localStorage
     const userInfoString = localStorage.getItem('userInfo');
+    
+    // Let's log what we're getting from localStorage to help debug
+    console.log('UserInfo from localStorage:', userInfoString);
+    
     if (userInfoString) {
       try {
         const user: User = JSON.parse(userInfoString);
-        // Use the part before @ as the name, or full email if no @ found
-        const displayName = user.email.includes('@')
-          ? user.email.split('@')[0]
-          : user.email;
-        setAdminName(displayName);
+        
+        // Extract name from email (part before @)
+        if (user.email && user.email.includes('@')) {
+          const namePart = user.email.split('@')[0];
+          // Capitalize first letter
+          const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+          setAdminName(capitalizedName);
+          
+          console.log('Parsed user info:', user);
+          console.log('Setting admin name to:', capitalizedName);
+        }
       } catch (error) {
         console.error('Error parsing user info:', error);
+      }
+    } else {
+      // If userInfo is not available, try to get email from localStorage
+      const email = localStorage.getItem('email');
+      if (email && email.includes('@')) {
+        const namePart = email.split('@')[0];
+        const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+        setAdminName(capitalizedName);
       }
     }
 
@@ -127,6 +144,67 @@ const Dashboard: React.FC = () => {
     fetchReportStats();
   }, [navigate]);
 
+  // Determine which content to show based on activeMenu
+  const renderDashboardContent = () => {
+    return (
+      <>
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            Statistik Laporan Masuk
+          </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={reportStats}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="bulan" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="jumlah" fill="#8884d8" name="Jumlah Laporan" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <Link
+            to="/laporan-korban"
+            className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Laporan Korban
+            </h3>
+            <p className="text-gray-600 text-center">
+              Lihat dan kelola laporan yang masuk
+            </p>
+          </Link>
+
+          <Link
+            to="/tingkat-kekerasan"
+            className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Tingkat Kekerasan
+            </h3>
+            <p className="text-gray-600 text-center">
+              Analisis dan dokumentasi tingkat kekerasan
+            </p>
+          </Link>
+
+          <Link
+            to="/manajemen-user"
+            className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Manajemen User
+            </h3>
+            <p className="text-gray-600 text-center">
+              Kelola pengguna dan hak akses
+            </p>
+          </Link>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar onMenuClick={handleMenuClick} />
@@ -142,66 +220,10 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Conditionally render content based on activeMenu */}
-        {activeMenu === 'laporan' && (
-          <>
-            <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Statistik Laporan Masuk
-              </h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={reportStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="bulan" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="jumlah" fill="#8884d8" name="Jumlah Laporan" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <Link
-                to="/laporan-korban"
-                className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
-              >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Laporan Korban
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Lihat dan kelola laporan yang masuk
-                </p>
-              </Link>
-
-              <Link
-                to="/tingkat-kekerasan"
-                className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
-              >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Tingkat Kekerasan
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Analisis dan dokumentasi tingkat kekerasan
-                </p>
-              </Link>
-
-              <Link
-                to="/manajemen-user"
-                className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
-              >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Manajemen User
-                </h3>
-                <p className="text-gray-600 text-center">
-                  Kelola pengguna dan hak akses
-                </p>
-              </Link>
-            </div>
-          </>
-        )}
+        {(activeMenu === 'dashboard' || activeMenu === '') && renderDashboardContent()}
 
         {/* Add conditional rendering for other menu items */}
-        {activeMenu === 'tingkat' && (
+        {activeMenu === 'tingkat-kekerasan' && (
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Laporan Tingkat Kekerasan
@@ -209,7 +231,28 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600">
               Detail laporan tingkat kekerasan akan ditampilkan di sini.
             </p>
-            {/* Add more details or components as needed */}
+          </div>
+        )}
+
+        {activeMenu === 'laporan-korban' && (
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Laporan Korban
+            </h2>
+            <p className="text-gray-600">
+              Detail laporan korban akan ditampilkan di sini.
+            </p>
+          </div>
+        )}
+
+        {activeMenu === 'manajemen-user' && (
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Manajemen Akun User
+            </h2>
+            <p className="text-gray-600">
+              Detail manajemen user akan ditampilkan di sini.
+            </p>
           </div>
         )}
       </div>

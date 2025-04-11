@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FileText, BarChart2, LogOut, LayoutDashboard, UserCheck } from 'lucide-react';
+import { FileText, BarChart2, LogOut, LayoutDashboard, UserCheck, Home } from 'lucide-react';
 
 interface User {
   id: number;
@@ -15,22 +15,52 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [adminEmail, setAdminEmail] = useState<string>('admin@gmail.com');
+  const [adminEmail, setAdminEmail] = useState<string>('');
+  const [adminName, setAdminName] = useState<string>('Admin');
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Retrieve user information from localStorage
+    // Get the user info directly from localStorage
     const userInfoString = localStorage.getItem('userInfo');
+    const token = localStorage.getItem('token');
+    
+    // Check if we have both token and userInfo
+    if (!token) {
+      // If no token, redirect to login
+      navigate('/login');
+      return;
+    }
+    
     if (userInfoString) {
       try {
         const user: User = JSON.parse(userInfoString);
-        setAdminEmail(user.email);
+        setAdminEmail(user.email || '');
+        
+        // Extract name from email (part before @)
+        if (user.email && user.email.includes('@')) {
+          const namePart = user.email.split('@')[0];
+          // Capitalize first letter
+          const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+          setAdminName(capitalizedName);
+        }
       } catch (error) {
         console.error('Error parsing user info:', error);
       }
+    } else {
+      // If we have a token but no userInfo, try to get the email from token
+      // (This is a fallback, ideally userInfo should be set during login)
+      const email = localStorage.getItem('email');
+      if (email) {
+        setAdminEmail(email);
+        if (email.includes('@')) {
+          const namePart = email.split('@')[0];
+          const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+          setAdminName(capitalizedName);
+        }
+      }
     }
-  }, []);
+  }, [navigate]);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -41,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
 
     // Trigger onMenuClick if provided
     if (onMenuClick) {
-      const menu = path.substring(1); // Remove leading slash
+      const menu = path.substring(1) || 'dashboard'; 
       onMenuClick(menu);
     }
 
@@ -55,10 +85,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
     // Clear authentication-related items from localStorage
     localStorage.clear();
     // Redirect to login page
-    navigate('/');
+    navigate('/login');
   };
 
   const menuItems = [
+    {
+      icon: <Home className="mr-3" size={20} />,
+      label: 'Beranda',
+      path: '/',
+    },
     {
       icon: <LayoutDashboard className="mr-3" size={20} />,
       label: 'Dashboard',
@@ -118,7 +153,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
           <div className="flex justify-center mb-4">
             <FaUserCircle size={80} className="text-purple-300" />
           </div>
-          <h2 className="text-lg font-semibold text-center">Admin</h2>
+          <h2 className="text-lg font-semibold text-center">{adminName}</h2>
           <p className="text-purple-200 text-sm text-center truncate">
             {adminEmail}
           </p>
@@ -128,9 +163,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
               <button
                 key={item.path}
                 className={`
-                                    w-full flex items-center px-4 py-2 rounded 
-                                    ${location.pathname === item.path ? 'bg-purple-600' : 'hover:bg-purple-700'}
-                                `}
+                  w-full flex items-center px-4 py-2 rounded 
+                  ${
+                    location.pathname === item.path ||
+                    (item.path === '/' && location.pathname === '/dashboard') ||
+                    (item.path === '/dashboard' && location.pathname === '/')
+                      ? 'bg-purple-600'
+                      : 'hover:bg-purple-700'
+                  }
+                `}
                 onClick={() => handleMenuClick(item.path)}
               >
                 {item.icon}
