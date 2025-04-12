@@ -4,15 +4,15 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/', // Enable client-side routing
+  base: '/',
   server: {
-    host: '0.0.0.0', // Biar bisa diakses dari laptop lain
-    port: 5173,      // Bisa diganti kalau ada konflik port
+    host: '0.0.0.0',
+    port: 5173,
     proxy: {
-      '/api': {
-        target: 'https://ml-api.up.railway.app',
+      '/ask': {
+        target: 'https://sipa-chat-production.up.railway.app',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        secure: false
       }
     }
   }
