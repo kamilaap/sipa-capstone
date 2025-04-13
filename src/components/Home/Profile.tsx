@@ -439,7 +439,7 @@ const Profile: React.FC = () => {
                     </div>
                     <div className="text-center md:text-left">
                       <h2 className="text-xl font-bold text-gray-800">{profile.nama || 'Pengguna'}</h2>
-                      <p className="text-gray-600">{profile.email || 'email@example.com'}</p>
+                      <p className="text-gray-600">{profile.email || 'email@gmail.com'}</p>
                       <div className="mt-2 inline-block bg-[#8B5CF6]/10 text-[#8B5CF6] px-3 py-1 rounded-full text-sm font-medium">
                         {profile.role === 'admin' ? 'Administrator' : profile.role}
                       </div>
@@ -533,7 +533,7 @@ const Profile: React.FC = () => {
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
-                            placeholder="email@example.com"
+                            placeholder="email@gmail.com"
                             error={formErrors.email}
                             icon={<FaEnvelope className="text-gray-400" />}
                           />

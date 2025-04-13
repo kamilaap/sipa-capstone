@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import axios, { AxiosResponse, AxiosError } from 'axios';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import Button from './Button';
-import Loading from './Loading';
+import Button from '../Ui/Button';
+import Loading from '../Ui/Loading';
 
-// Define the response type
 interface ForgotPasswordResponse {
   message?: string;
 }
 
-const ForgotPassword: React.FC = () => {
+const LupaPassword: React.FC = () => {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,37 +17,67 @@ const ForgotPassword: React.FC = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+
+  // Add state for password visibility
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  // Toggle functions for password visibility
+  const toggleNewPasswordVisibility = () => {
+    setShowNewPassword(!showNewPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  // Email validation function
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setShowErrorPopup(false);
-
-    // Password validation
-    if (newPassword !== confirmPassword) {
-      setErrorMessage('Konfirmasi password tidak cocok');
+    
+    // Client-side validation
+    if (!isValidEmail(email)) {
+      setErrorMessage('Format email tidak valid. Mohon periksa kembali.');
       setShowErrorPopup(true);
-      setIsLoading(false);
       return;
     }
 
+    if (newPassword.length < 8) {
+      setErrorMessage('Kata sandi harus minimal 8 karakter.');
+      setShowErrorPopup(true);
+      return;
+    }
+
+    // Password validation
+    if (newPassword !== confirmPassword) {
+      setErrorMessage('Password dan konfirmasi password harus sama.');
+      setShowErrorPopup(true);
+      return;
+    }
+
+    setIsLoading(true);
+    setShowErrorPopup(false);
+    setShowSuccessPopup(false);
+
     try {
-      const response: AxiosResponse<ForgotPasswordResponse> = await axios.put(
+      const { data } = await axios.put<ForgotPasswordResponse>(
         'https://api-sipa-capstone-production.up.railway.app/forgot-password',
-        { email, newPassword, confirmPassword }
+        {
+          email,
+          newPassword,
+          confirmPassword,
+        }
       );
 
-      const successMessage =
-        response.data.message || 'Password berhasil diubah';
-      console.log(successMessage); // Log the message
-
-      // Show success popup
+      // Show success popup with server message or default message
+      setErrorMessage(data.message || 'Password berhasil diperbarui!');
       setShowSuccessPopup(true);
 
       // Automatically navigate after a short delay
@@ -57,20 +86,31 @@ const ForgotPassword: React.FC = () => {
         navigate('/login');
       }, 2000);
     } catch (error) {
-      // Type-safe error handling
+      // Enhanced error handling
       if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<ForgotPasswordResponse>;
-        const errorMsg =
-          axiosError.response?.data?.message ||
-          axiosError.message ||
-          'Gagal mengubah password';
-
-        setErrorMessage(errorMsg);
-        setShowErrorPopup(true);
+        // Check the response status and data
+        const statusCode = error.response?.status;
+        const responseData = error.response?.data;
+        
+        // Handle specific error cases
+        if (statusCode === 404) {
+          setErrorMessage('Email tidak terdaftar. Mohon periksa kembali.');
+        } else if (statusCode === 400) {
+          if (responseData?.message?.includes('password')) {
+            setErrorMessage('Kata sandi harus minimal 8 karakter.');
+          } else {
+            setErrorMessage(responseData?.message || 'Input tidak valid. Mohon periksa kembali.');
+          }
+        } else {
+          // Handle other error messages from the server
+          const errorMsg = responseData?.message || error.message || 'Gagal mereset password';
+          setErrorMessage(errorMsg);
+        }
       } else {
         setErrorMessage('Terjadi kesalahan tidak terduga');
-        setShowErrorPopup(true);
       }
+      
+      setShowErrorPopup(true);
     } finally {
       setIsLoading(false);
     }
@@ -102,7 +142,7 @@ const ForgotPassword: React.FC = () => {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              Password berhasil diubah!
+              {errorMessage}
             </div>
           </motion.div>
         )}
@@ -138,7 +178,7 @@ const ForgotPassword: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Back Button */}
+      {/* Back to Login Button */}
       <div className="absolute top-4 left-4 z-20">
         <Button
           variant="secondary"
@@ -165,7 +205,6 @@ const ForgotPassword: React.FC = () => {
         </Button>
       </div>
 
-      {/* Main Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -198,10 +237,10 @@ const ForgotPassword: React.FC = () => {
                 </svg>
               </motion.div>
               <h2 className="text-3xl font-bold text-gray-900">
-                Lupa Password
+                Lupa Kata Sandi
               </h2>
               <p className="mt-2 text-sm text-gray-600">
-                Masukkan email dan password baru Anda
+                Masukkan email dan kata sandi baru Anda
               </p>
             </div>
 
@@ -226,23 +265,23 @@ const ForgotPassword: React.FC = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
-                      placeholder="email@contoh.com"
+                      placeholder="email@gmail.com"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label
-                    htmlFor="password"
+                    htmlFor="newPassword"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Password Baru
+                    Kata Sandi Baru
                   </label>
                   <div className="mt-1 relative">
                     <input
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
+                      id="newPassword"
+                      name="newPassword"
+                      type={showNewPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       required
                       value={newPassword}
@@ -252,10 +291,78 @@ const ForgotPassword: React.FC = () => {
                     />
                     <button
                       type="button"
-                      onClick={togglePasswordVisibility}
+                      onClick={toggleNewPasswordVisibility}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800"
                     >
-                      {showPassword ? (
+                      {showNewPassword ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Kata sandi minimal 8 karakter
+                  </p>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Konfirmasi Kata Sandi
+                  </label>
+                  <div className="mt-1 relative">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors pr-10"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={toggleConfirmPasswordVisibility}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800"
+                    >
+                      {showConfirmPassword ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"
@@ -295,28 +402,6 @@ const ForgotPassword: React.FC = () => {
                     </button>
                   </div>
                 </div>
-
-                <div>
-                  <label
-                    htmlFor="confirm-password"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Konfirmasi Password Baru
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="confirm-password"
-                      name="confirm-password"
-                      type="password"
-                      autoComplete="new-password"
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
-                      placeholder="••••••••"
-                    />
-                  </div>
-                </div>
               </div>
 
               <div>
@@ -348,7 +433,7 @@ const ForgotPassword: React.FC = () => {
                       ></path>
                     </svg>
                   ) : null}
-                  {isLoading ? 'Memproses...' : 'Ubah Password'}
+                  {isLoading ? 'Memproses...' : 'Reset Kata Sandi'}
                 </Button>
               </div>
             </form>
@@ -359,4 +444,4 @@ const ForgotPassword: React.FC = () => {
   );
 };
 
-export default ForgotPassword;
+export default LupaPassword;
