@@ -24,6 +24,14 @@ const Register: React.FC = () => {
     setErrorMessage(null);
     setShowErrorPopup(false);
 
+    // Check password length - minimum 8 characters
+    if (password.length < 8) {
+      setErrorMessage('Password harus minimal 8 karakter!');
+      setShowErrorPopup(true);
+      setIsLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setErrorMessage('Password dan konfirmasi password tidak sama!');
       setShowErrorPopup(true);
@@ -36,6 +44,7 @@ const Register: React.FC = () => {
       setErrorMessage(
         'email Anda harus berakhiran dengan gmail.com atau yahoo.com !'
       );
+      setShowErrorPopup(true);
       setIsLoading(false);
       return;
     }
@@ -344,6 +353,9 @@ const Register: React.FC = () => {
                       )}
                     </button>
                   </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Minimal 8 karakter
+                  </p>
                 </div>
 
                 <div>
