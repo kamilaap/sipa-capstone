@@ -123,7 +123,7 @@ const Privasi: React.FC = () => {
                 <p className="text-gray-800">Email: sipa@gmail.com</p>
                 <p className="text-gray-800">Telepon: +62 21 123456</p>
                 <p className="text-gray-800">
-                  Alamat: Jl. Contoh No. 123, Jakarta Pusat
+                  Alamat: Jl. Kebebasan No. 123, Jakarta Pusat
                 </p>
               </div>
             </div>

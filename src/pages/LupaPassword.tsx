@@ -234,7 +234,7 @@ const ForgotPassword: React.FC = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors"
-                      placeholder="email@contoh.com"
+                      placeholder="email@gmail.com"
                     />
                   </div>
                 </div>
