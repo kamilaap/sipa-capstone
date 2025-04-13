@@ -44,20 +44,20 @@ const LupaPassword: React.FC = () => {
 
     // Client-side validation
     if (!isValidEmail(email)) {
-      setErrorMessage('Format email tidak valid. Mohon periksa kembali.');
+      setErrorMessage('Email salah');
       setShowErrorPopup(true);
       return;
     }
 
     if (newPassword.length < 8) {
-      setErrorMessage('Kata sandi harus minimal 8 karakter.');
+      setErrorMessage('Password minimal 8 karakter!');
       setShowErrorPopup(true);
       return;
     }
 
     // Password validation
     if (newPassword !== confirmPassword) {
-      setErrorMessage('Password dan konfirmasi password harus sama.');
+      setErrorMessage('Password dan konfirmasi password tidak sama');
       setShowErrorPopup(true);
       return;
     }
@@ -92,26 +92,21 @@ const LupaPassword: React.FC = () => {
         const statusCode = error.response?.status;
         const responseData = error.response?.data;
 
-        // Handle specific error cases
+        // Handle specific error cases with simpler messages
         if (statusCode === 404) {
-          setErrorMessage('Email tidak terdaftar. Mohon periksa kembali.');
+          setErrorMessage('Email salah');
         } else if (statusCode === 400) {
           if (responseData?.message?.includes('password')) {
-            setErrorMessage('Kata sandi harus minimal 8 karakter.');
+            setErrorMessage('Password kurang dari 8');
           } else {
-            setErrorMessage(
-              responseData?.message ||
-                'Input tidak valid. Mohon periksa kembali.'
-            );
+            setErrorMessage('Input tidak valid');
           }
         } else {
           // Handle other error messages from the server
-          const errorMsg =
-            responseData?.message || error.message || 'Gagal mereset password';
-          setErrorMessage(errorMsg);
+          setErrorMessage('Gagal mereset password');
         }
       } else {
-        setErrorMessage('Terjadi kesalahan tidak terduga');
+        setErrorMessage('Terjadi kesalahan');
       }
 
       setShowErrorPopup(true);
