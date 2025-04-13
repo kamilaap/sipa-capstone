@@ -16,12 +16,12 @@ Aplikasi Laporan Kekerasan Ibu dan Anak merupakan tugas capstone kami di **Codin
 
 | Nama                            | Peran                | GitHub                                                  |
 | ------------------------------- | -------------------- | -------------------------------------------------------- |
-| Sipa Sopiatul Patoni            | Frontend Developer   | [@sipapatoni](https://github.com/Aleftu)            |
+| Sipa Sopiatul Patoni            | Frontend Developer   | [@Aleftu](https://github.com/Aleftu)            |
 | Kamila Putri Herlambang         | Frontend Developer   | [@kamilaap](https://github.com/kamilaap)                |
-| Elgiva Rasyad Aditya Putra      | Backend Developer    | [@elgivara](https://github.com/Rasyaditya13)                |
+| Elgiva Rasyad Aditya Putra      | Backend Developer    | [@Rasyadditya13](https://github.com/Rasyaditya13)                |
 | Thomas Christian Kuntolukito    | Backend Developer    | [@thomaskuntolukito](https://github.com/thomaskuntolukito) |
-| Bintang Raga Pratama            | ML Engineer          | [@bintangraga](https://github.com/SuryakandaRagaWistara)          |
-| Yogi Kautsar Alnandeta          | ML Engineer          | [@yogikautsar](https://github.com/yogikautsa112)          |
+| Bintang Raga Pratama            | ML Engineer          | [@SuryakandaRagaWistara](https://github.com/SuryakandaRagaWistara)          |
+| Yogi Kautsar Alnandeta          | ML Engineer          | [@yogikautsa112](https://github.com/yogikautsa112)          |
 
 ## 🚀 Fitur Utama
 
