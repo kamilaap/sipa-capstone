@@ -162,7 +162,7 @@ const LearnMore: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* How to Use Section */}
+      {/* Cara Penggunaan */}
       <section className="py-16 px-6 md:px-24 bg-[#F9FAFB]">
         <motion.div
           className="max-w-6xl mx-auto"

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Komponen untuk menampilkan dan mengubah status laporan korban
-// Dibuat untuk tugas React Intermediate - Fema (April 2025)
 const StatusLaporan: React.FC = () => {
   // State untuk modal edit
   const [isDialogTerbuka, setDialogTerbuka] = useState(false);

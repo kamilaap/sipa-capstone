@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import axios from 'axios';
 
-// Define interfaces
+// Tipe data untuk laporan
 interface ReportData {
   id: number;
   tanggal: string;
@@ -22,6 +22,7 @@ interface ReportData {
   };
 }
 
+// Statistik bulanan untuk grafik
 interface MonthlyReportStats {
   bulan: string;
   jumlah: number;
@@ -38,38 +39,40 @@ const Dashboard: React.FC = () => {
   const [adminName, setAdminName] = useState<string>('Admin');
   const [reportStats, setReportStats] = useState<MonthlyReportStats[]>([]);
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
+  // State untuk tampilan notifikasi fitur dalam pengembangan
+  const [tampilNotifikasi, setTampilNotifikasi] = useState<boolean>(false);
 
-  // Function to handle menu click from Sidebar
+  // Update menu aktif saat klik sidebar
   const handleMenuClick = (menu: string) => {
     setActiveMenu(menu);
   };
 
-  // Function to process reports and group by month
-  const processReportStats = (reports: ReportData[]): MonthlyReportStats[] => {
-    // Create a map to store monthly report counts
-    const monthReports = new Map<string, number>();
+  // Olah data laporan untuk dikelompokkan per bulan
+  const olahDataLaporan = (reports: ReportData[]): MonthlyReportStats[] => {
+    // Map untuk menyimpan jumlah laporan per bulan
+    const laporanBulanan = new Map<string, number>();
 
-    // Process each report
-    reports.forEach((report) => {
-      // Convert the date to a Date object
-      const reportDate = new Date(report.tanggal);
+    // Proses setiap laporan
+    reports.forEach((laporan) => {
+      // Konversi tanggal ke objek Date
+      const tanggalLaporan = new Date(laporan.tanggal);
 
-      // Format month as "MMM YYYY" (e.g., "Mar 2025")
-      const monthKey = reportDate.toLocaleString('default', {
+      // Format bulan sebagai "MMM YYYY" (misal "Mar 2025")
+      const kunciBulan = tanggalLaporan.toLocaleString('default', {
         month: 'short',
         year: 'numeric',
       });
 
-      // Increment the count for this month
-      monthReports.set(monthKey, (monthReports.get(monthKey) || 0) + 1);
+      // Tambahkan hitungan untuk bulan ini
+      laporanBulanan.set(kunciBulan, (laporanBulanan.get(kunciBulan) || 0) + 1);
     });
 
-    // Convert map to array of MonthlyReportStats
-    return Array.from(monthReports, ([bulan, jumlah]) => ({
+    // Ubah map ke array untuk ditampilkan di grafik
+    return Array.from(laporanBulanan, ([bulan, jumlah]) => ({
       bulan,
       jumlah,
     })).sort((a, b) => {
-      // Sort chronologically
+      // Urutkan kronologis
       const dateA = new Date(a.bulan);
       const dateB = new Date(b.bulan);
       return dateA.getTime() - dateB.getTime();
@@ -77,48 +80,67 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    // Check authentication
+    // Cek autentikasi dulu
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
       return;
     }
 
-    // Check for direct user info in localStorage
+    // Ambil info user dari beberapa sumber yang mungkin
+    const userDataString = localStorage.getItem('userData');
     const userInfoString = localStorage.getItem('userInfo');
     
-    // Let's log what we're getting from localStorage to help debug
-    console.log('UserInfo from localStorage:', userInfoString);
-    
-    if (userInfoString) {
+    // Coba ambil nama user dengan prioritas seperti di Sidebar
+    if (userDataString) {
+      // Prioritas 1: userData (seperti di komponen Pelayanan)
+      try {
+        const userData = JSON.parse(userDataString);
+        
+        // Ambil nama dari email atau field nama langsung
+        if (userData.name) {
+          setAdminName(userData.name);
+        } else if (userData.email && userData.email.includes('@')) {
+          const namePart = userData.email.split('@')[0];
+          // Kapitalisasi huruf pertama
+          const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+          setAdminName(capitalizedName);
+        }
+        
+        console.log('Pakai userData untuk nama admin:', adminName);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+      }
+    } else if (userInfoString) {
+      // Prioritas 2: userInfo
       try {
         const user: User = JSON.parse(userInfoString);
         
-        // Extract name from email (part before @)
+        // Ambil nama dari email
         if (user.email && user.email.includes('@')) {
-          const namePart = user.email.split('@')[0];
-          // Capitalize first letter
-          const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-          setAdminName(capitalizedName);
-          
-          console.log('Parsed user info:', user);
-          console.log('Setting admin name to:', capitalizedName);
+          const namaPengguna = user.email.split('@')[0];
+          // Kapitalisasi huruf pertama
+          const namaKapital = namaPengguna.charAt(0).toUpperCase() + namaPengguna.slice(1);
+          setAdminName(namaKapital);
         }
+        
+        console.log('Pakai userInfo untuk nama admin:', adminName);
       } catch (error) {
         console.error('Error parsing user info:', error);
       }
     } else {
-      // If userInfo is not available, try to get email from localStorage
+      // Prioritas 3: Coba ambil email langsung dari localStorage
       const email = localStorage.getItem('email');
       if (email && email.includes('@')) {
-        const namePart = email.split('@')[0];
-        const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-        setAdminName(capitalizedName);
+        const namaPengguna = email.split('@')[0];
+        const namaKapital = namaPengguna.charAt(0).toUpperCase() + namaPengguna.slice(1);
+        setAdminName(namaKapital);
+        console.log('Pakai email langsung untuk nama admin:', namaKapital);
       }
     }
 
-    // Fetch report statistics
-    const fetchReportStats = async () => {
+    // Ambil statistik laporan dari API
+    const ambilDataLaporan = async () => {
       try {
         const response = await axios.get<ReportData[]>(
           'https://api-sipa-capstone-production.up.railway.app/data-pengaduan',
@@ -129,11 +151,11 @@ const Dashboard: React.FC = () => {
           }
         );
 
-        // Process and set report statistics
-        const processedStats = processReportStats(response.data);
-        setReportStats(processedStats);
+        // Olah dan set statistik laporan
+        const dataOlahan = olahDataLaporan(response.data);
+        setReportStats(dataOlahan);
       } catch (error) {
-        console.error('Error fetching report statistics:', error);
+        console.error('Gagal mengambil statistik laporan:', error);
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           localStorage.clear();
           navigate('/login');
@@ -141,13 +163,19 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    fetchReportStats();
+    ambilDataLaporan();
   }, [navigate]);
 
-  // Determine which content to show based on activeMenu
-  const renderDashboardContent = () => {
+  // Buka/tutup popup info pengembangan
+  const toggleInfoPengembangan = () => {
+    setTampilNotifikasi(!tampilNotifikasi);
+  };
+
+  // Konten utama dashboard
+  const tampilkanDashboard = () => {
     return (
       <>
+        {/* Grafik statistik laporan */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Statistik Laporan Masuk
@@ -164,7 +192,9 @@ const Dashboard: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
+        {/* Menu akses cepat */}
         <div className="grid md:grid-cols-2 gap-6">
+          {/* Menu Laporan Korban */}
           <Link
             to="/laporan-korban"
             className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
@@ -177,18 +207,21 @@ const Dashboard: React.FC = () => {
             </p>
           </Link>
 
-          <Link
-            to="/tingkat-kekerasan"
-            className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
+          {/* Menu Tingkat Kekerasan (dalam pengembangan) */}
+          <div
+            className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center cursor-help opacity-80"
+            onClick={toggleInfoPengembangan} // Klik untuk munculkan notifikasi
           >
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Tingkat Kekerasan
+              <span className="ml-2 text-xs bg-yellow-500 text-black px-1 rounded">Segera</span>
             </h3>
             <p className="text-gray-600 text-center">
               Analisis dan dokumentasi tingkat kekerasan
             </p>
-          </Link>
+          </div>
 
+          {/* Menu Manajemen User */}
           <Link
             to="/manajemen-user"
             className="bg-white rounded-xl shadow-lg p-6 hover:bg-gray-50 transition flex flex-col items-center"
@@ -201,6 +234,28 @@ const Dashboard: React.FC = () => {
             </p>
           </Link>
         </div>
+
+        {/* Popup notifikasi pengembangan */}
+        {tampilNotifikasi && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">
+                Info Pengembangan
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Fitur ini masih dalam tahap pengembangan dan akan tersedia pada update mendatang.
+              </p>
+              <div className="flex justify-end">
+                <button
+                  onClick={toggleInfoPengembangan}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </>
     );
   };
@@ -210,6 +265,7 @@ const Dashboard: React.FC = () => {
       <Sidebar onMenuClick={handleMenuClick} />
 
       <div className="flex-1 p-4 md:p-8 lg:p-12 overflow-auto">
+        {/* Header dashboard */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
             Selamat Datang, {adminName}
@@ -219,17 +275,17 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* Conditionally render content based on activeMenu */}
-        {(activeMenu === 'dashboard' || activeMenu === '') && renderDashboardContent()}
+        {/* Tampilkan konten sesuai menu aktif */}
+        {(activeMenu === 'dashboard' || activeMenu === '') && tampilkanDashboard()}
 
-        {/* Add conditional rendering for other menu items */}
+        {/* Tampilan menu lainnya */}
         {activeMenu === 'tingkat-kekerasan' && (
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Laporan Tingkat Kekerasan
+              Fitur Dalam Pengembangan
             </h2>
             <p className="text-gray-600">
-              Detail laporan tingkat kekerasan akan ditampilkan di sini.
+              Fitur "Laporan Tingkat Kekerasan" akan dikembangkan di masa depan. Silakan cek kembali nanti.
             </p>
           </div>
         )}

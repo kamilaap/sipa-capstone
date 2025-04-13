@@ -3,8 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Button from '../Ui/Button';
 
-// Halaman Syarat & Ketentuan untuk aplikasi SIPA - untuk tugas UX/UI Design Pak Budi
-// Author: Anita Permata - XI RPL 2
+// Halaman Syarat & Ketentuan untuk aplikasi SIPA
 
 const Terms = () => {
   // Pakai kembaliKeHalaman untuk navigasi antar halaman
@@ -87,7 +86,7 @@ const Terms = () => {
                 Syarat dan Ketentuan SIPA
               </h1>
               <p className="mt-2 text-sm text-gray-600">
-                Terakhir diperbarui: 21 Maret 2025 {/* Tanggal ulang tahun saya */}
+                Terakhir diperbarui: 21 Maret 2025 {/* Tangga pas dibuat */}
               </p>
             </div>
 
@@ -215,7 +214,6 @@ const Terms = () => {
               </div>
             </div>
 
-            {/* Button dengan text yang lebih personal */}
             <div className="mt-8 flex justify-center">
               <Button variant="primary" onClick={handleKembali}>
                 Oke, Saya Paham

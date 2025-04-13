@@ -2,31 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BackToTop: React.FC = () => {
-  // Changed variable name to be more personal
-  const [buttonVisible, setButtonVisible] = useState(false);
+  // State untuk mengontrol kapan tombol muncul
+  const [tombolMuncul, setTombolMuncul] = useState(false);
   
-  // Used a slightly different threshold (350px) instead of the standard 300px
-  const checkScrollPosition = () => {
-    // Picked 350px after testing - looks better on my screen resolution
+  // Deteksi posisi scroll untuk menampilkan/sembunyikan tombol
+  const cekPosisiScroll = () => {
+    // Pakai 350px karena terlihat lebih pas di layar laptop 15"
     if (window.scrollY > 350) {
-      setButtonVisible(true);
+      setTombolMuncul(true);
     } else {
-      setButtonVisible(false);
+      setTombolMuncul(false);
     }
-    // Removed during cleanup but kept for my reference
-    // console.log("Scroll position:", window.scrollY);
+    // Komen ini sengaja dimatikan, untuk debugging aja
+    // console.log("Posisi scroll:", window.scrollY);
   };
 
   useEffect(() => {
-    // Need this to check scroll position and show/hide button
-    window.addEventListener('scroll', checkScrollPosition);
+    // Pasang event listener saat komponen dimuat
+    window.addEventListener('scroll', cekPosisiScroll);
     
-    // Always clean up event listeners to prevent memory leaks!
-    return () => window.removeEventListener('scroll', checkScrollPosition);
+    // Bersihkan event listener saat komponen unmount
+    return () => window.removeEventListener('scroll', cekPosisiScroll);
   }, []);
 
-  const scrollToTop = () => {
-    // Smooth scrolling feels nicer than instant jump
+  const kembaliKeAtas = () => {
+    // Animasi scroll halus supaya gak loncat-loncat
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
@@ -35,17 +35,18 @@ const BackToTop: React.FC = () => {
 
   return (
     <AnimatePresence>
-      {buttonVisible && (
+      {tombolMuncul && (
         <motion.button
-          // Animation config for the button appearance
+          // Setting animasi biar tombol muncul dengan efek scale
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          onClick={scrollToTop}
+          onClick={kembaliKeAtas}
+          // Pakai warna ungu-600 karena cocok dengan tema web saya
           className="fixed bottom-8 right-8 bg-purple-600 text-white p-3 rounded-full shadow-lg z-40 hover:bg-purple-700 transition-colors duration-300"
-          aria-label="Back to top"
+          aria-label="Kembali ke atas"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -6,8 +6,10 @@ import axios from 'axios';
 import Loading from '../Ui/Loading';
 import { useNavigate } from 'react-router-dom';
 
+// API URL - di deploy di Railway
 const API_BASE_URL = 'https://api-sipa-capstone-production.up.railway.app';
 
+// Interface untuk data profil pengguna
 interface UserProfile {
   id: number | null;
   nama: string | null;
@@ -17,12 +19,14 @@ interface UserProfile {
   updatedAt: string | null;
 }
 
+// Data yang bisa diupdate pada profil
 interface ProfileUpdateData {
   nama?: string;
   email?: string;
   password?: string;
 }
 
+// Format response error dari API
 interface ApiError {
   response?: {
     data?: {
@@ -33,63 +37,67 @@ interface ApiError {
   message?: string;
 }
 
+// Props untuk komponen form input
 interface FormInputProps {
-    id: string;
-    label: string;
-    type?: string;
-    value: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    disabled?: boolean;
-    placeholder?: string;
-    error?: string;
-    icon?: React.ReactNode;
-    name?: string; // Add this line
-  }
-  
-  const FormInput = React.memo(({ 
-    id, 
-    label, 
-    type = 'text', 
-    value, 
-    onChange, 
-    disabled = false, 
-    placeholder, 
-    error = '',
-    icon,
-    name 
-  }: FormInputProps) => (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </label>
-      <div className="relative">
-        {icon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            {icon}
-          </div>
-        )}
-        <input
-          type={type}
-          id={id}
-          name={name} 
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          className={`w-full px-4 py-2 ${icon ? 'pl-10' : ''} border ${
-            error ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 
-                   disabled ? 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed' :
-                            'border-gray-300 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]'
-          } rounded-lg transition-colors`}
-          placeholder={placeholder}
-        />
-      </div>
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-      {disabled && <p className="mt-1 text-xs text-gray-500">Bidang ini tidak dapat diubah</p>}
+  id: string;
+  label: string;
+  type?: string;
+  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
+  placeholder?: string;
+  error?: string;
+  icon?: React.ReactNode;
+  name?: string;
+}
+
+// Komponen form input yang di-memo untuk optimasi performa
+const FormInput = React.memo(({ 
+  id, 
+  label, 
+  type = 'text', 
+  value, 
+  onChange, 
+  disabled = false, 
+  placeholder, 
+  error = '',
+  icon,
+  name 
+}: FormInputProps) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    <div className="relative">
+      {icon && (
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          {icon}
+        </div>
+      )}
+      <input
+        type={type}
+        id={id}
+        name={name} 
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className={`w-full px-4 py-2 ${icon ? 'pl-10' : ''} border ${
+          error ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 
+                 disabled ? 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed' :
+                          'border-gray-300 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]'
+        } rounded-lg transition-colors`}
+        placeholder={placeholder}
+      />
     </div>
-  ));
+    {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+    {disabled && <p className="mt-1 text-xs text-gray-500">Bidang ini tidak dapat diubah</p>}
+  </div>
+));
+
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   
+  // State untuk menyimpan data profil
   const [profile, setProfile] = useState<UserProfile>({
     id: null,
     nama: null,
@@ -99,6 +107,7 @@ const Profile: React.FC = () => {
     updatedAt: null
   });
 
+  // State untuk loading, edit mode, dan form data
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -108,18 +117,30 @@ const Profile: React.FC = () => {
     password: '',
     confirmPassword: ''
   });
+  
+  // State untuk error pada form
   const [formErrors, setFormErrors] = useState({
     nama: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
+  
+  // State untuk notifikasi
   const [notification, setNotification] = useState<{
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
 
-  const getAuthData = useCallback(() => {
+  // Fungsi untuk menampilkan notifikasi
+  const showNotification = useCallback((type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    // Auto-hide notification after 3 seconds
+    setTimeout(() => setNotification({ type: null, message: '' }), 3000);
+  }, []);
+
+  // Fungsi helper untuk mengambil token dan user ID
+  const getUserAuthInfo = useCallback(() => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     
@@ -130,63 +151,30 @@ const Profile: React.FC = () => {
     return { token, userId };
   }, []);
 
-  // Fetch data user nya 
-  const fetchUserData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const { token, userId } = getAuthData();
+  // Fungsi untuk me-log error dengan format pribadi
+  const logErrorDetail = (context: string, error: ApiError) => {
+    console.error(`⚠️ [ERROR:${context}]`, error);
+    // TODO: Tambahkan logging ke service monitoring nanti
+  };
 
-      const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      const userData = response.data;
-      setProfile({
-        id: userData.id,
-        nama: userData.nama,
-        email: userData.email,
-        role: userData.role,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt
-      });
-
-      // set form data
-      setFormData({
-        nama: userData.nama || '',
-        email: userData.email || '',
-        password: '',
-        confirmPassword: ''
-      });
-    } catch (error) {
-      handleApiError(error as ApiError);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [getAuthData]);
-
-  useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
-
-  const handleApiError = (error: ApiError) => {
-    console.error("API Error:", error);
+  // Handler untuk error dari API
+  const handleServerError = useCallback((error: ApiError) => {
+    logErrorDetail('ProfileAPI', error);
+    
     const errorMsg = error.response?.data?.message || 
                     error.message || 
                     'Terjadi kesalahan. Silakan coba lagi nanti.';
                     
     showNotification('error', errorMsg);
     
+    // Redirect ke login jika token expired/invalid
     if (error.response?.status === 401) {
       localStorage.clear();
       navigate('/login');
     }
-  };
+  }, [navigate, showNotification]);
 
-  const showNotification = useCallback((type: 'success' | 'error', message: string) => {
-    setNotification({ type, message });
-    setTimeout(() => setNotification({ type: null, message: '' }), 3000);
-  }, []);
-
+  // Helper untuk format tanggal Indonesia
   const formatDate = useCallback((dateString: string | null) => {
     if (!dateString) return '-';
     try {
@@ -203,7 +191,47 @@ const Profile: React.FC = () => {
     }
   }, []);
 
-  const validateForm = useCallback((): boolean => {
+  // Ambil data user dari API
+  const fetchUserData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const { token, userId } = getUserAuthInfo();
+
+      const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const userData = response.data;
+      setProfile({
+        id: userData.id,
+        nama: userData.nama,
+        email: userData.email,
+        role: userData.role,
+        createdAt: userData.createdAt,
+        updatedAt: userData.updatedAt
+      });
+
+      // Set form data dengan data user
+      setFormData({
+        nama: userData.nama || '',
+        email: userData.email || '',
+        password: '',
+        confirmPassword: ''
+      });
+    } catch (error) {
+      handleServerError(error as ApiError);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getUserAuthInfo, handleServerError]);
+
+  // Load data user saat komponen dimount
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
+
+  // Validasi input form
+  const validateProfileInputs = useCallback((): boolean => {
     const errors = {
       nama: '',
       email: '',
@@ -213,11 +241,13 @@ const Profile: React.FC = () => {
     
     let isValid = true;
     
+    // Validasi nama
     if (editMode && formData.nama.trim() === '') {
       errors.nama = 'Nama tidak boleh kosong';
       isValid = false;
     }
     
+    // Validasi email
     if (editMode && formData.email.trim() === '') {
       errors.email = 'Email tidak boleh kosong';
       isValid = false;
@@ -229,6 +259,7 @@ const Profile: React.FC = () => {
       }
     }
     
+    // Validasi password jika diisi
     if (formData.password) {
       if (formData.password.length < 8) {
         errors.password = 'Password minimal 8 karakter';
@@ -245,67 +276,23 @@ const Profile: React.FC = () => {
     return isValid;
   }, [editMode, formData, profile.email]);
 
+  // Handler untuk perubahan input form
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-
-    try {
-      setIsSaving(true);
-      const { token, userId } = getAuthData();
-      
-
-      const updateData: ProfileUpdateData = {};
-      
-      if (formData.nama !== profile.nama) updateData.nama = formData.nama;
-      if (formData.email !== profile.email) updateData.email = formData.email;
-      if (formData.password) updateData.password = formData.password;
-
-      if (Object.keys(updateData).length === 0) {
-        setEditMode(false);
-        showNotification('success', 'Tidak ada perubahan yang perlu disimpan');
-        return;
-      }
-
-      const response = await axios.put(
-        `${API_BASE_URL}/users/${userId}`,
-        updateData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    
-      const updatedData = response.data.user || response.data;
-      setProfile(prev => ({
-        ...prev,
-        nama: updatedData.nama || prev.nama,
-        email: updatedData.email || prev.email,
-        updatedAt: updatedData.updatedAt || prev.updatedAt
-      }));
-      if (updatedData.nama) localStorage.setItem('userName', updatedData.nama);
-      if (updatedData.email) localStorage.setItem('userEmail', updatedData.email);
-
-      showNotification('success', response.data.message || 'Profil berhasil diperbarui!');
-      setEditMode(false);
-      setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
-    } catch (error) {
-      handleApiError(error as ApiError);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
+  // Handler untuk membatalkan edit
   const handleCancelEdit = useCallback(() => {
     setEditMode(false);
+    // Reset form data ke nilai awal
     setFormData({
       nama: profile.nama || '',
       email: profile.email || '',
       password: '',
       confirmPassword: ''
     });
+    // Reset error messages
     setFormErrors({
       nama: '',
       email: '',
@@ -314,6 +301,63 @@ const Profile: React.FC = () => {
     });
   }, [profile]);
 
+  // Handler untuk menyimpan perubahan profil
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateProfileInputs()) return;
+
+    try {
+      setIsSaving(true);
+      const { token, userId } = getUserAuthInfo();
+      
+      // Cek field mana yang berubah untuk di-update
+      const updateData: ProfileUpdateData = {};
+      
+      if (formData.nama !== profile.nama) updateData.nama = formData.nama;
+      if (formData.email !== profile.email) updateData.email = formData.email;
+      if (formData.password) updateData.password = formData.password;
+
+      // Jika tidak ada perubahan, tidak perlu hit API
+      if (Object.keys(updateData).length === 0) {
+        setEditMode(false);
+        showNotification('success', 'Tidak ada perubahan yang perlu disimpan');
+        return;
+      }
+
+      // Update profil ke API
+      const response = await axios.put(
+        `${API_BASE_URL}/users/${userId}`,
+        updateData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    
+      // Update state dengan data baru
+      const updatedData = response.data.user || response.data;
+      setProfile(prev => ({
+        ...prev,
+        nama: updatedData.nama || prev.nama,
+        email: updatedData.email || prev.email,
+        updatedAt: updatedData.updatedAt || prev.updatedAt
+      }));
+      
+      // Update data di localStorage
+      if (updatedData.nama) localStorage.setItem('userName', updatedData.nama);
+      if (updatedData.email) localStorage.setItem('userEmail', updatedData.email);
+
+      showNotification('success', response.data.message || 'Profil berhasil diperbarui!');
+      setEditMode(false);
+      
+      // Reset password fields
+      setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
+    } catch (error) {
+      handleServerError(error as ApiError);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Komponen untuk menampilkan notifikasi
   const Notification = useCallback(() => {
     if (!notification.type) return null;
     
@@ -339,8 +383,10 @@ const Profile: React.FC = () => {
     );
   }, [notification]);
 
+  // Render halaman profile
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] pt-24 pb-12 px-4">
+      {/* Tombol kembali ke beranda */}
       <div className="absolute top-4 left-4 z-20">
         <Button
           variant="secondary"
@@ -361,6 +407,7 @@ const Profile: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="relative">
+            {/* Efek glass blur background */}
             <div className="absolute -inset-4 bg-white/50 rounded-2xl blur-lg"></div>
             <div className="bg-white rounded-xl shadow-xl p-6 md:p-8 relative">
               {isLoading ? (
@@ -369,6 +416,7 @@ const Profile: React.FC = () => {
                 </div>
               ) : (
                 <>
+                  {/* Header profil */}
                   <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Profil Saya</h1>
                     {!editMode && (
@@ -384,6 +432,7 @@ const Profile: React.FC = () => {
                     )}
                   </div>
 
+                  {/* Avatar dan info utama */}
                   <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
                     <div className="w-24 h-24 bg-[#8B5CF6]/10 rounded-full flex items-center justify-center mb-4 md:mb-0 md:mr-6">
                       <FaUser className="text-[#8B5CF6] text-4xl" />
@@ -397,12 +446,14 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Mode view detail */}
                   {!editMode ? (
                     <div className="space-y-6">
                       <div className="border-t border-gray-100 pt-6">
                         <h3 className="text-lg font-bold text-gray-800 mb-4">Informasi Akun</h3>
                         
                         <div className="space-y-4">
+                          {/* Info nama */}
                           <div className="flex items-start">
                             <div className="w-10 h-10 bg-[#8B5CF6]/10 rounded-full flex items-center justify-center mr-4">
                               <FaUser className="text-[#8B5CF6]" />
@@ -413,6 +464,7 @@ const Profile: React.FC = () => {
                             </div>
                           </div>
                           
+                          {/* Info email */}
                           <div className="flex items-start">
                             <div className="w-10 h-10 bg-[#8B5CF6]/10 rounded-full flex items-center justify-center mr-4">
                               <FaEnvelope className="text-[#8B5CF6]" />
@@ -423,6 +475,7 @@ const Profile: React.FC = () => {
                             </div>
                           </div>
                           
+                          {/* Info password */}
                           <div className="flex items-start">
                             <div className="w-10 h-10 bg-[#8B5CF6]/10 rounded-full flex items-center justify-center mr-4">
                               <FaKey className="text-[#8B5CF6]" />
@@ -433,6 +486,7 @@ const Profile: React.FC = () => {
                             </div>
                           </div>
 
+                          {/* Info tambahan */}
                           <div className="pt-4 border-t border-gray-100">
                             <h4 className="font-medium text-gray-800 mb-3">Info Lainnya</h4>
                             
@@ -452,11 +506,13 @@ const Profile: React.FC = () => {
                       </div>
                     </div>
                   ) : (
+                    // Mode edit profile
                     <form onSubmit={handleSaveProfile} className="space-y-6">
                       <div className="border-t border-gray-100 pt-6">
                         <h3 className="text-lg font-bold text-gray-800 mb-4">Edit Informasi Akun</h3>
                         
                         <div className="space-y-4">
+                          {/* Input nama */}
                           <FormInput
                             key="name-input"
                             id="name"
@@ -469,6 +525,7 @@ const Profile: React.FC = () => {
                             icon={<FaUser className="text-gray-400" />}
                           />
                           
+                          {/* Input email */}
                           <FormInput
                             key="email-input"
                             id="email"
@@ -481,6 +538,7 @@ const Profile: React.FC = () => {
                             icon={<FaEnvelope className="text-gray-400" />}
                           />
                           
+                          {/* Section update password */}
                           <div className="pt-4 border-t border-gray-100">
                             <h4 className="font-medium text-gray-800 mb-3">Ubah Password</h4>
                             
@@ -515,6 +573,7 @@ const Profile: React.FC = () => {
                         </div>
                       </div>
 
+                      {/* Tombol aksi */}
                       <div className="flex space-x-3 pt-4">
                         <Button 
                           variant="primary" 

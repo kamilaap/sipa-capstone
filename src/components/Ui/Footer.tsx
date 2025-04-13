@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
     <footer className="bg-gradient-to-r from-purple-50 to-white border-t border-purple-100 py-8">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
-          {/* Left Section - Brand Info */}
+          {/* Info */}
           <div className="bg-white p-6 rounded-lg shadow-sm w-full md:w-auto">
             <h2 className="text-lg font-bold text-purple-700 mb-3 flex items-center">
               <div className="w-2 h-8 bg-purple-500 mr-2 rounded-full"></div>
@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Middle Section - Social Media */}
+          {/* Social Media */}
           <div className="flex flex-col items-center">
             <div className="mb-3 text-xs font-medium text-purple-600">
               Ikuti Kami
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Section - Copyright */}
+          {/* Copyright */}
           <div className="bg-white p-4 rounded-lg shadow-sm text-center md:text-right w-full md:w-auto">
             <div className="inline-block border-b-2 border-purple-100 pb-2 mb-2">
               <Link
