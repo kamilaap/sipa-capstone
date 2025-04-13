@@ -81,9 +81,9 @@ const Pelayanan = () => {
     
     try {
       // ini api yang sebenarnya
-      // const response = await axios.post('https://sipa-chat-production.up.railway.app/ask', {
+      const response = await axios.post('https://sipa-chat-production.up.railway.app/ask-model', {
       //ini api mode dev, cek di vite.config.ts
-      const response = await axios.post('/ask', {
+      // const response = await axios.post('/ask', {
         question: userInput
       }, {
         headers: {
