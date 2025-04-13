@@ -82,8 +82,6 @@ const Pelayanan = () => {
     try {
       // ini api yang sebenarnya
       const response = await axios.post('https://api-sipa-capstone-production.up.railway.app/ask-model', {
-      //ini api mode dev, cek di vite.config.ts
-      // const response = await axios.post('/ask', {
         question: userInput
       }, {
         headers: {

@@ -153,12 +153,7 @@ const ArtikelTerbaru: React.FC = () => {
                       </motion.svg>
                     </button>
 
-                    <Link
-                      to={`/artikel/${artikel.id}`}
-                      className="text-sm text-gray-500 hover:text-purple-600 transition-colors"
-                    >
-                      Detail
-                    </Link>
+                 
                   </div>
                 </div>
               </motion.div>

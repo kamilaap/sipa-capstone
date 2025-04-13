@@ -137,8 +137,8 @@ const Navbar: React.FC = () => {
   // Handle klik section artikel (scroll ke bawah kalo di homepage)
   const klikSectionArtikel = (): void => {
     if (cekHomePage()) {
-      // Scroll otomatis kalo di home page
-      const sectionArtikel = document.getElementById('articles-section');
+      // Scroll otomatis kalo di home page - Updated to use "bagian-artikel" ID
+      const sectionArtikel = document.getElementById('bagian-artikel');
       if (sectionArtikel) {
         sectionArtikel.scrollIntoView({ behavior: 'smooth' });
       }
@@ -295,13 +295,26 @@ const Navbar: React.FC = () => {
             >
               Pengaduan
             </Link>
-            <Link
-              to={cekHomePage() ? '#articles-section' : '/artikel'}
-              onClick={klikSectionArtikel}
-              className="text-gray-700 font-medium hover:text-[#8B5CF6] transition-colors relative group"
-            >
-              Artikel
-            </Link>
+            {/* Updated to handle hash navigation differently */}
+            {cekHomePage() ? (
+              <a
+                href="#bagian-artikel"
+                onClick={(e) => {
+                  e.preventDefault();
+                  klikSectionArtikel();
+                }}
+                className="text-gray-700 font-medium hover:text-[#8B5CF6] transition-colors relative group"
+              >
+                Artikel
+              </a>
+            ) : (
+              <Link
+                to="/artikel"
+                className="text-gray-700 font-medium hover:text-[#8B5CF6] transition-colors relative group"
+              >
+                Artikel
+              </Link>
+            )}
           </div>
 
           {/* Tombol Login/Profile */}
@@ -434,12 +447,24 @@ const Navbar: React.FC = () => {
                   icon={<FaNewspaper className="text-[#8B5CF6] w-5 h-5" />}
                   label="Pengaduan"
                 />
-                <ItemNavMobile
-                  to={cekHomePage() ? '#articles-section' : '/artikel'}
-                  icon={<FaNewspaper className="text-[#8B5CF6] w-5 h-5" />}
-                  label="Artikel"
-                  onClick={klikSectionArtikel}
-                />
+                {/* Updated mobile nav for article section */}
+                {cekHomePage() ? (
+                  <div 
+                    className="flex items-center space-x-3 p-3 rounded-lg hover:bg-[#8B5CF6]/10 transition-colors cursor-pointer"
+                    onClick={() => {
+                      klikSectionArtikel();
+                    }}
+                  >
+                    <FaNewspaper className="text-[#8B5CF6] w-5 h-5" />
+                    <span className="text-gray-800 font-medium">Artikel</span>
+                  </div>
+                ) : (
+                  <ItemNavMobile
+                    to="/artikel"
+                    icon={<FaNewspaper className="text-[#8B5CF6] w-5 h-5" />}
+                    label="Artikel"
+                  />
+                )}
                 <ItemNavMobile
                   to="/status-pengaduan"
                   icon={<FaCog className="text-[#8B5CF6] w-5 h-5" />}
