@@ -7,7 +7,7 @@ import Button from '../Ui/Button';
 const Privasi: React.FC = () => {
   const navigate = useNavigate();
   // Tambah variabel personal
-  const tanggalUpdate = "13 Maret 2025";
+  const tanggalUpdate = '13 Maret 2025';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -90,9 +90,9 @@ const Privasi: React.FC = () => {
             {/* Isi kebijakan privasi */}
             <div className="prose max-w-none">
               <p className="text-gray-700">
-                Privasi Anda sangat penting bagi kami. Kebijakan ini
-                menjelaskan gimana cara kami mengumpulkan, menggunakan,
-                dan melindungi data pribadi Anda.
+                Privasi Anda sangat penting bagi kami. Kebijakan ini menjelaskan
+                gimana cara kami mengumpulkan, menggunakan, dan melindungi data
+                pribadi Anda.
               </p>
 
               <h2 className="text-xl font-semibold text-gray-800 mt-6">
@@ -104,23 +104,20 @@ const Privasi: React.FC = () => {
               <ul className="list-disc pl-6 mt-2 text-gray-700">
                 <li>Data identitas (nama, email, nomor HP)</li>
                 <li>Informasi profil (foto, biodata, preferensi)</li>
-                <li>
-                  Info teknis (alamat IP, browser, info gadget)
-                </li>
-                <li>
-                  Data penggunaan (waktu akses, fitur yang dipakai)
-                </li>
+                <li>Info teknis (alamat IP, browser, info gadget)</li>
+                <li>Data penggunaan (waktu akses, fitur yang dipakai)</li>
                 <li>Info lokasi (kalau diizinkan sama gadget kamu)</li>
               </ul>
 
               {/* Sisanya tetap sama dengan beberapa perubahan bahasa */}
-              
+
               {/* Bagian kontak sedikit dirubah */}
               <h2 className="text-xl font-semibold text-gray-800 mt-6">
                 10. Kontak Kami
               </h2>
               <p className="text-gray-700">
-                Punya pertanyaan tentang kebijakan ini? Langsung aja hubungi kita:
+                Punya pertanyaan tentang kebijakan ini? Langsung aja hubungi
+                kita:
               </p>
               <div className="bg-purple-50 p-4 rounded-lg mt-2">
                 <p className="text-gray-800">Email: sipa@gmail.com</p>

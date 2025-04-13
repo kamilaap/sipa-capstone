@@ -25,8 +25,18 @@ interface ResponseData {
 
 // Array bulan dalam bahasa Indonesia buat fallback
 const namaBulan = [
-  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  'Januari',
+  'Februari',
+  'Maret',
+  'April',
+  'Mei',
+  'Juni',
+  'Juli',
+  'Agustus',
+  'September',
+  'Oktober',
+  'November',
+  'Desember',
 ];
 
 const FormPengaduan: React.FC = () => {
@@ -47,7 +57,7 @@ const FormPengaduan: React.FC = () => {
         month: 'long',
         year: 'numeric',
       });
-    } catch  {
+    } catch {
       // Fallback kalau browser ngga support locale id-ID
       // Using underscore (_) instead of 'e' as unused parameter
       return `${skrg.getDate()} ${namaBulan[skrg.getMonth()]} ${skrg.getFullYear()}`;
@@ -99,7 +109,7 @@ const FormPengaduan: React.FC = () => {
     if (tahapForm < 3) {
       if (!cekDataLengkap()) {
         // Tampilkan pesan kesalahan
-        setPesanError("Data belum lengkap, mohon dilengkapi dulu ya!");
+        setPesanError('Data belum lengkap, mohon dilengkapi dulu ya!');
         return;
       }
       setTahapForm((prev) => prev + 1);
@@ -148,16 +158,16 @@ const FormPengaduan: React.FC = () => {
 
       // Pesan error custom
       const tipeError = {
-        network: "Koneksi internet lagi gangguan nih, coba lagi nanti ya!",
-        server: "Server lagi sibuk, tunggu bentar ya...",
-        validasi: "Ada data yang kurang tepat, cek lagi ya!",
-        lainnya: "Hmm ada yang aneh. Coba refresh dulu deh!",
+        network: 'Koneksi internet lagi gangguan nih, coba lagi nanti ya!',
+        server: 'Server lagi sibuk, tunggu bentar ya...',
+        validasi: 'Ada data yang kurang tepat, cek lagi ya!',
+        lainnya: 'Hmm ada yang aneh. Coba refresh dulu deh!',
       };
 
       if (axios.isAxiosError(error)) {
         if (error.response) {
           console.log('Error data:', error.response.data);
-          
+
           if (error.response.status === 400) {
             message = tipeError.validasi;
           } else if (error.response.status === 500) {
@@ -242,8 +252,8 @@ const FormPengaduan: React.FC = () => {
           Laporan Berhasil Dibuat!
         </h2>
         <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          Laporan kamu sudah kami terima dan akan segera ditindaklanjuti.
-          Simpan kode di bawah ini untuk cek status kasus kamu nanti ya.
+          Laporan kamu sudah kami terima dan akan segera ditindaklanjuti. Simpan
+          kode di bawah ini untuk cek status kasus kamu nanti ya.
         </p>
 
         <div className="mb-8">
@@ -454,7 +464,9 @@ const FormPengaduan: React.FC = () => {
 
           <div>
             <h4 className="text-sm font-medium text-gray-500">UMUR</h4>
-            <p className="font-medium text-gray-800">{dataLaporan.umur} tahun</p>
+            <p className="font-medium text-gray-800">
+              {dataLaporan.umur} tahun
+            </p>
           </div>
 
           <div>
@@ -479,7 +491,8 @@ const FormPengaduan: React.FC = () => {
 
         <div className="bg-purple-50 px-6 py-4 border-t border-purple-100">
           <p className="text-sm text-purple-700">
-            Dengan kirim laporan ini, kamu menyatakan bahwa info yang diberikan benar dan bisa dipertanggungjawabkan.
+            Dengan kirim laporan ini, kamu menyatakan bahwa info yang diberikan
+            benar dan bisa dipertanggungjawabkan.
           </p>
         </div>
       </div>

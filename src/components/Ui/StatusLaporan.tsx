@@ -5,13 +5,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 const StatusLaporan: React.FC = () => {
   // State untuk modal edit
   const [isDialogTerbuka, setDialogTerbuka] = useState(false);
-  
+
   // State untuk warna background status
   const [warnaBgStatus, setWarnaBgStatus] = useState('bg-white');
-  
+
   // State untuk status laporan (di form utama)
   const [statusLaporan, setStatusLaporan] = useState('Pending');
-  
+
   // Status yang sedang diedit di modal
   const [statusDalamModal, setStatusDalamModal] = useState('Pending');
 
@@ -36,15 +36,20 @@ const StatusLaporan: React.FC = () => {
   };
 
   // Mengubah warna background berdasarkan status
-  const ubahWarnaBerdasarkanStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const ubahWarnaBerdasarkanStatus = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const pilihanStatus = event.target.value;
 
     // Warna yang aku pilih sendiri biar bagus untuk tiap status
     let warnaBaruBg = 'bg-white';
-    if (pilihanStatus === 'Pending') warnaBaruBg = 'bg-blue-300';      // Biru = masih menunggu
-    else if (pilihanStatus === 'Process') warnaBaruBg = 'bg-yellow-300'; // Kuning = sedang diproses
-    else if (pilihanStatus === 'Reject') warnaBaruBg = 'bg-red-300';     // Merah = ditolak
-    else if (pilihanStatus === 'Accept') warnaBaruBg = 'bg-green-300';   // Hijau = diterima
+    if (pilihanStatus === 'Pending')
+      warnaBaruBg = 'bg-blue-300'; // Biru = masih menunggu
+    else if (pilihanStatus === 'Process')
+      warnaBaruBg = 'bg-yellow-300'; // Kuning = sedang diproses
+    else if (pilihanStatus === 'Reject')
+      warnaBaruBg = 'bg-red-300'; // Merah = ditolak
+    else if (pilihanStatus === 'Accept') warnaBaruBg = 'bg-green-300'; // Hijau = diterima
 
     setWarnaBgStatus(warnaBaruBg);
   };
@@ -135,10 +140,10 @@ const StatusLaporan: React.FC = () => {
                   key={i}
                   className="absolute bg-purple-400 opacity-50 rounded-full"
                   style={{
-                    width: `${30 + (i * 10)}px`, // Ukuran yang lebih konsisten
-                    height: `${30 + (i * 10)}px`,
-                    top: `${20 + (i * 15)}%`, // Posisi yang lebih terstruktur
-                    left: `${15 + (i * 17)}%`,
+                    width: `${30 + i * 10}px`, // Ukuran yang lebih konsisten
+                    height: `${30 + i * 10}px`,
+                    top: `${20 + i * 15}%`, // Posisi yang lebih terstruktur
+                    left: `${15 + i * 17}%`,
                   }}
                   animate={{
                     y: [0, -20, 0], // Animasi sederhana naik-turun
@@ -152,7 +157,7 @@ const StatusLaporan: React.FC = () => {
                 />
               ))}
             </div>
-            
+
             {/* Modal content */}
             <motion.div
               className="bg-white p-6 m-10 shadow-lg rounded-md relative z-10"
@@ -162,9 +167,7 @@ const StatusLaporan: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-xl font-semibold mb-4">
-                Konfirmasi Edit
-              </h3>
+              <h3 className="text-xl font-semibold mb-4">Konfirmasi Edit</h3>
               <form className="grid">
                 <div>
                   <label className="block text-gray-800">Kode</label>
@@ -193,10 +196,10 @@ const StatusLaporan: React.FC = () => {
 
                 <div>
                   <label className="block text-gray-800">Keterangan</label>
-                  <textarea 
+                  <textarea
                     placeholder="Tambahkan keterangan tentang perubahan status..."
-                    className="h-32 w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400">
-                  </textarea>
+                    className="h-32 w-full p-2 focus:outline-none border border-gray-300 rounded focus:ring-purple-300 focus:border-purple-400"
+                  ></textarea>
                 </div>
               </form>
               <div className="flex justify-end mt-4">

@@ -55,9 +55,9 @@ const UserManajemen: React.FC = () => {
       showNotification('User berhasil dihapus', 'success');
     } catch (error) {
       const apiError = error as ApiError;
-      const errorMsg = apiError.response?.data ? 
-        String(apiError.response.data) : 
-        apiError.message || 'Terjadi kesalahan';
+      const errorMsg = apiError.response?.data
+        ? String(apiError.response.data)
+        : apiError.message || 'Terjadi kesalahan';
       console.log('Error detail:', errorMsg);
       showNotification('Gagal menghapus user', 'error');
     }
@@ -65,22 +65,28 @@ const UserManajemen: React.FC = () => {
 
   const handleEditRole = async (user: AkunUser) => {
     try {
-      await axios.put(`https://api-sipa-capstone-production.up.railway.app/edit-role/${user.id}`, {
-        role: user.role,
-      });
+      await axios.put(
+        `https://api-sipa-capstone-production.up.railway.app/edit-role/${user.id}`,
+        {
+          role: user.role,
+        }
+      );
       setEditRoleUser(null);
       fetchUsers();
-      showNotification(`Role user berhasil diubah menjadi ${user.role}`, 'success');
+      showNotification(
+        `Role user berhasil diubah menjadi ${user.role}`,
+        'success'
+      );
     } catch (error) {
       const apiError = error as ApiError;
-      const errorMsg = apiError.response?.data ? 
-        String(apiError.response.data) : 
-        apiError.message || 'Terjadi kesalahan';
+      const errorMsg = apiError.response?.data
+        ? String(apiError.response.data)
+        : apiError.message || 'Terjadi kesalahan';
       console.log('Error detail:', errorMsg);
       showNotification('Gagal mengubah role user', 'error');
     }
   };
-  
+
   const showNotification = (message: string, type: 'success' | 'error') => {
     setNotification({ message, type, show: true });
     setTimeout(() => {
@@ -126,9 +132,11 @@ const UserManajemen: React.FC = () => {
       <div className="flex-1 p-4 md:p-8 lg:p-12 overflow-auto w-full">
         {/* Notification */}
         {notification.show && (
-          <div 
+          <div
             className={`fixed top-4 right-4 flex items-center p-4 rounded-lg shadow-lg z-50 ${
-              notification.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              notification.type === 'success'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-100 text-red-800'
             }`}
           >
             {notification.type === 'success' ? (
@@ -161,11 +169,13 @@ const UserManajemen: React.FC = () => {
                   <td className="py-3 px-4">{user.nama}</td>
                   <td className="py-3 px-4">{user.email}</td>
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      user.role === 'admin' 
-                        ? 'bg-purple-100 text-purple-800' 
-                        : 'bg-blue-100 text-blue-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        user.role === 'admin'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-blue-100 text-blue-800'
+                      }`}
+                    >
                       {user.role || 'tamu'}
                     </span>
                   </td>
@@ -244,7 +254,9 @@ const UserManajemen: React.FC = () => {
                           name="role"
                           value="admin"
                           checked={editRoleUser.role === 'admin'}
-                          onChange={() => setEditRoleUser({...editRoleUser, role: 'admin'})}
+                          onChange={() =>
+                            setEditRoleUser({ ...editRoleUser, role: 'admin' })
+                          }
                           className="mr-2"
                         />
                         <span>Admin</span>
@@ -254,8 +266,12 @@ const UserManajemen: React.FC = () => {
                           type="radio"
                           name="role"
                           value="tamu"
-                          checked={editRoleUser.role === 'tamu' || !editRoleUser.role}
-                          onChange={() => setEditRoleUser({...editRoleUser, role: 'tamu'})}
+                          checked={
+                            editRoleUser.role === 'tamu' || !editRoleUser.role
+                          }
+                          onChange={() =>
+                            setEditRoleUser({ ...editRoleUser, role: 'tamu' })
+                          }
                           className="mr-2"
                         />
                         <span>Tamu</span>

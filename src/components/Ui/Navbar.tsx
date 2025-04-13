@@ -126,7 +126,8 @@ const Navbar: React.FC = () => {
     };
 
     document.addEventListener('mousedown', tutupDropdownKaloClickDiluar);
-    return () => document.removeEventListener('mousedown', tutupDropdownKaloClickDiluar);
+    return () =>
+      document.removeEventListener('mousedown', tutupDropdownKaloClickDiluar);
   }, []);
 
   // Cek apakah lagi di homepage
@@ -248,9 +249,7 @@ const Navbar: React.FC = () => {
                     <div className="font-medium text-gray-800 text-sm">
                       {kontak.nama}
                     </div>
-                    <div className="text-xs text-gray-600">
-                      {kontak.nomor}
-                    </div>
+                    <div className="text-xs text-gray-600">{kontak.nomor}</div>
                   </div>
                   <div className="w-6 h-6 flex items-center justify-center bg-green-100 rounded-full hover:bg-green-200 transition-colors">
                     <FaPhoneAlt className="text-green-600 text-xs" />
@@ -449,7 +448,7 @@ const Navbar: React.FC = () => {
                 />
                 {/* Updated mobile nav for article section */}
                 {cekHomePage() ? (
-                  <div 
+                  <div
                     className="flex items-center space-x-3 p-3 rounded-lg hover:bg-[#8B5CF6]/10 transition-colors cursor-pointer"
                     onClick={() => {
                       klikSectionArtikel();

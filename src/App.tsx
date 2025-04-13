@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/Home';
 import LearnMore from './pages/PelajariLebihLanjut';
 import Login from './pages/Login';
-import ForgotPassword from './pages/LupaPassword';
+import LupaPassword from './pages/LupaPassword';
 import Register from './pages/Registrasi';
 import StatusPengaduan from './pages/StatusPengaduan';
 import TeamPage from './pages/TimCapstone';
@@ -11,7 +11,7 @@ import FormPengaduan from './pages/FormPengaduan';
 import Terms from './components/Home/Terms';
 import Privasi from './components/Home/Privacy';
 import AnimatedCursor from './components/Ui/Animated';
-import Profile from './components/Home/Profile'
+import Profile from './components/Home/Profile';
 import ArticleListPage from './components/Home/ArticlesListPage';
 import PelayananPage from './pages/Pelayanan';
 import HalamanBantuan from './pages/Bantuan';
@@ -31,18 +31,16 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/learn-more" element={<LearnMore />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/forgot-password" element={<LupaPassword />} />
           <Route path="/pengaduan" element={<FormPengaduan />} />
           <Route path="/register" element={<Register />} />
           <Route path="/status-pengaduan" element={<StatusPengaduan />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privasi />} />
-
           <Route path="/artikel" element={<ArticleListPage />} />
           <Route path="/pelayanan" element={<PelayananPage />} />
           <Route path="/bantuan" element={<HalamanBantuan />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/laporan-korban" element={<LaporanKorban />} />
           <Route path="/tingkat-kekerasan" element={<TingkatKekerasan />} />

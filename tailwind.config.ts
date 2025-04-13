@@ -11,7 +11,8 @@ const config: Config = {
         poppins: ['Poppins', 'sans-serif'],
       },
       backgroundImage: {
-        'gradient-moving': 'linear-gradient(-45deg, #8b5cf6, #7c3aed, #c084fc,#e9d5ff)',
+        'gradient-moving':
+          'linear-gradient(-45deg, #8b5cf6, #7c3aed, #c084fc,#e9d5ff)',
       },
       backgroundSize: {
         '400': '400% 400%',
@@ -25,7 +26,7 @@ const config: Config = {
           '50%': { backgroundPosition: '100% 50%' },
           '100%': { backgroundPosition: '0% 50%' },
         },
-      }
+      },
     },
   },
   plugins: [],

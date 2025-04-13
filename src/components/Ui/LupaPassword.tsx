@@ -41,7 +41,7 @@ const LupaPassword: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Client-side validation
     if (!isValidEmail(email)) {
       setErrorMessage('Format email tidak valid. Mohon periksa kembali.');
@@ -91,7 +91,7 @@ const LupaPassword: React.FC = () => {
         // Check the response status and data
         const statusCode = error.response?.status;
         const responseData = error.response?.data;
-        
+
         // Handle specific error cases
         if (statusCode === 404) {
           setErrorMessage('Email tidak terdaftar. Mohon periksa kembali.');
@@ -99,17 +99,21 @@ const LupaPassword: React.FC = () => {
           if (responseData?.message?.includes('password')) {
             setErrorMessage('Kata sandi harus minimal 8 karakter.');
           } else {
-            setErrorMessage(responseData?.message || 'Input tidak valid. Mohon periksa kembali.');
+            setErrorMessage(
+              responseData?.message ||
+                'Input tidak valid. Mohon periksa kembali.'
+            );
           }
         } else {
           // Handle other error messages from the server
-          const errorMsg = responseData?.message || error.message || 'Gagal mereset password';
+          const errorMsg =
+            responseData?.message || error.message || 'Gagal mereset password';
           setErrorMessage(errorMsg);
         }
       } else {
         setErrorMessage('Terjadi kesalahan tidak terduga');
       }
-      
+
       setShowErrorPopup(true);
     } finally {
       setIsLoading(false);

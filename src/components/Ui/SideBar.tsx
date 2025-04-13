@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FileText, BarChart2, LogOut, LayoutDashboard, UserCheck, Home } from 'lucide-react';
+import {
+  FileText,
+  BarChart2,
+  LogOut,
+  LayoutDashboard,
+  UserCheck,
+  Home,
+} from 'lucide-react';
 
 interface User {
   id: number;
@@ -32,18 +39,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
     // Coba ambil info user dari beberapa tempat yang mungkin
     const userDataString = localStorage.getItem('userData');
     const userInfoString = localStorage.getItem('userInfo');
-    
+
     if (userDataString) {
       // Prioritas 1: Cek userData (seperti di komponen Pelayanan)
       try {
         const userData = JSON.parse(userDataString);
         setEmailAdmin(userData.email || '');
-        
+
         // Ambil nama dari email (bagian sebelum @)
         if (userData.email && userData.email.includes('@')) {
           const bagianNama = userData.email.split('@')[0];
           // Huruf pertama kapital
-          const namaKapital = bagianNama.charAt(0).toUpperCase() + bagianNama.slice(1);
+          const namaKapital =
+            bagianNama.charAt(0).toUpperCase() + bagianNama.slice(1);
           setNamaAdmin(namaKapital);
         } else if (userData.name) {
           // Kalau ada field nama langsung
@@ -57,12 +65,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
       try {
         const user: User = JSON.parse(userInfoString);
         setEmailAdmin(user.email || '');
-        
+
         // Ambil nama dari email (bagian sebelum @)
         if (user.email && user.email.includes('@')) {
           const bagianNama = user.email.split('@')[0];
           // Huruf pertama kapital
-          const namaKapital = bagianNama.charAt(0).toUpperCase() + bagianNama.slice(1);
+          const namaKapital =
+            bagianNama.charAt(0).toUpperCase() + bagianNama.slice(1);
           setNamaAdmin(namaKapital);
         }
       } catch (error) {
@@ -75,7 +84,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
         setEmailAdmin(email);
         if (email.includes('@')) {
           const bagianNama = email.split('@')[0];
-          const namaKapital = bagianNama.charAt(0).toUpperCase() + bagianNama.slice(1);
+          const namaKapital =
+            bagianNama.charAt(0).toUpperCase() + bagianNama.slice(1);
           setNamaAdmin(namaKapital);
         }
       }
@@ -92,20 +102,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
     if (nonaktif) {
       // Tampilkan pesan notifikasi alih-alih navigasi
       setTampilPesan(true);
-      
+
       // Otomatis tutup pesan setelah 3 detik
       setTimeout(() => {
         setTampilPesan(false);
       }, 3000);
-      
+
       return;
     }
-    
+
     navigate(path);
 
     // Panggil onMenuClick kalau ada
     if (onMenuClick) {
-      const menu = path.substring(1) || 'dashboard'; 
+      const menu = path.substring(1) || 'dashboard';
       onMenuClick(menu);
     }
 
@@ -129,31 +139,31 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
       icon: <Home className="mr-3" size={20} />,
       label: 'Beranda',
       path: '/',
-      disabled: false
+      disabled: false,
     },
     {
       icon: <LayoutDashboard className="mr-3" size={20} />,
       label: 'Dashboard',
       path: '/dashboard',
-      disabled: false
+      disabled: false,
     },
     {
       icon: <FileText className="mr-3" size={20} />,
       label: 'Laporan Korban',
       path: '/laporan-korban',
-      disabled: false
+      disabled: false,
     },
     {
       icon: <BarChart2 className="mr-3" size={20} />,
       label: 'Laporan Tingkat Kekerasan',
       path: '/tingkat-kekerasan',
-      disabled: true // Fitur masih coming soon
+      disabled: true, // Fitur masih coming soon
     },
     {
       icon: <UserCheck className="mr-3" size={20} />,
       label: 'Manajemen Akun User',
       path: '/manajemen-user',
-      disabled: false
+      disabled: false,
     },
   ];
 
@@ -183,11 +193,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
       {/* Popup Notifikasi Fitur */}
       {tampilPesan && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="absolute inset-0 bg-black opacity-50" onClick={() => setTampilPesan(false)}></div>
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={() => setTampilPesan(false)}
+          ></div>
           <div className="bg-white rounded-lg p-6 shadow-xl z-10 max-w-md mx-4">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Fitur Dalam Pengembangan</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
+              Fitur Dalam Pengembangan
+            </h3>
             <p className="text-gray-600 mb-6">
-              Fitur "Laporan Tingkat Kekerasan" akan dikembangkan di masa depan. Silakan cek kembali nanti.
+              Fitur "Laporan Tingkat Kekerasan" akan dikembangkan di masa depan.
+              Silakan cek kembali nanti.
             </p>
             <button
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 w-full"
@@ -241,7 +257,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
                 {item.icon}
                 {item.label}
                 {item.disabled && (
-                  <span className="ml-2 text-xs bg-yellow-500 text-black px-1 rounded">Segera</span>
+                  <span className="ml-2 text-xs bg-yellow-500 text-black px-1 rounded">
+                    Segera
+                  </span>
                 )}
               </button>
             ))}

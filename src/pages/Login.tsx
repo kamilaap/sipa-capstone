@@ -28,13 +28,13 @@ const Login: React.FC = () => {
   const [ingatSaya, setIngatSaya] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tampilPassword, setTampilPassword] = useState(false);
-  
+
   // State untuk validasi
   const [errors, setErrors] = useState({
     email: '',
     password: '',
   });
-  
+
   // State untuk popup notifikasi
   const [tampilPopupSukses, setTampilPopupSukses] = useState(false);
   const [tampilPopupError, setTampilPopupError] = useState(false);
@@ -74,11 +74,11 @@ const Login: React.FC = () => {
   // Fungsi untuk memproses login
   const prosesLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsLoading(true);
     setTampilPopupError(false);
 
@@ -99,7 +99,7 @@ const Login: React.FC = () => {
           role: data.user.role || 'user',
           token: data.token,
         };
-        
+
         // Store token and role in localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('role', userData.role);
@@ -107,9 +107,9 @@ const Login: React.FC = () => {
         if (data.user.id) {
           localStorage.setItem('userId', data.user.id.toString());
         }
-        
+
         localStorage.setItem('userData', JSON.stringify(userData));
-        
+
         // Tampilkan popup sukses
         setTampilPopupSukses(true);
 
@@ -128,16 +128,17 @@ const Login: React.FC = () => {
     } catch (error) {
       // Handle berbagai jenis error
       let errorMessage = 'Terjadi kesalahan saat login';
-      
+
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<LoginResponse>;
-        
+
         // Handle error response dari server
         if (axiosError.response) {
-          errorMessage = axiosError.response.data?.message || 
-                         (axiosError.response.status === 401 ? 
-                          'Email atau password salah' : 
-                          'Terjadi kesalahan pada server');
+          errorMessage =
+            axiosError.response.data?.message ||
+            (axiosError.response.status === 401
+              ? 'Email atau password salah'
+              : 'Terjadi kesalahan pada server');
         } else if (axiosError.request) {
           errorMessage = 'Tidak ada respon dari server';
         } else {
@@ -146,7 +147,7 @@ const Login: React.FC = () => {
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
-      
+
       setPesanError(errorMessage);
       setTampilPopupError(true);
     } finally {
@@ -247,7 +248,7 @@ const Login: React.FC = () => {
           Kembali ke Beranda
         </Button>
       </div>
-      
+
       {/* Form Login */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -313,13 +314,15 @@ const Login: React.FC = () => {
                       value={email}
                       onChange={(e) => {
                         setEmail(e.target.value);
-                        setErrors({...errors, email: ''});
+                        setErrors({ ...errors, email: '' });
                       }}
                       className={`appearance-none block w-full px-3 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors`}
                       placeholder="email@gmail.com"
                     />
                     {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.email}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -341,7 +344,7 @@ const Login: React.FC = () => {
                       value={password}
                       onChange={(e) => {
                         setPassword(e.target.value);
-                        setErrors({...errors, password: ''});
+                        setErrors({ ...errors, password: '' });
                       }}
                       className={`appearance-none block w-full px-3 py-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#8B5CF6] focus:border-[#8B5CF6] transition-colors pr-10`}
                       placeholder="••••••••"
@@ -391,7 +394,9 @@ const Login: React.FC = () => {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.password}
+                    </p>
                   )}
                 </div>
               </div>

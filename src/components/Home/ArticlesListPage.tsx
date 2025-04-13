@@ -66,15 +66,23 @@ const ArticleListPage: React.FC = () => {
     indeksArtikelPertama,
     indeksArtikelTerakhir
   );
-  const totalHalaman = Math.ceil(artikelHasilPencarian.length / jumlahArtikelPerHalaman);
+  const totalHalaman = Math.ceil(
+    artikelHasilPencarian.length / jumlahArtikelPerHalaman
+  );
 
   // Buat nomor halaman untuk pagination
   const nomorHalaman = [];
   const maksButtonHalaman = 5;
 
   // Logika untuk menentukan halaman mana yang ditampilkan
-  let halamanMulai = Math.max(1, halamanAktif - Math.floor(maksButtonHalaman / 2));
-  const halamanAkhir = Math.min(totalHalaman, halamanMulai + maksButtonHalaman - 1);
+  let halamanMulai = Math.max(
+    1,
+    halamanAktif - Math.floor(maksButtonHalaman / 2)
+  );
+  const halamanAkhir = Math.min(
+    totalHalaman,
+    halamanMulai + maksButtonHalaman - 1
+  );
 
   if (halamanAkhir - halamanMulai + 1 < maksButtonHalaman) {
     halamanMulai = Math.max(1, halamanAkhir - maksButtonHalaman + 1);
@@ -247,7 +255,9 @@ const ArticleListPage: React.FC = () => {
                       ? 'Sembunyikan'
                       : 'Baca selengkapnya'}
                     <motion.svg
-                      animate={{ rotate: artikelTerbuka === artikel.id ? 180 : 0 }}
+                      animate={{
+                        rotate: artikelTerbuka === artikel.id ? 180 : 0,
+                      }}
                       transition={{ duration: 0.3 }}
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4 ml-1"

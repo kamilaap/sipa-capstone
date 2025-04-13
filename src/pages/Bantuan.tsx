@@ -78,11 +78,12 @@ const HalamanBantuan: React.FC = () => {
     },
     {
       question: 'Gimana cara melacak pengaduan yang sudah saya buat?', // pertanyaan dengan bahasa lebih informal
-      answer: 
+      answer:
         'Kamu bisa melacak pengaduan dengan memasukkan nomor ID pengaduan di halaman "Lacak Pengaduan" atau login ke akun kamu untuk melihat semua pengaduan yang pernah dibuat beserta statusnya.',
     },
     {
-      question: 'Kasus pengaduan tentang kerusakan infrastruktur jalan desa ditangani siapa?', // pertanyaan spesifik
+      question:
+        'Kasus pengaduan tentang kerusakan infrastruktur jalan desa ditangani siapa?', // pertanyaan spesifik
       answer:
         'Pengaduan terkait infrastruktur jalan desa akan diteruskan ke Dinas Pekerjaan Umum di tingkat kabupaten/kota dan juga ke kantor kecamatan terkait. Tim kami akan berkoordinasi dengan perangkat desa untuk memastikan tindak lanjut yang tepat.',
     },

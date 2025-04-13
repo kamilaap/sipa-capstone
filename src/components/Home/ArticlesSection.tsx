@@ -152,8 +152,6 @@ const ArtikelTerbaru: React.FC = () => {
                         />
                       </motion.svg>
                     </button>
-
-                 
                   </div>
                 </div>
               </motion.div>

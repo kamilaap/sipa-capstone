@@ -45,14 +45,19 @@ const LaporanKorban: React.FC = () => {
   const navigate = useNavigate();
   // State untuk daftar pengaduan
   const [daftarPengaduan, setPengaduanList] = useState<Pengaduan[]>([]);
-  const [pengaduanYangDipilih, setSelectedPengaduan] = useState<Pengaduan | null>(null);
-  const [detailPengaduan, setDetailPengaduan] = useState<Pengaduan | null>(null);
+  const [pengaduanYangDipilih, setSelectedPengaduan] =
+    useState<Pengaduan | null>(null);
+  const [detailPengaduan, setDetailPengaduan] = useState<Pengaduan | null>(
+    null
+  );
 
   // State untuk modal dan notifikasi
   const [modalStatusTerbuka, setIsStatusModalOpen] = useState(false);
   const [statusYangDipilih, setSelectedStatus] = useState<string | null>(null);
   const [catatanKeterangan, setKeterangan] = useState('');
-  const [statusModal, setModalStatus] = useState<'success' | 'error' | null>(null);
+  const [statusModal, setModalStatus] = useState<'success' | 'error' | null>(
+    null
+  );
   const [pesanError, setErrorMessage] = useState('');
 
   // State untuk pagination
@@ -182,7 +187,10 @@ const LaporanKorban: React.FC = () => {
   // Kalkulasi untuk pagination
   const indexItemTerakhir = halamanSaatIni * jumlahItemPerHalaman;
   const indexItemPertama = indexItemTerakhir - jumlahItemPerHalaman;
-  const itemHalamanIni = daftarPengaduan.slice(indexItemPertama, indexItemTerakhir);
+  const itemHalamanIni = daftarPengaduan.slice(
+    indexItemPertama,
+    indexItemTerakhir
+  );
   const totalHalaman = Math.ceil(daftarPengaduan.length / jumlahItemPerHalaman);
 
   // Handler navigasi pagination
@@ -207,7 +215,10 @@ const LaporanKorban: React.FC = () => {
     const nomorHalaman = [];
     const maxPagesToShow = 5;
 
-    let startPage = Math.max(1, halamanSaatIni - Math.floor(maxPagesToShow / 2));
+    let startPage = Math.max(
+      1,
+      halamanSaatIni - Math.floor(maxPagesToShow / 2)
+    );
     const endPage = Math.min(totalHalaman, startPage + maxPagesToShow - 1);
 
     // Pastikan kita selalu menampilkan maxPagesToShow jika ada cukup halaman
@@ -289,7 +300,9 @@ const LaporanKorban: React.FC = () => {
               <p>{detailPengaduan.umur} tahun</p>
             </div>
             <div>
-              <span className="font-semibold text-gray-600">Lokasi Kejadian:</span>
+              <span className="font-semibold text-gray-600">
+                Lokasi Kejadian:
+              </span>
               <p>{detailPengaduan.lokasi}</p>
             </div>
             <div>
@@ -297,7 +310,9 @@ const LaporanKorban: React.FC = () => {
               <p className="whitespace-pre-line">{detailPengaduan.kronologi}</p>
             </div>
             <div>
-              <span className="font-semibold text-gray-600">Status Penanganan:</span>
+              <span className="font-semibold text-gray-600">
+                Status Penanganan:
+              </span>
               {tampilkanBadgeStatus(detailPengaduan.status_pengaduan.status)}
             </div>
           </div>
@@ -339,8 +354,8 @@ const LaporanKorban: React.FC = () => {
                     setIsStatusModalOpen(true);
                   }}
                   className={`py-3 rounded-lg hover:bg-blue-600 transition flex items-center justify-center space-x-2 ${
-                    statusYangDipilih === 'antre' 
-                      ? 'bg-blue-600 text-white' 
+                    statusYangDipilih === 'antre'
+                      ? 'bg-blue-600 text-white'
                       : 'bg-blue-500 text-white'
                   }`}
                 >
@@ -352,8 +367,8 @@ const LaporanKorban: React.FC = () => {
                     setIsStatusModalOpen(true);
                   }}
                   className={`py-3 rounded-lg hover:bg-amber-600 transition flex items-center justify-center space-x-2 ${
-                    statusYangDipilih === 'proses' 
-                      ? 'bg-amber-600 text-white' 
+                    statusYangDipilih === 'proses'
+                      ? 'bg-amber-600 text-white'
                       : 'bg-amber-500 text-white'
                   }`}
                 >
@@ -365,8 +380,8 @@ const LaporanKorban: React.FC = () => {
                     setIsStatusModalOpen(true);
                   }}
                   className={`py-3 rounded-lg hover:bg-emerald-600 transition flex items-center justify-center space-x-2 ${
-                    statusYangDipilih === 'selesai' 
-                      ? 'bg-emerald-600 text-white' 
+                    statusYangDipilih === 'selesai'
+                      ? 'bg-emerald-600 text-white'
                       : 'bg-emerald-500 text-white'
                   }`}
                 >
@@ -441,14 +456,21 @@ const LaporanKorban: React.FC = () => {
               <tbody>
                 {itemHalamanIni.length > 0 ? (
                   itemHalamanIni.map((pengaduan) => (
-                    <tr key={pengaduan.id} className="border-b hover:bg-gray-50">
+                    <tr
+                      key={pengaduan.id}
+                      className="border-b hover:bg-gray-50"
+                    >
                       <td className="py-3 px-4">{pengaduan.kode}</td>
                       <td className="py-3 px-4">
-                        {new Date(pengaduan.tanggal).toLocaleDateString('id-ID')}
+                        {new Date(pengaduan.tanggal).toLocaleDateString(
+                          'id-ID'
+                        )}
                       </td>
                       <td className="py-3 px-4">{pengaduan.lokasi}</td>
                       <td className="py-3 px-4">
-                        {tampilkanBadgeStatus(pengaduan.status_pengaduan.status)}
+                        {tampilkanBadgeStatus(
+                          pengaduan.status_pengaduan.status
+                        )}
                       </td>
                       <td className="py-3 px-4 flex space-x-2">
                         <button

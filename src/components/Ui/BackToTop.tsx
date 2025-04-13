@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const BackToTop: React.FC = () => {
   // State untuk mengontrol kapan tombol muncul
   const [tombolMuncul, setTombolMuncul] = useState(false);
-  
+
   // Deteksi posisi scroll untuk menampilkan/sembunyikan tombol
   const cekPosisiScroll = () => {
     // Pakai 350px karena terlihat lebih pas di layar laptop 15"
@@ -20,7 +20,7 @@ const BackToTop: React.FC = () => {
   useEffect(() => {
     // Pasang event listener saat komponen dimuat
     window.addEventListener('scroll', cekPosisiScroll);
-    
+
     // Bersihkan event listener saat komponen unmount
     return () => window.removeEventListener('scroll', cekPosisiScroll);
   }, []);

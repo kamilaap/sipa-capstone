@@ -42,7 +42,8 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://linkedin.com/in/rinawijaya',
       email: 'sopiatulpatonisipa@gmail.com',
       instagram: 'https://instagram.com/sipasff',
-      biodata: 'UI/UX enthusiast. Passionate about creating accessible interfaces for social impact projects.',
+      biodata:
+        'UI/UX enthusiast. Passionate about creating accessible interfaces for social impact projects.',
     },
     {
       nama: 'Kamila Putri Herlambang', // ini aku, hehehe
@@ -52,7 +53,8 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://www.linkedin.com/in/kamila-putri-herlambang',
       email: 'kp.herlambang@gmail.com',
       instagram: 'https://instagram.com/kamilaputrih',
-      biodata: 'React js. Suka nyanyi, membaca buku, dan suka dia yang gak suka aku.',
+      biodata:
+        'React js. Suka nyanyi, membaca buku, dan suka dia yang gak suka aku.',
     },
     {
       nama: 'Elgiva Rasyad Aditya Putra',
@@ -62,7 +64,8 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://linkedin.com/in/dewilestari',
       email: 'rasyadelgiva@gmail.com',
       instagram: 'https://instagram.com/elgivarasyad',
-      biodata: 'Node.js developer with experience in secure API development and database architecture.',
+      biodata:
+        'Node.js developer with experience in secure API development and database architecture.',
     },
     {
       nama: 'Thomas Christian Kuntolukito',
@@ -72,7 +75,8 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://linkedin.com/in/agussupriyanto',
       email: 'thomas@sipa.id',
       instagram: 'https://instagram.com/thomaschristian',
-      biodata: 'Specializes in server optimization, authentication systems, and creating robust backend architectures.',
+      biodata:
+        'Specializes in server optimization, authentication systems, and creating robust backend architectures.',
     },
     {
       nama: 'Bintang Raga Pratama',
@@ -80,9 +84,10 @@ const TeamPage: React.FC = () => {
       foto: '/assets/tokdalang.jpg', // nanti diupdate
       github: 'https://github.com/SuryakandaRagaWistara',
       linkedin: 'https://linkedin.com/in/anitarahman',
-      email: 'bintang@sipa.id', 
+      email: 'bintang@sipa.id',
       instagram: 'https://instagram.com/bintangraga',
-      biodata: 'Data scientist focused on NLP and sentiment analysis for identifying cases of violence in text reports.',
+      biodata:
+        'Data scientist focused on NLP and sentiment analysis for identifying cases of violence in text reports.',
     },
     {
       nama: 'Yogi Kautsar Alnandeta',
@@ -92,7 +97,8 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://linkedin.com/in/yogikautsar',
       email: 'yogi@sipa.id',
       instagram: 'https://instagram.com/yogikautsar',
-      biodata: 'ML engineer with expertise in pattern recognition and classification algorithms for early detection systems.',
+      biodata:
+        'ML engineer with expertise in pattern recognition and classification algorithms for early detection systems.',
     },
   ];
 
@@ -148,7 +154,7 @@ const TeamPage: React.FC = () => {
           </div>
           {/* Biodata singkat */}
           <p className="text-gray-600 text-sm mb-4">{biodata}</p>
-          
+
           {/* Link sosmed - sengaja dibedain styling biar gak terlalu kaku */}
           <div className="flex space-x-2">
             {github && (
@@ -273,8 +279,8 @@ const TeamPage: React.FC = () => {
           {/* Grid untuk menampilkan kartu anggota tim */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {timPengembang.map((anggota, index) => (
-              <AnggotaTim 
-                key={index} 
+              <AnggotaTim
+                key={index}
                 nama={anggota.nama}
                 posisi={anggota.posisi}
                 foto={anggota.foto}

@@ -90,23 +90,24 @@ const Dashboard: React.FC = () => {
     // Ambil info user dari beberapa sumber yang mungkin
     const userDataString = localStorage.getItem('userData');
     const userInfoString = localStorage.getItem('userInfo');
-    
+
     // Coba ambil nama user dengan prioritas seperti di Sidebar
     if (userDataString) {
       // Prioritas 1: userData (seperti di komponen Pelayanan)
       try {
         const userData = JSON.parse(userDataString);
-        
+
         // Ambil nama dari email atau field nama langsung
         if (userData.name) {
           setAdminName(userData.name);
         } else if (userData.email && userData.email.includes('@')) {
           const namePart = userData.email.split('@')[0];
           // Kapitalisasi huruf pertama
-          const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+          const capitalizedName =
+            namePart.charAt(0).toUpperCase() + namePart.slice(1);
           setAdminName(capitalizedName);
         }
-        
+
         console.log('Pakai userData untuk nama admin:', adminName);
       } catch (error) {
         console.error('Error parsing user data:', error);
@@ -115,15 +116,16 @@ const Dashboard: React.FC = () => {
       // Prioritas 2: userInfo
       try {
         const user: User = JSON.parse(userInfoString);
-        
+
         // Ambil nama dari email
         if (user.email && user.email.includes('@')) {
           const namaPengguna = user.email.split('@')[0];
           // Kapitalisasi huruf pertama
-          const namaKapital = namaPengguna.charAt(0).toUpperCase() + namaPengguna.slice(1);
+          const namaKapital =
+            namaPengguna.charAt(0).toUpperCase() + namaPengguna.slice(1);
           setAdminName(namaKapital);
         }
-        
+
         console.log('Pakai userInfo untuk nama admin:', adminName);
       } catch (error) {
         console.error('Error parsing user info:', error);
@@ -133,7 +135,8 @@ const Dashboard: React.FC = () => {
       const email = localStorage.getItem('email');
       if (email && email.includes('@')) {
         const namaPengguna = email.split('@')[0];
-        const namaKapital = namaPengguna.charAt(0).toUpperCase() + namaPengguna.slice(1);
+        const namaKapital =
+          namaPengguna.charAt(0).toUpperCase() + namaPengguna.slice(1);
         setAdminName(namaKapital);
         console.log('Pakai email langsung untuk nama admin:', namaKapital);
       }
@@ -214,7 +217,9 @@ const Dashboard: React.FC = () => {
           >
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Tingkat Kekerasan
-              <span className="ml-2 text-xs bg-yellow-500 text-black px-1 rounded">Segera</span>
+              <span className="ml-2 text-xs bg-yellow-500 text-black px-1 rounded">
+                Segera
+              </span>
             </h3>
             <p className="text-gray-600 text-center">
               Analisis dan dokumentasi tingkat kekerasan
@@ -243,7 +248,8 @@ const Dashboard: React.FC = () => {
                 Info Pengembangan
               </h3>
               <p className="text-gray-600 mb-4">
-                Fitur ini masih dalam tahap pengembangan dan akan tersedia pada update mendatang.
+                Fitur ini masih dalam tahap pengembangan dan akan tersedia pada
+                update mendatang.
               </p>
               <div className="flex justify-end">
                 <button
@@ -276,7 +282,8 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Tampilkan konten sesuai menu aktif */}
-        {(activeMenu === 'dashboard' || activeMenu === '') && tampilkanDashboard()}
+        {(activeMenu === 'dashboard' || activeMenu === '') &&
+          tampilkanDashboard()}
 
         {/* Tampilan menu lainnya */}
         {activeMenu === 'tingkat-kekerasan' && (
@@ -285,7 +292,8 @@ const Dashboard: React.FC = () => {
               Fitur Dalam Pengembangan
             </h2>
             <p className="text-gray-600">
-              Fitur "Laporan Tingkat Kekerasan" akan dikembangkan di masa depan. Silakan cek kembali nanti.
+              Fitur "Laporan Tingkat Kekerasan" akan dikembangkan di masa depan.
+              Silakan cek kembali nanti.
             </p>
           </div>
         )}

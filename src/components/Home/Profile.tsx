@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaKey, FaEdit, FaCheck, FaTimes, FaHome } from 'react-icons/fa';
+import {
+  FaUser,
+  FaEnvelope,
+  FaKey,
+  FaEdit,
+  FaCheck,
+  FaTimes,
+  FaHome,
+} from 'react-icons/fa';
 import Button from '../Ui/Button';
 import axios from 'axios';
 import Loading from '../Ui/Loading';
@@ -52,51 +60,62 @@ interface FormInputProps {
 }
 
 // Komponen form input yang di-memo untuk optimasi performa
-const FormInput = React.memo(({ 
-  id, 
-  label, 
-  type = 'text', 
-  value, 
-  onChange, 
-  disabled = false, 
-  placeholder, 
-  error = '',
-  icon,
-  name 
-}: FormInputProps) => (
-  <div>
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
-      {label}
-    </label>
-    <div className="relative">
-      {icon && (
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          {icon}
-        </div>
+const FormInput = React.memo(
+  ({
+    id,
+    label,
+    type = 'text',
+    value,
+    onChange,
+    disabled = false,
+    placeholder,
+    error = '',
+    icon,
+    name,
+  }: FormInputProps) => (
+    <div>
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-700 mb-1"
+      >
+        {label}
+      </label>
+      <div className="relative">
+        {icon && (
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            {icon}
+          </div>
+        )}
+        <input
+          type={type}
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={`w-full px-4 py-2 ${icon ? 'pl-10' : ''} border ${
+            error
+              ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+              : disabled
+                ? 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed'
+                : 'border-gray-300 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]'
+          } rounded-lg transition-colors`}
+          placeholder={placeholder}
+        />
+      </div>
+      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+      {disabled && (
+        <p className="mt-1 text-xs text-gray-500">
+          Bidang ini tidak dapat diubah
+        </p>
       )}
-      <input
-        type={type}
-        id={id}
-        name={name} 
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        className={`w-full px-4 py-2 ${icon ? 'pl-10' : ''} border ${
-          error ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 
-                 disabled ? 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed' :
-                          'border-gray-300 focus:ring-[#8B5CF6] focus:border-[#8B5CF6]'
-        } rounded-lg transition-colors`}
-        placeholder={placeholder}
-      />
     </div>
-    {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-    {disabled && <p className="mt-1 text-xs text-gray-500">Bidang ini tidak dapat diubah</p>}
-  </div>
-));
+  )
+);
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
-  
+
   // State untuk menyimpan data profil
   const [profile, setProfile] = useState<UserProfile>({
     id: null,
@@ -104,7 +123,7 @@ const Profile: React.FC = () => {
     email: null,
     role: null,
     createdAt: null,
-    updatedAt: null
+    updatedAt: null,
   });
 
   // State untuk loading, edit mode, dan form data
@@ -115,17 +134,17 @@ const Profile: React.FC = () => {
     nama: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
-  
+
   // State untuk error pada form
   const [formErrors, setFormErrors] = useState({
     nama: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
-  
+
   // State untuk notifikasi
   const [notification, setNotification] = useState<{
     type: 'success' | 'error' | null;
@@ -133,21 +152,24 @@ const Profile: React.FC = () => {
   }>({ type: null, message: '' });
 
   // Fungsi untuk menampilkan notifikasi
-  const showNotification = useCallback((type: 'success' | 'error', message: string) => {
-    setNotification({ type, message });
-    // Auto-hide notification after 3 seconds
-    setTimeout(() => setNotification({ type: null, message: '' }), 3000);
-  }, []);
+  const showNotification = useCallback(
+    (type: 'success' | 'error', message: string) => {
+      setNotification({ type, message });
+      // Auto-hide notification after 3 seconds
+      setTimeout(() => setNotification({ type: null, message: '' }), 3000);
+    },
+    []
+  );
 
   // Fungsi helper untuk mengambil token dan user ID
   const getUserAuthInfo = useCallback(() => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
-    
+
     if (!token || !userId) {
       throw new Error('User tidak terautentikasi');
     }
-    
+
     return { token, userId };
   }, []);
 
@@ -158,21 +180,25 @@ const Profile: React.FC = () => {
   };
 
   // Handler untuk error dari API
-  const handleServerError = useCallback((error: ApiError) => {
-    logErrorDetail('ProfileAPI', error);
-    
-    const errorMsg = error.response?.data?.message || 
-                    error.message || 
-                    'Terjadi kesalahan. Silakan coba lagi nanti.';
-                    
-    showNotification('error', errorMsg);
-    
-    // Redirect ke login jika token expired/invalid
-    if (error.response?.status === 401) {
-      localStorage.clear();
-      navigate('/login');
-    }
-  }, [navigate, showNotification]);
+  const handleServerError = useCallback(
+    (error: ApiError) => {
+      logErrorDetail('ProfileAPI', error);
+
+      const errorMsg =
+        error.response?.data?.message ||
+        error.message ||
+        'Terjadi kesalahan. Silakan coba lagi nanti.';
+
+      showNotification('error', errorMsg);
+
+      // Redirect ke login jika token expired/invalid
+      if (error.response?.status === 401) {
+        localStorage.clear();
+        navigate('/login');
+      }
+    },
+    [navigate, showNotification]
+  );
 
   // Helper untuk format tanggal Indonesia
   const formatDate = useCallback((dateString: string | null) => {
@@ -182,9 +208,9 @@ const Profile: React.FC = () => {
       return date.toLocaleDateString('id-ID', {
         day: 'numeric',
         month: 'long',
-        year: 'numeric', 
+        year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       });
     } catch {
       return dateString;
@@ -198,7 +224,7 @@ const Profile: React.FC = () => {
       const { token, userId } = getUserAuthInfo();
 
       const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const userData = response.data;
@@ -208,7 +234,7 @@ const Profile: React.FC = () => {
         email: userData.email,
         role: userData.role,
         createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt
+        updatedAt: userData.updatedAt,
       });
 
       // Set form data dengan data user
@@ -216,7 +242,7 @@ const Profile: React.FC = () => {
         nama: userData.nama || '',
         email: userData.email || '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
       });
     } catch (error) {
       handleServerError(error as ApiError);
@@ -236,17 +262,17 @@ const Profile: React.FC = () => {
       nama: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     };
-    
+
     let isValid = true;
-    
+
     // Validasi nama
     if (editMode && formData.nama.trim() === '') {
       errors.nama = 'Nama tidak boleh kosong';
       isValid = false;
     }
-    
+
     // Validasi email
     if (editMode && formData.email.trim() === '') {
       errors.email = 'Email tidak boleh kosong';
@@ -258,29 +284,32 @@ const Profile: React.FC = () => {
         isValid = false;
       }
     }
-    
+
     // Validasi password jika diisi
     if (formData.password) {
       if (formData.password.length < 8) {
         errors.password = 'Password minimal 8 karakter';
         isValid = false;
       }
-      
+
       if (formData.password !== formData.confirmPassword) {
         errors.confirmPassword = 'Password tidak cocok';
         isValid = false;
       }
     }
-    
+
     setFormErrors(errors);
     return isValid;
   }, [editMode, formData, profile.email]);
 
   // Handler untuk perubahan input form
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  }, []);
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    },
+    []
+  );
 
   // Handler untuk membatalkan edit
   const handleCancelEdit = useCallback(() => {
@@ -290,30 +319,30 @@ const Profile: React.FC = () => {
       nama: profile.nama || '',
       email: profile.email || '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     });
     // Reset error messages
     setFormErrors({
       nama: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     });
   }, [profile]);
 
   // Handler untuk menyimpan perubahan profil
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateProfileInputs()) return;
 
     try {
       setIsSaving(true);
       const { token, userId } = getUserAuthInfo();
-      
+
       // Cek field mana yang berubah untuk di-update
       const updateData: ProfileUpdateData = {};
-      
+
       if (formData.nama !== profile.nama) updateData.nama = formData.nama;
       if (formData.email !== profile.email) updateData.email = formData.email;
       if (formData.password) updateData.password = formData.password;
@@ -331,25 +360,29 @@ const Profile: React.FC = () => {
         updateData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-    
+
       // Update state dengan data baru
       const updatedData = response.data.user || response.data;
-      setProfile(prev => ({
+      setProfile((prev) => ({
         ...prev,
         nama: updatedData.nama || prev.nama,
         email: updatedData.email || prev.email,
-        updatedAt: updatedData.updatedAt || prev.updatedAt
+        updatedAt: updatedData.updatedAt || prev.updatedAt,
       }));
-      
+
       // Update data di localStorage
       if (updatedData.nama) localStorage.setItem('userName', updatedData.nama);
-      if (updatedData.email) localStorage.setItem('userEmail', updatedData.email);
+      if (updatedData.email)
+        localStorage.setItem('userEmail', updatedData.email);
 
-      showNotification('success', response.data.message || 'Profil berhasil diperbarui!');
+      showNotification(
+        'success',
+        response.data.message || 'Profil berhasil diperbarui!'
+      );
       setEditMode(false);
-      
+
       // Reset password fields
-      setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
+      setFormData((prev) => ({ ...prev, password: '', confirmPassword: '' }));
     } catch (error) {
       handleServerError(error as ApiError);
     } finally {
@@ -360,23 +393,24 @@ const Profile: React.FC = () => {
   // Komponen untuk menampilkan notifikasi
   const Notification = useCallback(() => {
     if (!notification.type) return null;
-    
+
     return (
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         className={`mb-4 ${
-          notification.type === 'success' 
-            ? 'bg-green-100 border-l-4 border-green-500 text-green-700' 
+          notification.type === 'success'
+            ? 'bg-green-100 border-l-4 border-green-500 text-green-700'
             : 'bg-red-100 border-l-4 border-red-500 text-red-700'
         } p-4 rounded shadow-md`}
       >
         <div className="flex items-center">
-          {notification.type === 'success' 
-            ? <FaCheck className="text-green-500 mr-2" />
-            : <FaTimes className="text-red-500 mr-2" />
-          }
+          {notification.type === 'success' ? (
+            <FaCheck className="text-green-500 mr-2" />
+          ) : (
+            <FaTimes className="text-red-500 mr-2" />
+          )}
           <p>{notification.message}</p>
         </div>
       </motion.div>
@@ -418,11 +452,13 @@ const Profile: React.FC = () => {
                 <>
                   {/* Header profil */}
                   <div className="flex items-center justify-between mb-6">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Profil Saya</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                      Profil Saya
+                    </h1>
                     {!editMode && (
-                      <Button 
-                        variant="secondary" 
-                        size="sm" 
+                      <Button
+                        variant="secondary"
+                        size="sm"
                         onClick={() => setEditMode(true)}
                         className="flex items-center"
                       >
@@ -438,10 +474,16 @@ const Profile: React.FC = () => {
                       <FaUser className="text-[#8B5CF6] text-4xl" />
                     </div>
                     <div className="text-center md:text-left">
-                      <h2 className="text-xl font-bold text-gray-800">{profile.nama || 'Pengguna'}</h2>
-                      <p className="text-gray-600">{profile.email || 'email@gmail.com'}</p>
+                      <h2 className="text-xl font-bold text-gray-800">
+                        {profile.nama || 'Pengguna'}
+                      </h2>
+                      <p className="text-gray-600">
+                        {profile.email || 'email@gmail.com'}
+                      </p>
                       <div className="mt-2 inline-block bg-[#8B5CF6]/10 text-[#8B5CF6] px-3 py-1 rounded-full text-sm font-medium">
-                        {profile.role === 'admin' ? 'Administrator' : profile.role}
+                        {profile.role === 'admin'
+                          ? 'Administrator'
+                          : profile.role}
                       </div>
                     </div>
                   </div>
@@ -450,8 +492,10 @@ const Profile: React.FC = () => {
                   {!editMode ? (
                     <div className="space-y-6">
                       <div className="border-t border-gray-100 pt-6">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">Informasi Akun</h3>
-                        
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">
+                          Informasi Akun
+                        </h3>
+
                         <div className="space-y-4">
                           {/* Info nama */}
                           <div className="flex items-start">
@@ -460,10 +504,12 @@ const Profile: React.FC = () => {
                             </div>
                             <div>
                               <p className="text-sm text-gray-500">Nama</p>
-                              <p className="font-medium">{profile.nama || 'Belum diatur'}</p>
+                              <p className="font-medium">
+                                {profile.nama || 'Belum diatur'}
+                              </p>
                             </div>
                           </div>
-                          
+
                           {/* Info email */}
                           <div className="flex items-start">
                             <div className="w-10 h-10 bg-[#8B5CF6]/10 rounded-full flex items-center justify-center mr-4">
@@ -471,10 +517,12 @@ const Profile: React.FC = () => {
                             </div>
                             <div>
                               <p className="text-sm text-gray-500">Email</p>
-                              <p className="font-medium">{profile.email || 'Belum diatur'}</p>
+                              <p className="font-medium">
+                                {profile.email || 'Belum diatur'}
+                              </p>
                             </div>
                           </div>
-                          
+
                           {/* Info password */}
                           <div className="flex items-start">
                             <div className="w-10 h-10 bg-[#8B5CF6]/10 rounded-full flex items-center justify-center mr-4">
@@ -488,17 +536,27 @@ const Profile: React.FC = () => {
 
                           {/* Info tambahan */}
                           <div className="pt-4 border-t border-gray-100">
-                            <h4 className="font-medium text-gray-800 mb-3">Info Lainnya</h4>
-                            
+                            <h4 className="font-medium text-gray-800 mb-3">
+                              Info Lainnya
+                            </h4>
+
                             <div className="grid grid-cols-1 gap-4">
                               <div>
-                                <p className="text-sm text-gray-500">Terdaftar Pada</p>
-                                <p className="font-medium">{formatDate(profile.createdAt)}</p>
+                                <p className="text-sm text-gray-500">
+                                  Terdaftar Pada
+                                </p>
+                                <p className="font-medium">
+                                  {formatDate(profile.createdAt)}
+                                </p>
                               </div>
-                              
+
                               <div>
-                                <p className="text-sm text-gray-500">Diperbarui Pada</p>
-                                <p className="font-medium">{formatDate(profile.updatedAt)}</p>
+                                <p className="text-sm text-gray-500">
+                                  Diperbarui Pada
+                                </p>
+                                <p className="font-medium">
+                                  {formatDate(profile.updatedAt)}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -509,8 +567,10 @@ const Profile: React.FC = () => {
                     // Mode edit profile
                     <form onSubmit={handleSaveProfile} className="space-y-6">
                       <div className="border-t border-gray-100 pt-6">
-                        <h3 className="text-lg font-bold text-gray-800 mb-4">Edit Informasi Akun</h3>
-                        
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">
+                          Edit Informasi Akun
+                        </h3>
+
                         <div className="space-y-4">
                           {/* Input nama */}
                           <FormInput
@@ -524,7 +584,7 @@ const Profile: React.FC = () => {
                             error={formErrors.nama}
                             icon={<FaUser className="text-gray-400" />}
                           />
-                          
+
                           {/* Input email */}
                           <FormInput
                             key="email-input"
@@ -537,11 +597,13 @@ const Profile: React.FC = () => {
                             error={formErrors.email}
                             icon={<FaEnvelope className="text-gray-400" />}
                           />
-                          
+
                           {/* Section update password */}
                           <div className="pt-4 border-t border-gray-100">
-                            <h4 className="font-medium text-gray-800 mb-3">Ubah Password</h4>
-                            
+                            <h4 className="font-medium text-gray-800 mb-3">
+                              Ubah Password
+                            </h4>
+
                             <div className="space-y-3">
                               <FormInput
                                 key="password-input"
@@ -555,7 +617,7 @@ const Profile: React.FC = () => {
                                 error={formErrors.password}
                                 icon={<FaKey className="text-gray-400" />}
                               />
-                              
+
                               <FormInput
                                 key="confirm-password-input"
                                 id="confirmPassword"
@@ -575,16 +637,16 @@ const Profile: React.FC = () => {
 
                       {/* Tombol aksi */}
                       <div className="flex space-x-3 pt-4">
-                        <Button 
-                          variant="primary" 
+                        <Button
+                          variant="primary"
                           type="submit"
                           className="flex-1 md:flex-none"
                           disabled={isSaving}
                         >
                           {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
                         </Button>
-                        <Button 
-                          variant="secondary" 
+                        <Button
+                          variant="secondary"
                           type="button"
                           className="flex-1 md:flex-none"
                           onClick={handleCancelEdit}

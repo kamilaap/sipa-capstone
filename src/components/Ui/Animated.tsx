@@ -27,12 +27,12 @@ const AnimatedCursor: React.FC = () => {
   const [diklik, setDiklik] = useState(false);
   const animFrameRef = useRef<number>(0);
 
-  // Konfigurasi kursor - ini saya sesuaikan sendiri sampai enak dilihat 
+  // Konfigurasi kursor - ini saya sesuaikan sendiri sampai enak dilihat
   const pengaturan = {
     kecepatanIkutLuar: 0.4, // Cepat lambatnya lingkaran luar (0-1)
-    kecepatanEkor: 0.25,    // Kecepatan titik-titik ekor
-    panjangEkor: 5,         // Berapa banyak titik ekor
-    kecepatanPudar: 0.92,   // Seberapa cepat ekornya menghilang (0-1)
+    kecepatanEkor: 0.25, // Kecepatan titik-titik ekor
+    panjangEkor: 5, // Berapa banyak titik ekor
+    kecepatanPudar: 0.92, // Seberapa cepat ekornya menghilang (0-1)
   };
 
   // Effect untuk mendeteksi gerakan mouse dan interaksi
@@ -49,7 +49,7 @@ const AnimatedCursor: React.FC = () => {
     // Deteksi ketika kursor di atas elemen yang bisa diinteraksi
     const handleMouseDiatasInteraktif = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      
+
       // Cek apakah elemen target adalah button, link, input, dsb
       const bisaDiklik =
         target.tagName.toLowerCase() === 'a' ||
@@ -92,8 +92,12 @@ const AnimatedCursor: React.FC = () => {
     const animasi = () => {
       // Update posisi lingkaran luar dengan efek keterlambatan
       setPosisiLuar((posisiSekarang) => ({
-        x: posisiSekarang.x + (posisi.x - posisiSekarang.x) * pengaturan.kecepatanIkutLuar,
-        y: posisiSekarang.y + (posisi.y - posisiSekarang.y) * pengaturan.kecepatanIkutLuar,
+        x:
+          posisiSekarang.x +
+          (posisi.x - posisiSekarang.x) * pengaturan.kecepatanIkutLuar,
+        y:
+          posisiSekarang.y +
+          (posisi.y - posisiSekarang.y) * pengaturan.kecepatanIkutLuar,
       }));
 
       // Update titik-titik ekor kursor
@@ -111,7 +115,8 @@ const AnimatedCursor: React.FC = () => {
         // Pudarkan titik yang sudah ada
         const titikDiupdate = titikBaru.map((titik, index) => ({
           ...titik,
-          opacity: index === 0 ? 0.6 : titik.opacity * pengaturan.kecepatanPudar,
+          opacity:
+            index === 0 ? 0.6 : titik.opacity * pengaturan.kecepatanPudar,
         }));
 
         // Batasi jumlah titik sesuai pengaturan

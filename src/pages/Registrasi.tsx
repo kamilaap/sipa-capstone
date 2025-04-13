@@ -32,12 +32,13 @@ const Register: React.FC = () => {
     }
 
     //user validasi gamil adn yahuuu
-    if (!email.endsWith("@gmail.com") && !email.endsWith("@yahoo.com")) {
-      setErrorMessage("email Anda harus berakhiran dengan gmail.com atau yahoo.com !");
+    if (!email.endsWith('@gmail.com') && !email.endsWith('@yahoo.com')) {
+      setErrorMessage(
+        'email Anda harus berakhiran dengan gmail.com atau yahoo.com !'
+      );
       setIsLoading(false);
       return;
     }
-    
 
     // if (!email.endsWith("@gmail.com" && !email.endsWith("@yahoo.com"))) {
     //   setErrorMessage("email Anda harus berakhiran dengan gmail.com atau yahoo.com !");
@@ -45,7 +46,6 @@ const Register: React.FC = () => {
     //   return;
     // }
 
-    
     try {
       await axios.post(
         'https://api-sipa-capstone-production.up.railway.app/register',
@@ -54,13 +54,12 @@ const Register: React.FC = () => {
 
       // Show success popup instead of alert
       setShowSuccessPopup(true);
-      
+
       // Navigate after delay
       setTimeout(() => {
         setShowSuccessPopup(false);
         navigate('/login');
       }, 2000);
-      
     } catch (error) {
       // Handle error from axios
       if (axios.isAxiosError(error)) {
@@ -85,7 +84,7 @@ const Register: React.FC = () => {
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Success Popup */}

@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { useNavigate } from 'react-router-dom';
 
 // Warna tema yang aku pakai di seluruh aplikasi
-const warnaPurple = "#8844d4";
-const warnaPink = "#ec4899"; 
-const warnaBlue = "#3b82f6";
-const warnaGray = "#d1d5db";
+const warnaPurple = '#8844d4';
+const warnaPink = '#ec4899';
+const warnaBlue = '#3b82f6';
+const warnaGray = '#d1d5db';
 
 // Interface untuk data yang diambil dari API
 interface ViolenceData {
@@ -40,9 +51,10 @@ const StatisticsSection: React.FC = () => {
   const [sedangMuat, setSedangMuat] = useState<boolean>(true);
   const [tabAktif, setTabAktif] = useState<number>(0);
   const namaTab = ['Semua Data', 'Berdasarkan Gender', 'Tren Tahunan'];
-  
+
   // FIXME: Nanti ganti ke endpoint production pas deploy
-  const API_URL = 'https://api-sipa-capstone-production.up.railway.app/data-kekerasan';
+  const API_URL =
+    'https://api-sipa-capstone-production.up.railway.app/data-kekerasan';
 
   // Fungsi untuk navigasi ke halaman pengaduan
   const keLamanPengaduan = () => {
@@ -55,7 +67,7 @@ const StatisticsSection: React.FC = () => {
       try {
         // Pake timeout biar loading keliatan dikit, soalnya kadang API-nya kecepetan
         // setTimeout(() => {}, 1000); // TODO: Nanti dihapus kalau udah production
-        
+
         const response = await axios.get<ViolenceData[]>(API_URL);
         setDataKekerasan(response.data);
         setSedangMuat(false);
@@ -70,70 +82,95 @@ const StatisticsSection: React.FC = () => {
   }, []);
 
   // Hitung total korban dari semua tahun
-  const totalKorban = dataKekerasan.reduce((acc, curr) => acc + curr.korban_total, 0);
-  const totalKorbanLaki = dataKekerasan.reduce((acc, curr) => acc + curr.korban_laki, 0);
-  const totalKorbanPerempuan = dataKekerasan.reduce((acc, curr) => acc + curr.korban_perempuan, 0);
-  
+  const totalKorban = dataKekerasan.reduce(
+    (acc, curr) => acc + curr.korban_total,
+    0
+  );
+  const totalKorbanLaki = dataKekerasan.reduce(
+    (acc, curr) => acc + curr.korban_laki,
+    0
+  );
+  const totalKorbanPerempuan = dataKekerasan.reduce(
+    (acc, curr) => acc + curr.korban_perempuan,
+    0
+  );
+
   // Fungsi untuk menghitung persentase kenaikan dari 2020-2024
   // Ini penting untuk highlight di dashboard utama
   const hitungPertumbuhan = (): number => {
     if (dataKekerasan.length < 5) return 0;
-    
-    const dataRentangTahun = dataKekerasan.filter(item => item.tahun >= 2020 && item.tahun <= 2024);
+
+    const dataRentangTahun = dataKekerasan.filter(
+      (item) => item.tahun >= 2020 && item.tahun <= 2024
+    );
     if (dataRentangTahun.length < 2) return 0;
-    
-    const tahunAwal = dataRentangTahun.find(item => item.tahun === 2020);
-    const tahunAkhir = dataRentangTahun.find(item => item.tahun === 2024);
-    
+
+    const tahunAwal = dataRentangTahun.find((item) => item.tahun === 2020);
+    const tahunAkhir = dataRentangTahun.find((item) => item.tahun === 2024);
+
     if (!tahunAwal || !tahunAkhir) return 0;
-    
-    return parseFloat(((tahunAkhir.korban_total - tahunAwal.korban_total) / tahunAwal.korban_total * 100).toFixed(1));
+
+    return parseFloat(
+      (
+        ((tahunAkhir.korban_total - tahunAwal.korban_total) /
+          tahunAwal.korban_total) *
+        100
+      ).toFixed(1)
+    );
   };
 
   // Format data untuk grafik
   const formatDataChart = (): ChartData[] => {
-    return dataKekerasan.map(item => ({
+    return dataKekerasan.map((item) => ({
       name: item.tahun.toString(),
       'Korban Laki-laki': item.korban_laki,
       'Korban Perempuan': item.korban_perempuan,
-      'Total Korban': item.korban_total
+      'Total Korban': item.korban_total,
     }));
   };
 
   // Komponen untuk animasi angka (bikin sendiri)
-  const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ value, suffix = '', duration = 2 }) => {
+  const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
+    value,
+    suffix = '',
+    duration = 2,
+  }) => {
     const [count, setCount] = useState<number>(0);
-    
+
     useEffect(() => {
       let startTime: number | null = null;
       const nilaiTarget = typeof value === 'string' ? parseFloat(value) : value;
       let animationFrameId: number;
-      
+
       // Animasi counter dengan requestAnimationFrame biar smooth
       const updateCount = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+        const progress = Math.min(
+          (timestamp - startTime) / (duration * 1000),
+          1
+        );
         const currentCount = Math.floor(progress * nilaiTarget);
-        
+
         setCount(currentCount);
-        
+
         if (progress < 1) {
           animationFrameId = requestAnimationFrame(updateCount);
         } else {
           setCount(nilaiTarget);
         }
       };
-      
+
       animationFrameId = requestAnimationFrame(updateCount);
-      
+
       return () => {
         cancelAnimationFrame(animationFrameId);
       };
     }, [value, duration]);
-    
+
     return (
       <span className="text-3xl font-bold text-purple-600 tracking-tight">
-        {count.toLocaleString()}{suffix}
+        {count.toLocaleString()}
+        {suffix}
       </span>
     );
   };
@@ -158,7 +195,9 @@ const StatisticsSection: React.FC = () => {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.7 }} /* Sedikit lebih lambat biar kesan lebih natural */
+          transition={{
+            duration: 0.7,
+          }} /* Sedikit lebih lambat biar kesan lebih natural */
           viewport={{ once: true }}
           className="text-center mb-16"
         >
@@ -170,13 +209,17 @@ const StatisticsSection: React.FC = () => {
                 className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-600"
                 initial={{ width: 0 }}
                 whileInView={{ width: '100%' }}
-                transition={{ duration: 0.8, delay: 0.3 }} /* Ubah delay animation */
+                transition={{
+                  duration: 0.8,
+                  delay: 0.3,
+                }} /* Ubah delay animation */
                 viewport={{ once: true }}
               ></motion.div>
             </span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-10">
-            Visualisasi data statistik kasus kekerasan di Indonesia, menampilkan tren dan pola dari tahun 2020 hingga 2025.
+            Visualisasi data statistik kasus kekerasan di Indonesia, menampilkan
+            tren dan pola dari tahun 2020 hingga 2025.
           </p>
 
           {/* Kartu statistik utama */}
@@ -199,8 +242,14 @@ const StatisticsSection: React.FC = () => {
               className="flex flex-col items-center px-6 py-4 bg-white rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
               whileHover={{ y: -5 }}
             >
-              <AnimatedCounter value={hitungPertumbuhan()} suffix="%" duration={2.7} />
-              <span className="text-sm text-gray-500">Peningkatan 2020-2024</span>
+              <AnimatedCounter
+                value={hitungPertumbuhan()}
+                suffix="%"
+                duration={2.7}
+              />
+              <span className="text-sm text-gray-500">
+                Peningkatan 2020-2024
+              </span>
             </motion.div>
 
             <motion.div
@@ -213,13 +262,19 @@ const StatisticsSection: React.FC = () => {
               <div className="flex gap-4">
                 <div>
                   <span className="text-3xl font-bold text-pink-500 tracking-tight">
-                    {totalKorban > 0 ? ((totalKorbanPerempuan / totalKorban) * 100).toFixed(1) : '0'}%
+                    {totalKorban > 0
+                      ? ((totalKorbanPerempuan / totalKorban) * 100).toFixed(1)
+                      : '0'}
+                    %
                   </span>
                   <span className="block text-sm text-gray-500">Perempuan</span>
                 </div>
                 <div>
                   <span className="text-3xl font-bold text-blue-500 tracking-tight">
-                    {totalKorban > 0 ? ((totalKorbanLaki / totalKorban) * 100).toFixed(1) : '0'}%
+                    {totalKorban > 0
+                      ? ((totalKorbanLaki / totalKorban) * 100).toFixed(1)
+                      : '0'}
+                    %
                   </span>
                   <span className="block text-sm text-gray-500">Laki-laki</span>
                 </div>
@@ -265,33 +320,38 @@ const StatisticsSection: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                       borderRadius: '8px',
                       borderColor: warnaGray,
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                     }}
                   />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="Total Korban" 
+                  <Line
+                    type="monotone"
+                    dataKey="Total Korban"
                     stroke={warnaPurple}
-                    strokeWidth={3} 
+                    strokeWidth={3}
                     dot={{ r: 6 }}
-                    activeDot={{ r: 8, stroke: warnaPurple, strokeWidth: 2, fill: '#fff' }}
+                    activeDot={{
+                      r: 8,
+                      stroke: warnaPurple,
+                      strokeWidth: 2,
+                      fill: '#fff',
+                    }}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="Korban Perempuan" 
+                  <Line
+                    type="monotone"
+                    dataKey="Korban Perempuan"
                     stroke={warnaPink}
                     strokeWidth={2}
                     dot={{ r: 4 }}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="Korban Laki-laki" 
+                  <Line
+                    type="monotone"
+                    dataKey="Korban Laki-laki"
                     stroke={warnaBlue}
                     strokeWidth={2}
                     dot={{ r: 4 }}
@@ -311,17 +371,25 @@ const StatisticsSection: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                       borderRadius: '8px',
                       borderColor: warnaGray,
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                     }}
                   />
                   <Legend />
-                  <Bar dataKey="Korban Perempuan" fill={warnaPink} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Korban Laki-laki" fill={warnaBlue} radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="Korban Perempuan"
+                    fill={warnaPink}
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="Korban Laki-laki"
+                    fill={warnaBlue}
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -337,16 +405,20 @@ const StatisticsSection: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                       borderRadius: '8px',
                       borderColor: warnaGray,
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                     }}
                   />
                   <Legend />
-                  <Bar dataKey="Total Korban" fill={warnaPurple} radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="Total Korban"
+                    fill={warnaPurple}
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -362,9 +434,10 @@ const StatisticsSection: React.FC = () => {
           className="mt-16 text-center"
         >
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-            Kasus kekerasan terus meningkat setiap tahun. Mari berperan aktif dalam mencegah dan melaporkan kasus kekerasan.
+            Kasus kekerasan terus meningkat setiap tahun. Mari berperan aktif
+            dalam mencegah dan melaporkan kasus kekerasan.
           </p>
-          <button 
+          <button
             onClick={keLamanPengaduan}
             className="px-8 py-3 bg-purple-600 text-white font-medium rounded-lg shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:-translate-y-1"
           >

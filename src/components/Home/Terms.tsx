@@ -8,7 +8,7 @@ import Button from '../Ui/Button';
 const Terms = () => {
   // Pakai kembaliKeHalaman untuk navigasi antar halaman
   const kembaliKeHalaman = useNavigate();
-  
+
   // Handler untuk tombol kembali
   const handleKembali = () => kembaliKeHalaman(-1);
 
@@ -93,8 +93,9 @@ const Terms = () => {
             {/* Isi terms & conditions - diadaptasi dari contoh project sebelumnya */}
             <div className="prose max-w-none">
               <p className="text-gray-700">
-                Selamat datang di aplikasi SIPA (Sistem Informasi Pelayanan Akademik) SMK Nusantara. 
-                Silakan baca syarat dan ketentuan ini dengan seksama sebelum menggunakan platform kami.
+                Selamat datang di aplikasi SIPA (Sistem Informasi Pelayanan
+                Akademik) SMK Nusantara. Silakan baca syarat dan ketentuan ini
+                dengan seksama sebelum menggunakan platform kami.
               </p>
 
               <h2 className="text-xl font-semibold text-gray-800 mt-6">
@@ -153,8 +154,8 @@ const Terms = () => {
               <p className="text-gray-700">
                 Layanan dan kontennya, termasuk tetapi tidak terbatas pada teks,
                 grafik, logo, ikon, gambar, klip audio, unduhan digital, dan
-                kompilasi data, adalah milik SMK Nusantara atau pemberi lisensi kami dan
-                dilindungi oleh undang-undang hak cipta Indonesia dan
+                kompilasi data, adalah milik SMK Nusantara atau pemberi lisensi
+                kami dan dilindungi oleh undang-undang hak cipta Indonesia dan
                 internasional.
               </p>
 
