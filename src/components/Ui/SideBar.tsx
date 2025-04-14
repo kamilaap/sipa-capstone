@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
   // Fungsi ketika menu diklik
   const klikMenu = (path: string, nonaktif: boolean = false) => {
     if (nonaktif) {
-      // Tampilkan pesan notifikasi alih-alih navigasi
+      // Tampilkan pesan 
       setTampilPesan(true);
 
       // Otomatis tutup pesan setelah 3 detik

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Button from './Button'; // Komponen Button kustom
+import Button from './Button'; 
 import {
   FaPhoneAlt,
   FaHospital,
@@ -18,7 +18,7 @@ import {
 } from 'react-icons/fa';
 
 // Tipe data untuk kontak darurat
-// TODO: Nanti pindahin ke file types.ts terpisah
+// TODO: tipe nya taro disini
 interface KontakDarurat {
   nama: string;
   nomor: string;
@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
   // Get current location
   const lokasi = useLocation();
 
-  // List kontak penting - data dummy dulu, nanti dari API
+  // List kontak penting - data dummy dulu
   const kontakDarurat: KontakDarurat[] = [
     {
       nama: 'Polisi',
@@ -66,8 +66,8 @@ const Navbar: React.FC = () => {
       icon: <FaHospital className="text-red-600" />,
     },
     {
-      nama: 'Hotline Pengaduan Kekerasan', // tambah kontak KPAI nanti
-      nomor: '0800-123-456',
+      nama: 'Hotline Pengaduan Kekerasan KPAI', // tambah kontak KPAI nanti
+      nomor: '0811-1002-7727',
       icon: <FaHandsHelping className="text-purple-600" />,
     },
     {
@@ -294,7 +294,7 @@ const Navbar: React.FC = () => {
             >
               Pengaduan
             </Link>
-            {/* Updated to handle hash navigation differently */}
+            {/* ini buat diarahin ke artikel saat di home */}
             {cekHomePage() ? (
               <a
                 href="#bagian-artikel"

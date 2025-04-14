@@ -11,18 +11,14 @@ import {
 } from 'lucide-react';
 import Sidebar from './SideBar';
 
-/**
- * Interface untuk data status pengaduan dari API
- */
+ //Interface untuk data status pengaduan dari API
 interface StatusPengaduan {
   id: number;
   status: string;
   keterangan: string;
 }
 
-/**
- * Interface utama untuk data pengaduan dari API
- */
+ //Interface utama untuk data pengaduan dari API
 interface Pengaduan {
   id: number;
   kode: string;
@@ -406,14 +402,13 @@ const LaporanKorban: React.FC = () => {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
                 placeholder={`Contoh: ${DESKRIPSI_STATUS[statusYangDipilih as keyof typeof DESKRIPSI_STATUS]?.keterangan || 'Masukkan keterangan status...'}`}
               />
-
               <div className="flex space-x-4 mt-6">
-                <button
-                  onClick={handleUpdateStatus}
-                  className="flex-1 bg-ungu-600 text-white py-3 rounded-lg hover:bg-ungu-700 transition"
-                >
-                  Simpan Perubahan
-                </button>
+                                <button 
+                                    onClick={handleUpdateStatus}
+                                    className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+                                >
+                                    Simpan Perubahan
+                                </button>
                 <button
                   onClick={() => {
                     setIsStatusModalOpen(false);

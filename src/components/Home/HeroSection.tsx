@@ -4,14 +4,13 @@ import Button from '../Ui/Button';
 import { Link } from 'react-router-dom';
 
 const Beranda: React.FC = () => {
-  // Variasi warna untuk background particles
+  // Variasi warna untuk background
   const warnaPartikel = ['#C084FC', '#A78BFA', '#FF8C00', '#DDD6FE'];
 
   return (
     <section className="relative bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] w-full min-h-screen pt-32 pb-32 px-6 md:px-24 transition-all duration-500 overflow-hidden flex flex-col justify-center">
-      {/* Background particles - bikin efek dinamis */}
+      {/* Background overflow biar dinamis */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Using warnaPartikel array to generate particles */}
         <div
           className="absolute top-10 left-10 w-4 h-4 rounded-full animate-pulse"
           style={{ backgroundColor: warnaPartikel[0] }}
@@ -28,7 +27,7 @@ const Beranda: React.FC = () => {
           className="absolute bottom-1/3 left-1/5 w-5 h-5 rounded-full animate-pulse opacity-60"
           style={{ backgroundColor: warnaPartikel[3] }}
         ></div>
-        {/* Nambahin 1 partikel lagi buat lebih asik */}
+        {/* Nambahin 1 partikel lagi*/}
         <div
           className="absolute top-1/3 left-2/3 w-3 h-3 rounded-full animate-pulse opacity-70"
           style={{ backgroundColor: warnaPartikel[0] }}
@@ -48,7 +47,7 @@ const Beranda: React.FC = () => {
           </h1>
           <p className="text-lg text-[#6B7280] max-w-xl">
             Tumbuhkan sikap{' '}
-            <span className="text-[#A78BFA] font-bold">#peduli sesama</span>{' '}
+            <span className="text-[#A78BFA] font-bold">#pedulisesama</span>{' '}
             terhadap kasus kekerasan pada ibu dan anak di sekitar anda. Laporkan
             tingkat kekerasan sebagai bentuk perlindungan dan kepedulian
             terhadap korban.

@@ -18,13 +18,13 @@ const LupaPassword: React.FC = () => {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Add state for password visibility
+  // tambahkan password visible
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
-  // Toggle functions for password visibility
+  // Toggle 
   const toggleNewPasswordVisibility = () => {
     setShowNewPassword(!showNewPassword);
   };
@@ -33,7 +33,7 @@ const LupaPassword: React.FC = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  // Email validation function
+  // functuon buat validasi email
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -42,7 +42,7 @@ const LupaPassword: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation
+    // ini kalo ada error
     if (!isValidEmail(email)) {
       setErrorMessage('Email salah');
       setShowErrorPopup(true);
@@ -76,23 +76,23 @@ const LupaPassword: React.FC = () => {
         }
       );
 
-      // Show success popup with server message or default message
+      // pop up message berhasil
       setErrorMessage(data.message || 'Password berhasil diperbarui!');
       setShowSuccessPopup(true);
 
-      // Automatically navigate after a short delay
+      // delay
       setTimeout(() => {
         setShowSuccessPopup(false);
         navigate('/login');
       }, 2000);
     } catch (error) {
-      // Enhanced error handling
+      // error handling
       if (axios.isAxiosError(error)) {
-        // Check the response status and data
+        // response status dan data
         const statusCode = error.response?.status;
         const responseData = error.response?.data;
 
-        // Handle specific error cases with simpler messages
+        // Handle spesifik error
         if (statusCode === 404) {
           setErrorMessage('Email salah');
         } else if (statusCode === 400) {
@@ -102,7 +102,7 @@ const LupaPassword: React.FC = () => {
             setErrorMessage('Input tidak valid');
           }
         } else {
-          // Handle other error messages from the server
+          // Handle dari sisi server
           setErrorMessage('Gagal mereset password');
         }
       } else {
@@ -117,7 +117,7 @@ const LupaPassword: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F0E7FF] via-[#EAD6FF] to-[#F5EBFF] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Success Popup */}
+      {/* pop up sukses */}
       <AnimatePresence>
         {showSuccessPopup && (
           <motion.div
@@ -177,7 +177,7 @@ const LupaPassword: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Back to Login Button */}
+      {/* kembali ke login*/}
       <div className="absolute top-4 left-4 z-20">
         <Button
           variant="secondary"

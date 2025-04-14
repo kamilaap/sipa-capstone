@@ -41,7 +41,7 @@ const StatusLaporan: React.FC = () => {
   ) => {
     const pilihanStatus = event.target.value;
 
-    // Warna yang aku pilih sendiri biar bagus untuk tiap status
+    // Warna 
     let warnaBaruBg = 'bg-white';
     if (pilihanStatus === 'Pending')
       warnaBaruBg = 'bg-blue-300'; // Biru = masih menunggu
@@ -140,17 +140,17 @@ const StatusLaporan: React.FC = () => {
                   key={i}
                   className="absolute bg-purple-400 opacity-50 rounded-full"
                   style={{
-                    width: `${30 + i * 10}px`, // Ukuran yang lebih konsisten
+                    width: `${30 + i * 10}px`, 
                     height: `${30 + i * 10}px`,
-                    top: `${20 + i * 15}%`, // Posisi yang lebih terstruktur
+                    top: `${20 + i * 15}%`, 
                     left: `${15 + i * 17}%`,
                   }}
                   animate={{
-                    y: [0, -20, 0], // Animasi sederhana naik-turun
+                    y: [0, -20, 0], 
                     x: [0, 10, 0],
                   }}
                   transition={{
-                    duration: 3, // Durasi yang konsisten
+                    duration: 3,
                     repeat: Infinity,
                     ease: 'easeInOut',
                   }}

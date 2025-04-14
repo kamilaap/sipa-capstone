@@ -23,7 +23,7 @@ const ArtikelTerbaru: React.FC = () => {
     const ambilDataArtikel = async () => {
       try {
         setSedangMuat(true);
-        // Link API bisa diganti sesuai kebutuhan project
+        // url api
         const response = await axios.get<ArtikelData[]>(
           'https://api-sipa-capstone-production.up.railway.app/artikel'
         );
@@ -79,7 +79,7 @@ const ArtikelTerbaru: React.FC = () => {
     );
   }
 
-  // Hanya tampilkan 3 artikel teratas
+  // hanya 3 artikel yang di tampilkan
   const artikelDitampilkan = daftarArtikel.slice(0, 3);
 
   return (

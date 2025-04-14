@@ -9,7 +9,6 @@ import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaChevronDown,
-  // FaArrowRight, // dimatikan dulu karena tombol belum siap
 } from 'react-icons/fa';
 import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
@@ -53,7 +52,7 @@ const ItemTanyaJawab: React.FC<{
 };
 
 // Halaman utama Pusat Bantuan
-const HalamanBantuan: React.FC = () => {
+const Bantuan: React.FC = () => {
   // Data pertanyaan yang sering diajukan pengguna
   const daftarTanyaJawab = [
     {
@@ -176,15 +175,6 @@ const HalamanBantuan: React.FC = () => {
                       <FaFileAlt className="mr-2" /> Buat Pengaduan
                     </Button>
                   </Link>
-                  <Button
-                    variant="secondary"
-                    onClick={() =>
-                      (window.location.href =
-                        'mailto:bantuan@sistemPengaduan.id')
-                    }
-                  >
-                    <FaEnvelope className="mr-2" /> Hubungi Kami
-                  </Button>
                 </div>
               </div>
             </div>
@@ -197,4 +187,4 @@ const HalamanBantuan: React.FC = () => {
   );
 };
 
-export default HalamanBantuan;
+export default Bantuan;

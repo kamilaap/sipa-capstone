@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
       }
     }
 
-    // Ambil statistik laporan dari API
+    // Ambil statistik laporan dari API pengaduan
     const ambilDataLaporan = async () => {
       try {
         const response = await axios.get<ReportData[]>(

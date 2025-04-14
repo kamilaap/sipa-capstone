@@ -3,10 +3,9 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Button from '../Ui/Button';
 
-// Ganti nama komponen jadi lebih personal
 const Privasi: React.FC = () => {
   const navigate = useNavigate();
-  // Tambah variabel personal
+  // Tanggalnya cuma contoh 
   const tanggalUpdate = '13 Maret 2025';
 
   return (
@@ -38,10 +37,9 @@ const Privasi: React.FC = () => {
         </Button>
       </div>
 
-      {/* Partikel latar belakang buat tampilan lebih hidup */}
+      {/* Partikel latar belakang*/}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-20 w-4 h-4 bg-[#C084FC] rounded-full animate-pulse"></div>
-        {/* Partikel ukuran berbeda-beda biar gak monoton */}
         <div className="absolute top-1/3 right-1/4 w-7 h-7 bg-[#A78BFA] rounded-full animate-pulse opacity-40"></div>
         <div className="absolute bottom-20 right-20 w-5 h-5 bg-[#FF8C00] rounded-full animate-pulse"></div>
         <div className="absolute bottom-1/4 left-1/5 w-6 h-6 bg-[#DDD6FE] rounded-full animate-pulse opacity-60"></div>
@@ -54,7 +52,7 @@ const Privasi: React.FC = () => {
         className="max-w-4xl w-full space-y-8 relative z-10 my-12"
       >
         <div className="relative">
-          {/* Background glow effect */}
+          {/* Background*/}
           <div className="absolute -inset-4 bg-white/50 rounded-2xl blur-lg"></div>
           <div className="bg-white p-8 rounded-xl shadow-xl relative">
             <div className="text-center mb-8">
@@ -140,5 +138,4 @@ const Privasi: React.FC = () => {
   );
 };
 
-// Rename komponen saat export
 export default Privasi;

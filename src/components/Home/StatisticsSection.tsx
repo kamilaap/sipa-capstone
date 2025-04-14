@@ -52,7 +52,6 @@ const StatisticsSection: React.FC = () => {
   const [tabAktif, setTabAktif] = useState<number>(0);
   const namaTab = ['Semua Data', 'Berdasarkan Gender', 'Tren Tahunan'];
 
-  // FIXME: Nanti ganti ke endpoint production pas deploy
   const API_URL =
     'https://api-sipa-capstone-production.up.railway.app/data-kekerasan';
 
@@ -66,7 +65,6 @@ const StatisticsSection: React.FC = () => {
     const ambilData = async () => {
       try {
         // Pake timeout biar loading keliatan dikit, soalnya kadang API-nya kecepetan
-        // setTimeout(() => {}, 1000); // TODO: Nanti dihapus kalau udah production
 
         const response = await axios.get<ViolenceData[]>(API_URL);
         setDataKekerasan(response.data);
@@ -129,7 +127,7 @@ const StatisticsSection: React.FC = () => {
     }));
   };
 
-  // Komponen untuk animasi angka (bikin sendiri)
+  // Komponen untuk animasi angka (lumayan susah T_T)
   const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     value,
     suffix = '',
@@ -186,7 +184,7 @@ const StatisticsSection: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-white via-purple-50 to-white flex items-center justify-center px-6 md:px-24 py-20 overflow-hidden">
-      {/* Background blob effects - ini efek yang aku suka banget */}
+      {/* Background blob effects - bagus ehe*/}
       <div className="absolute top-20 left-20 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-40 right-20 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
@@ -197,7 +195,7 @@ const StatisticsSection: React.FC = () => {
           whileInView={{ opacity: 1 }}
           transition={{
             duration: 0.7,
-          }} /* Sedikit lebih lambat biar kesan lebih natural */
+          }} /* lebih lambat aja biar kesan lebih natural */
           viewport={{ once: true }}
           className="text-center mb-16"
         >

@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#6A0DAD', // Warna ungu sesuai desain
+        primary: '#6A0DAD', 
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],

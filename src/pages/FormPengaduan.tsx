@@ -132,7 +132,7 @@ const FormPengaduan: React.FC = () => {
           tanggalLaporan: tanggalHariIni,
           tanggal: tanggalHariIni,
           bukti: '', // Kosong dulu, nanti bisa diupdate
-          umur: parseInt(dataLaporan.umur), // Ubah jadi angka
+          umur: parseInt(dataLaporan.umur), // Ubah jadi angka umurnya
           gender: dataLaporan.gender,
         },
         {
@@ -141,9 +141,6 @@ const FormPengaduan: React.FC = () => {
           },
         }
       );
-
-      // Debug aja - nanti hapus kalau udah pasti work
-      console.log('Respon API:', response.data);
 
       // Simpan data response untuk ditampilkan
       if (response.data && response.data.pengaduan) {
@@ -434,7 +431,7 @@ const FormPengaduan: React.FC = () => {
             />
           </div>
           <p className="mt-1 text-sm text-gray-500">
-            Jelasin apa yang terjadi, kapan, dan siapa aja yang terlibat
+            Jelaskan apa yang terjadi, kapan, dan siapa aja yang terlibat
           </p>
         </div>
       </>

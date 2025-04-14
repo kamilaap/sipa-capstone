@@ -14,7 +14,7 @@ import axios from 'axios';
 import Loading from '../Ui/Loading';
 import { useNavigate } from 'react-router-dom';
 
-// API URL - di deploy di Railway
+// API 
 const API_BASE_URL = 'https://api-sipa-capstone-production.up.railway.app';
 
 // Interface untuk data profil pengguna
@@ -59,7 +59,7 @@ interface FormInputProps {
   name?: string;
 }
 
-// Komponen form input yang di-memo untuk optimasi performa
+// Komponen form input yang di-memo untuk optimasi performa (nyoba)
 const FormInput = React.memo(
   ({
     id,
@@ -155,7 +155,7 @@ const Profile: React.FC = () => {
   const showNotification = useCallback(
     (type: 'success' | 'error', message: string) => {
       setNotification({ type, message });
-      // Auto-hide notification after 3 seconds
+      // Auto-hide notifikasi setelah 3 detik
       setTimeout(() => setNotification({ type: null, message: '' }), 3000);
     },
     []
@@ -176,7 +176,6 @@ const Profile: React.FC = () => {
   // Fungsi untuk me-log error dengan format pribadi
   const logErrorDetail = (context: string, error: ApiError) => {
     console.error(`⚠️ [ERROR:${context}]`, error);
-    // TODO: Tambahkan logging ke service monitoring nanti
   };
 
   // Handler untuk error dari API
@@ -441,7 +440,7 @@ const Profile: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="relative">
-            {/* Efek glass blur background */}
+            {/* Efek blur background */}
             <div className="absolute -inset-4 bg-white/50 rounded-2xl blur-lg"></div>
             <div className="bg-white rounded-xl shadow-xl p-6 md:p-8 relative">
               {isLoading ? (

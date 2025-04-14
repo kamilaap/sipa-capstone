@@ -7,14 +7,12 @@ const BackToTop: React.FC = () => {
 
   // Deteksi posisi scroll untuk menampilkan/sembunyikan tombol
   const cekPosisiScroll = () => {
-    // Pakai 350px karena terlihat lebih pas di layar laptop 15"
+    // Pakai 350px 
     if (window.scrollY > 350) {
       setTombolMuncul(true);
     } else {
       setTombolMuncul(false);
     }
-    // Komen ini sengaja dimatikan, untuk debugging aja
-    // console.log("Posisi scroll:", window.scrollY);
   };
 
   useEffect(() => {
@@ -44,7 +42,6 @@ const BackToTop: React.FC = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={kembaliKeAtas}
-          // Pakai warna ungu-600 karena cocok dengan tema web saya
           className="fixed bottom-8 right-8 bg-purple-600 text-white p-3 rounded-full shadow-lg z-40 hover:bg-purple-700 transition-colors duration-300"
           aria-label="Kembali ke atas"
         >

@@ -37,15 +37,12 @@ interface StatusPengaduanData {
 
 const StatusPengaduan: React.FC = () => {
   // State untuk form dan hasil pencarian
-  const [kodePengaduan, setKodePengaduan] = useState(''); // Pakai kode alih-alih nomor
+  const [kodePengaduan, setKodePengaduan] = useState(''); // Pakai kode
   const [sedangLoading, setSedangLoading] = useState(false);
   const [sudahCari, setSudahCari] = useState(false);
   const [dataPengaduan, setDataPengaduan] =
     useState<StatusPengaduanData | null>(null);
   const [pesanError, setPesanError] = useState('');
-
-  // Debug untuk development
-  console.log('Render component StatusPengaduan');
 
   // Fungsi untuk mencari status pengaduan berdasarkan kode
   const cariPengaduan = async (e: React.FormEvent) => {
@@ -66,7 +63,7 @@ const StatusPengaduan: React.FC = () => {
         `https://api-sipa-capstone-production.up.railway.app/cek-pengaduan/${kodePengaduan}`
       );
 
-      // Simpan data hasil
+      // Simpan hasilnya
       console.log('Data ditemukan:', response.data);
       setDataPengaduan(response.data);
       setSudahCari(true);
@@ -95,7 +92,7 @@ const StatusPengaduan: React.FC = () => {
         };
       case 'proses':
         return {
-          text: 'Diproses', // Sedikit perbedaan dari original
+          text: 'Diproses', 
           color: 'bg-blue-100 text-blue-700',
           icon: <FaSpinner className="mr-2 animate-spin" />,
         };
@@ -333,7 +330,7 @@ const StatusPengaduan: React.FC = () => {
                           style={{
                             width:
                               dataPengaduan.status_pengaduan.status === 'antre'
-                                ? '30%' // Sedikit berbeda dari original (33%)
+                                ? '30%'
                                 : dataPengaduan.status_pengaduan.status ===
                                     'proses'
                                   ? '66%'

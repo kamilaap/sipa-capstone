@@ -12,8 +12,7 @@ interface TitikEkor {
   opacity: number;
 }
 
-// Komponen kursor kustom yang bikin website kita jadi keren
-// Dibuat untuk Project Portfolio Kelas XII RPL - by Dimas Pratama
+// Komponen kursor kustom 
 const AnimatedCursor: React.FC = () => {
   // State untuk mencatat posisi mouse
   const [posisi, setPosisi] = useState<PosisiKursor>({ x: 0, y: 0 });
@@ -27,7 +26,7 @@ const AnimatedCursor: React.FC = () => {
   const [diklik, setDiklik] = useState(false);
   const animFrameRef = useRef<number>(0);
 
-  // Konfigurasi kursor - ini saya sesuaikan sendiri sampai enak dilihat
+  // Konfigurasi kursor - udah disesuaikan kok
   const pengaturan = {
     kecepatanIkutLuar: 0.4, // Cepat lambatnya lingkaran luar (0-1)
     kecepatanEkor: 0.25, // Kecepatan titik-titik ekor

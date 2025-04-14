@@ -25,10 +25,9 @@ interface AnggotaTimProps {
   linkedin?: string;
   email?: string;
   instagram?: string;
-  biodata: string;
 }
 
-const TeamPage: React.FC = () => {
+const TimCapstone: React.FC = () => {
   // State untuk menyimpan foto yang diperbesar
   const [fotoTerpilih, setFotoTerpilih] = useState<string | null>(null);
 
@@ -42,8 +41,6 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://linkedin.com/in/rinawijaya',
       email: 'sopiatulpatonisipa@gmail.com',
       instagram: 'https://instagram.com/sipasff',
-      biodata:
-        'UI/UX enthusiast. Passionate about creating accessible interfaces for social impact projects.',
     },
     {
       nama: 'Kamila Putri Herlambang', // ini aku, hehehe
@@ -53,30 +50,24 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://www.linkedin.com/in/kamila-putri-herlambang',
       email: 'kp.herlambang@gmail.com',
       instagram: 'https://instagram.com/kamilaputrih',
-      biodata:
-        'React js. Suka nyanyi, membaca buku, dan suka dia yang gak suka aku.',
     },
     {
       nama: 'Elgiva Rasyad Aditya Putra',
       posisi: 'Backend Developer',
-      foto: '/assets/tokdalang.jpg', // foto placeholder, nanti diganti
+      foto: '/assets/rasyad.jpg', 
       github: 'https://github.com/Rasyaditya13',
-      linkedin: 'https://linkedin.com/in/dewilestari',
+      linkedin: 'https://www.linkedin.com/in/elgiva-rasyad-581b67291/',
       email: 'rasyadelgiva@gmail.com',
-      instagram: 'https://instagram.com/elgivarasyad',
-      biodata:
-        'Node.js developer with experience in secure API development and database architecture.',
+      instagram: 'https://www.instagram.com/rasyad.mencarinama/',
     },
     {
       nama: 'Thomas Christian Kuntolukito',
       posisi: 'Backend Developer',
-      foto: '/assets/tokdalang.jpg', // belum ada fotonya
-      github: 'https://github.com/agussupriyanto',
-      linkedin: 'https://linkedin.com/in/agussupriyanto',
-      email: 'thomas@sipa.id',
-      instagram: 'https://instagram.com/thomaschristian',
-      biodata:
-        'Specializes in server optimization, authentication systems, and creating robust backend architectures.',
+      foto: '/assets/thomas.jpg', 
+      github: 'https://www.github.com/Norpele/',
+      linkedin: 'https://www.linkedin.com/in/thomas-christian-kuntoluktio-8620252a6/',
+      email: 'thomaschristian012e@gmail.com',
+      instagram: 'https://www.instagram.com/thomas_christian_k/',
     },
     {
       nama: 'Bintang Raga Pratama',
@@ -86,28 +77,21 @@ const TeamPage: React.FC = () => {
       linkedin: 'https://linkedin.com/in/anitarahman',
       email: 'bintang@sipa.id',
       instagram: 'https://instagram.com/bintangraga',
-      biodata:
-        'Data scientist focused on NLP and sentiment analysis for identifying cases of violence in text reports.',
     },
     {
       nama: 'Yogi Kautsar Alnandeta',
       posisi: 'Machine Learning Engineer',
-      foto: '/assets/tokdalang.jpg', // masih pake placeholder
-      github: 'https://github.com/farhanabdullah',
-      linkedin: 'https://linkedin.com/in/yogikautsar',
-      email: 'yogi@sipa.id',
-      instagram: 'https://instagram.com/yogikautsar',
-      biodata:
-        'ML engineer with expertise in pattern recognition and classification algorithms for early detection systems.',
+      foto: '/assets/yogi.jpg', 
+      github: 'https://github.com/yogikautsa112',
+      linkedin: 'https://www.linkedin.com/in/alndta/',
+      email: 'yogikautsa@gmail.com',
+      instagram: 'https://www.instagram.com/alndta_/',
     },
   ];
 
-  // Scroll ke atas dan set judul halaman ketika halaman dimuat
   useEffect(() => {
     // Set judul tab browser
     document.title = 'Tim Pengembang | Sipa';
-
-    // Scroll otomatis ke atas halaman
     window.scrollTo(0, 0);
   }, []);
 
@@ -120,7 +104,6 @@ const TeamPage: React.FC = () => {
     linkedin,
     email,
     instagram,
-    biodata,
   }) => {
     return (
       <motion.div
@@ -152,10 +135,8 @@ const TeamPage: React.FC = () => {
             )}
             <p className="text-sm font-medium text-purple-600">{posisi}</p>
           </div>
-          {/* Biodata singkat */}
-          <p className="text-gray-600 text-sm mb-4">{biodata}</p>
 
-          {/* Link sosmed - sengaja dibedain styling biar gak terlalu kaku */}
+          {/* Link sosmed - kalo gamau hapus nih */}
           <div className="flex space-x-2">
             {github && (
               <a
@@ -276,7 +257,7 @@ const TeamPage: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* Grid untuk menampilkan kartu anggota tim */}
+          {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {timPengembang.map((anggota, index) => (
               <AnggotaTim
@@ -288,7 +269,6 @@ const TeamPage: React.FC = () => {
                 linkedin={anggota.linkedin}
                 email={anggota.email}
                 instagram={anggota.instagram}
-                biodata={anggota.biodata}
               />
             ))}
           </div>
@@ -327,20 +307,13 @@ const TeamPage: React.FC = () => {
                   Latar Belakang
                 </h3>
                 <p className="text-gray-700 mb-4">
-                  Proyek Sipa lahir dari keprihatinan kami terhadap tingginya
-                  angka kekerasan terhadap perempuan dan anak di Indonesia,
-                  serta minimnya akses pelaporan yang aman dan mudah digunakan.
-                  Sebagai tim Capstone, kami bersatu dengan visi untuk
-                  menciptakan platform digital yang dapat membantu korban
-                  mendapatkan pendampingan secara cepat dan aman.
+                Kekerasan terhadap ibu dan anak merupakan salah satu permasalahan sosial yang hingga kini masih marak terjadi di berbagai daerah. Banyak korban kekerasan yang tidak mendapatkan perlindungan dan pendampingan yang layak karena kurangnya akses terhadap saluran pelaporan yang aman, cepat, dan mudah dijangkau. Tak jarang pula korban merasa takut, malu, atau tidak tahu ke mana harus melapor.
                 </p>
                 <p className="text-gray-700">
-                  Berdasarkan riset yang kami lakukan, banyak kasus kekerasan
-                  tidak terlaporkan karena korban takut, tidak tahu harus
-                  melapor ke mana, atau khawatir tentang kerahasiaan
-                  identitasnya. Sipa hadir sebagai solusi untuk mengatasi
-                  hambatan-hambatan tersebut.
+                Seiring dengan perkembangan teknologi, inovasi digital dapat dimanfaatkan untuk menjawab permasalahan tersebut. Dalam upaya mendukung perlindungan terhadap ibu dan anak, diperlukan sebuah sistem yang dapat menjadi jembatan antara korban dan pihak yang berwenang dalam penanganan kasus kekerasan.
+Berdasarkan permasalahan tersebut, tim kami mengembangkan aplikasi SIPA (Sistem Pelaporan Kekerasan Ibu dan Anak), sebuah platform berbasis digital yang memungkinkan masyarakat, khususnya korban atau saksi kekerasan terhadap ibu dan anak, untuk melaporkan kasus secara cepat, aman, dan terverifikasi. Aplikasi ini dirancang untuk mempermudah proses pelaporan, menyediakan informasi dan edukasi terkait kekerasan, serta menghubungkan korban dengan lembaga terkait seperti Dinas Sosial, kepolisian, dan LSM pendamping.
                 </p>
+                <p className="text-gray-700 mb-4">Dengan adanya SIPA, diharapkan dapat tercipta ekosistem pelaporan yang lebih responsif dan mendukung upaya pencegahan serta penanganan kekerasan terhadap ibu dan anak secara lebih efektif dan terstruktur.</p>
               </motion.div>
 
               {/* Teknologi yang dipakai */}
@@ -360,12 +333,11 @@ const TeamPage: React.FC = () => {
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                   <li>
-                    <strong>Frontend:</strong> React.js, Next.js, TailwindCSS,
+                    <strong>Frontend:</strong> React.js, TailwindCSS,
                     Framer Motion
                   </li>
                   <li>
                     <strong>Backend:</strong> Node.js, Express, PostgreSQL,
-                    Firebase Authentication
                   </li>
                   <li>
                     <strong>Machine Learning:</strong> TensorFlow, Python,
@@ -379,43 +351,7 @@ const TeamPage: React.FC = () => {
               </motion.div>
 
               {/* Visi dan tujuan */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="bg-white p-6 rounded-xl shadow-md border border-purple-100"
-              >
-                <h3 className="text-xl font-semibold text-purple-700 mb-3">
-                  Visi dan Dampak
-                </h3>
-                <p className="text-gray-700 mb-4">
-                  Sipa bertujuan untuk memberikan dampak positif bagi masyarakat
-                  Indonesia dengan:
-                </p>
-                <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                  <li>
-                    Menyediakan saluran pelaporan yang aman, nyaman, dan
-                    terjamin kerahasiaannya
-                  </li>
-                  <li>
-                    Menghubungkan korban dengan pendamping profesional secara
-                    cepat
-                  </li>
-                  <li>
-                    Meningkatkan kesadaran masyarakat tentang pencegahan
-                    kekerasan
-                  </li>
-                  <li>
-                    Memberikan informasi dan edukasi tentang hukum dan hak-hak
-                    korban
-                  </li>
-                  <li>
-                    Mengumpulkan data untuk membantu pembuat kebijakan dalam
-                    mengatasi masalah kekerasan secara sistematis
-                  </li>
-                </ul>
-              </motion.div>
+             
             </div>
           </div>
         </div>
@@ -462,4 +398,4 @@ const TeamPage: React.FC = () => {
   );
 };
 
-export default TeamPage;
+export default TimCapstone;

@@ -25,10 +25,10 @@ Aplikasi Laporan Kekerasan Ibu dan Anak merupakan tugas capstone kami di **Codin
 
 ## 🚀 Fitur Utama
 
-- ✅ **Pelaporan Online** – Pengguna dapat mengisi formulir laporan kekerasan dengan bukti foto.  
-- ✅ **Anonimitas Terjaga** – Pelapor dapat memilih untuk tetap anonim.  
+- ✅ **Pelaporan Online** – Pengguna dapat mengisi formulir laporan kekerasan .  
+- ✅ **Anonimitas Terjaga** – Pelapor terjamin keamananya sehingga tidak perlu khawatir.  
 - ✅ **Tracking Laporan** – Cek status laporan secara real-time.  
-- ✅ **Dashboard Admin** – Admin dapat mengelola laporan, memberikan respon, dan melihat statistik laporan.  
+- ✅ **Dashboard Admin** – Admin dapat mengelola laporan, mengubah status laporan, dan melihat statistik laporan.  
 - ✅ **Pelayanan** – Layanan konsultasi berbasis chatbot.  
 
 ## 🛠️ Teknologi yang Digunakan

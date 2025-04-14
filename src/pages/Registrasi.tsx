@@ -236,15 +236,8 @@ const Register: React.FC = () => {
               </p>
             </div>
 
-            {/* Error Message - can be removed since we have popup now */}
-            {errorMessage && !showErrorPopup && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-300 text-red-800 rounded-lg text-sm">
-                {errorMessage}
-              </div>
-            )}
-
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-              {/* Rest of the form remains the same */}
+              {/* form */}
               <div className="space-y-4">
                 <div>
                   <label

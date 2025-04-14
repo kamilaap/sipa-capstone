@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-// -- DEFINISI TIPE DATA --
+// tipe data
 interface KartuFiturProps {
   ikon: React.ReactNode;
   judul: string;
@@ -180,7 +180,7 @@ const KartuFitur: React.FC<KartuFiturProps> = ({
   );
 };
 
-// -- KOMPONEN IKON SVG --
+// komponen icon
 const IkonPelimdung = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -257,7 +257,7 @@ const Fitur: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-white via-purple-50 to-white flex items-center justify-center px-6 md:px-24 py-20 overflow-hidden">
-      {/* Background blobs untuk efek visual */}
+      {/* Background untuk efek visual */}
       <div className="absolute top-20 left-20 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-40 right-20 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>

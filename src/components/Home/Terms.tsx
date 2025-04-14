@@ -1,4 +1,3 @@
-// import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Button from '../Ui/Button';
@@ -86,7 +85,7 @@ const Terms = () => {
                 Syarat dan Ketentuan SIPA
               </h1>
               <p className="mt-2 text-sm text-gray-600">
-                Terakhir diperbarui: 21 Maret 2025 {/* Tangga pas dibuat */}
+                Terakhir diperbarui: 21 Maret 2025 {/* Tanggal pas dibuat */}
               </p>
             </div>
 

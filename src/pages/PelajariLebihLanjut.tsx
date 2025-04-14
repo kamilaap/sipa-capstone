@@ -51,7 +51,7 @@ const LearnMore: React.FC = () => {
         </div>
       </div>
 
-      {/* About the App Section */}
+      {/* Tentang Section */}
       <section className="py-16 px-6 md:px-24 bg-white">
         <motion.div
           className="max-w-6xl mx-auto"
@@ -91,10 +91,9 @@ const LearnMore: React.FC = () => {
               </p>
               <p className="text-[#6B7280]">
                 Setiap laporan ditangani dengan perlindungan data yang ketat dan
-                diproses oleh tim profesional yang terlatih dalam penanganan
-                kasus kekerasan terhadap ibu dan anak. Kami bekerja sama dengan
-                lembaga pemerintah dan LSM untuk memastikan tindak lanjut yang
-                tepat dan dukungan berkelanjutan.
+                terjamin keamanannya. Sehingga pelapor tidak perlu khawatir dan merasa takut
+                untuk melaporkan tindak kekerasan dimana pun dan kapan saja. Dilengkapi dengan 
+                pelayanan berbasis chatbot yang siap membantu para korban dan para pelapor.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <div className="flex items-center gap-2">
@@ -203,8 +202,7 @@ const LearnMore: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold mb-3">Buat Pengaduan</h3>
               <p className="text-[#6B7280]">
-                Isi formulir pengaduan dengan detail yang lengkap. Lampirkan
-                bukti jika ada (foto, audio, atau dokumen). Semua laporan
+                Isi formulir pengaduan dengan detail yang lengkap. Semua laporan
                 ditangani dengan penuh kehati-hatian.
               </p>
             </motion.div>
@@ -221,8 +219,7 @@ const LearnMore: React.FC = () => {
               </h3>
               <p className="text-[#6B7280]">
                 Setelah laporan terkirim, Anda dapat memantau status
-                penanganannya. Tim kami akan menghubungi untuk tindak lanjut dan
-                memberikan bantuan yang diperlukan.
+                penanganannya. Tim kami akan mengganti status pelaporan dalam waktu 24 jam
               </p>
             </motion.div>
           </div>
@@ -311,206 +308,6 @@ const LearnMore: React.FC = () => {
               </li>
             </ul>
           </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Resources Section */}
-      <section className="py-16 px-6 md:px-24 bg-white">
-        <motion.div
-          className="max-w-6xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <motion.h2
-            variants={itemVariants}
-            className="text-3xl font-semibold mb-10 text-center"
-          >
-            Sumber Daya
-          </motion.h2>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <motion.div
-              variants={itemVariants}
-              className="bg-[#F9F5FF] p-6 rounded-xl hover:bg-[#F3E8FF] transition-colors duration-300"
-            >
-              <h3 className="text-xl font-semibold mb-4 text-[#8B5CF6]">
-                Pusat Edukasi
-              </h3>
-              <p className="text-[#6B7280] mb-4">
-                Akses berbagai materi edukasi tentang pencegahan dan penanganan
-                kekerasan terhadap ibu dan anak. Kami menyediakan artikel,
-                infografis, dan video yang informatif.
-              </p>
-              <div className="grid grid-cols-2 gap-4 mt-6">
-                <div className="flex flex-col items-center p-4 bg-white rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8 text-[#8B5CF6] mb-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  <span className="text-sm text-center text-[#4B5563]">
-                    Artikel & Panduan
-                  </span>
-                </div>
-                <div className="flex flex-col items-center p-4 bg-white rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8 text-[#8B5CF6] mb-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="text-sm text-center text-[#4B5563]">
-                    Video Edukasi
-                  </span>
-                </div>
-                <div className="flex flex-col items-center p-4 bg-white rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8 text-[#8B5CF6] mb-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="text-sm text-center text-[#4B5563]">
-                    Webinar
-                  </span>
-                </div>
-                <div className="flex flex-col items-center p-4 bg-white rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8 text-[#8B5CF6] mb-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                    />
-                  </svg>
-                  <span className="text-sm text-center text-[#4B5563]">
-                    Tips & Saran
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              className="bg-[#F9F5FF] p-6 rounded-xl hover:bg-[#F3E8FF] transition-colors duration-300"
-            >
-              <h3 className="text-xl font-semibold mb-4 text-[#8B5CF6]">
-                Jaringan Bantuan
-              </h3>
-              <p className="text-[#6B7280] mb-4">
-                Temukan informasi tentang lembaga dan organisasi yang dapat
-                memberikan bantuan langsung, termasuk rumah aman, layanan
-                konseling, dan bantuan hukum.
-              </p>
-              <div className="space-y-4 mt-6">
-                <div className="flex items-center p-4 bg-white rounded-lg">
-                  <div className="w-10 h-10 rounded-full bg-[#EDE9FE] flex items-center justify-center mr-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-[#8B5CF6]"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Hotline Darurat</h4>
-                    <p className="text-sm text-[#6B7280]">
-                      0800-123-4567 (24/7)
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center p-4 bg-white rounded-lg">
-                  <div className="w-10 h-10 rounded-full bg-[#EDE9FE] flex items-center justify-center mr-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-[#8B5CF6]"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Konseling & Pendampingan</h4>
-                    <p className="text-sm text-[#6B7280]">
-                      Layanan konsultasi online
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center p-4 bg-white rounded-lg">
-                  <div className="w-10 h-10 rounded-full bg-[#EDE9FE] flex items-center justify-center mr-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6 text-[#8B5CF6]"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Rumah Aman</h4>
-                    <p className="text-sm text-[#6B7280]">
-                      Lokasi aman sementara
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
         </motion.div>
       </section>
 
@@ -629,9 +426,6 @@ const LearnMore: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/pengaduan">
               <Button variant="outline">Buat Pengaduan Sekarang</Button>
-            </Link>
-            <Link to="/hotline">
-              <Button variant="outline">Hubungi Hotline</Button>
             </Link>
           </div>
         </motion.div>

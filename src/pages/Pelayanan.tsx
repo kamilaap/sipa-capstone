@@ -125,7 +125,7 @@ const Pelayanan = () => {
 
   // Handle akhiri sesi chat
   const handleEndChat = () => {
-    // Tampilkan modal konfirmasi yang menarik
+    // Tampilkan modal konfirmasi 
     const modal = document.createElement('div');
     modal.className =
       'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
