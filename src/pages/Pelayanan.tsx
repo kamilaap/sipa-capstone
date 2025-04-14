@@ -125,7 +125,7 @@ const Pelayanan = () => {
 
   // Handle akhiri sesi chat
   const handleEndChat = () => {
-    // Tampilkan modal konfirmasi 
+    // Tampilkan modal konfirmasi yang menarik
     const modal = document.createElement('div');
     modal.className =
       'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
@@ -386,31 +386,35 @@ const Pelayanan = () => {
         </div>
       </div>
 
-      {/* Input Area */}
-      <div className="bg-white rounded-b-xl shadow-md p-4">
-        <form
-          onSubmit={handleSendMessage}
-          className="flex items-center space-x-2"
-        >
-          <input
-            type="text"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Ketik pesan Anda di sini..."
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:border-transparent"
-            disabled={isLoading}
-          />
-          <Button
-            type="submit"
-            variant="primary"
-            size="sm"
-            disabled={isLoading || !userInput.trim()}
-            icon={<FaPaperPlane />}
-          >
-            Kirim
-          </Button>
-        </form>
-      </div>
+    {/* Input Area */}
+<div className="bg-white rounded-b-xl shadow-md p-4">
+  <form
+    onSubmit={handleSendMessage}
+    className="flex items-center space-x-2"
+  >
+    <div className="flex-1 relative">
+      <input
+        type="text"
+        value={userInput}
+        onChange={(e) => setUserInput(e.target.value)}
+        placeholder="Ketik pesan Anda di sini..."
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] focus:border-transparent"
+        disabled={isLoading}
+      />
+    </div>
+    <div className="flex-shrink-0">
+      <Button
+        type="submit"
+        variant="primary"
+        size="sm"
+        disabled={isLoading || !userInput.trim()}
+        icon={<FaPaperPlane />}
+      >
+        Kirim
+      </Button>
+    </div>
+  </form>
+</div>
     </div>
   );
 };

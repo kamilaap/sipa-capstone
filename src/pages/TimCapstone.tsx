@@ -14,7 +14,6 @@ import Navbar from '../components/Ui/Navbar';
 import Footer from '../components/Ui/Footer';
 import BackToTop from '../components/Ui/BackToTop';
 import { motion } from 'framer-motion';
-import TeamNotification from '../components/Ui/TeamNotification';
 
 // Interface untuk properties anggota tim
 interface AnggotaTimProps {
@@ -189,7 +188,6 @@ const TimCapstone: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-purple-50">
       <Navbar />
-      <TeamNotification />
 
       <main className="flex-grow">
         {/* Hero Section - Judul halaman tim */}

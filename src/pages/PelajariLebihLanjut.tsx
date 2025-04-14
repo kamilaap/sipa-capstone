@@ -353,8 +353,7 @@ const LearnMore: React.FC = () => {
               <p className="text-[#6B7280]">
                 Setelah membuat pengaduan, Anda akan menerima nomor referensi
                 unik. Gunakan nomor ini untuk melacak status pengaduan di akun
-                Anda. Anda juga akan menerima pemberitahuan melalui email atau
-                SMS ketika ada pembaruan.
+                Anda. 
               </p>
             </motion.div>
 

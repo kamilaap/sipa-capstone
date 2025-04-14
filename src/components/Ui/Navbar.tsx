@@ -18,7 +18,6 @@ import {
 } from 'react-icons/fa';
 
 // Tipe data untuk kontak darurat
-// TODO: tipe nya taro disini
 interface KontakDarurat {
   nama: string;
   nomor: string;
@@ -44,7 +43,6 @@ const Navbar: React.FC = () => {
   const [namaUser, setNamaUser] = useState<string | null>(null);
 
   // Refs buat deteksi klik diluar dropdown
-  // Harusnya bisa pake useClickOutside hook sih, tapi belum sempet bikin
   const refDropdownDarurat = useRef<HTMLDivElement>(null);
   const refButtonDarurat = useRef<HTMLButtonElement>(null);
   const refMenuUser = useRef<HTMLDivElement>(null);
@@ -66,7 +64,7 @@ const Navbar: React.FC = () => {
       icon: <FaHospital className="text-red-600" />,
     },
     {
-      nama: 'Hotline Pengaduan Kekerasan KPAI', // tambah kontak KPAI nanti
+      nama: 'Hotline Pengaduan Kekerasan KPAI',
       nomor: '0811-1002-7727',
       icon: <FaHandsHelping className="text-purple-600" />,
     },
@@ -101,7 +99,6 @@ const Navbar: React.FC = () => {
   }, []);
 
   // Tutup dropdown kalo klik diluar
-  // Buatnya agak ribet, nanti coba pake custom hook aja
   useEffect(() => {
     const tutupDropdownKaloClickDiluar = (event: MouseEvent) => {
       // Tutup dropdown darurat
@@ -267,17 +264,21 @@ const Navbar: React.FC = () => {
         )}
       </div>
 
-      {/* Navbar */}
+      {/* Navbar - FIXED: always solid background on mobile */}
       <nav
-        className={`fixed top-0 w-full z-40 transition-all duration-300 ${udahScroll ? 'py-3 bg-white/95 shadow-md backdrop-blur-md' : 'py-6 bg-transparent'}`}
+        className={`fixed top-0 w-full z-40 transition-all duration-300 ${
+          udahScroll || window.innerWidth < 768 
+          ? 'py-3 bg-white shadow-md' 
+          : 'py-6 bg-transparent'
+        }`}
       >
-        <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
+        <div className="container mx-auto px-4 md:px-12 flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img
               src="/assets/logo.png"
               alt="SIPA Logo"
-              className="w-12 h-12 mr-2"
+              className="w-10 h-10 md:w-12 md:h-12 mr-2"
             />
           </Link>
           {/* Menu Desktop */}
@@ -391,21 +392,22 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Toggle Menu Mobile */}
+          {/* Toggle Menu Mobile - Improved with better contrast */}
           <div className="md:hidden">
             <button
-              className="text-gray-700 focus:outline-none"
+              className="text-gray-800 hover:text-[#8B5CF6] focus:outline-none p-1 rounded-md"
               onClick={(): void => setMenuMobileKebuka(!menuMobileKebuka)}
+              aria-label="Menu"
             >
               <FaBars className="w-6 h-6" />
             </button>
           </div>
 
-          {/* Menu Mobile - Slide-in */}
+          {/* Menu Mobile - Slide-in with improved styling */}
           {menuMobileKebuka && (
-            <div className="fixed inset-0 bg-white z-50">
+            <div className="fixed inset-0 bg-white z-50 animate-slideIn">
               {/* Header Menu Mobile */}
-              <div className="bg-[#8B5CF6] text-white p-6 flex justify-between items-center">
+              <div className="bg-[#8B5CF6] text-white p-4 flex justify-between items-center shadow-md">
                 <div className="flex items-center space-x-3">
                   <img
                     src="/assets/logo.png"
@@ -414,7 +416,7 @@ const Navbar: React.FC = () => {
                   />
                   <div>
                     <h2 className="font-bold text-lg">SIPA</h2>
-                    <p className="text-xs text-[#8B5CF6]-100">
+                    <p className="text-xs text-white/80">
                       {udahLogin
                         ? `Selamat datang, ${roleUser === 'admin' ? 'Admin' : namaUser || 'Pengguna'}`
                         : 'Sistem Informasi Perlindungan Anak'}
@@ -423,14 +425,15 @@ const Navbar: React.FC = () => {
                 </div>
                 <button
                   onClick={(): void => setMenuMobileKebuka(false)}
-                  className="focus:outline-none"
+                  className="focus:outline-none p-2 rounded-full hover:bg-white/10 transition-colors"
+                  aria-label="Tutup menu"
                 >
                   <FaTimes className="w-6 h-6" />
                 </button>
               </div>
 
-              {/* Navigasi Mobile */}
-              <div className="p-4 space-y-2">
+              {/* Navigasi Mobile - Better padding and spacing */}
+              <div className="p-4 space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 74px)' }}>
                 <ItemNavMobile
                   to="/"
                   icon={<FaHome className="text-[#8B5CF6] w-5 h-5" />}
@@ -469,12 +472,13 @@ const Navbar: React.FC = () => {
                   icon={<FaCog className="text-[#8B5CF6] w-5 h-5" />}
                   label="Status Pengaduan"
                 />
-              </div>
 
-              {/* Tombol Aksi User Mobile */}
-              <div className="p-4 border-t border-gray-100">
+                {/* Divider */}
+                <div className="my-2 border-t border-gray-100"></div>
+
+                {/* Tombol Aksi User Mobile */}
                 {udahLogin ? (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {roleUser === 'admin' && (
                       <ItemNavMobile
                         to="/dashboard"
@@ -496,17 +500,19 @@ const Navbar: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <ItemNavMobile
-                      to="/register"
-                      icon={<FaUserPlus className="text-[#8B5CF6] w-5 h-5" />}
-                      label="Registrasi"
-                    />
-                    <ItemNavMobile
-                      to="/login"
-                      icon={<FaUser className="text-[#8B5CF6] w-5 h-5" />}
-                      label="Login"
-                    />
+                  <div className="space-y-2 mt-4">
+                    <Link to="/register" className="block" onClick={() => setMenuMobileKebuka(false)}>
+                      <div className="bg-gray-100 hover:bg-gray-200 text-[#8B5CF6] rounded-lg p-3 flex items-center justify-center space-x-2 transition-colors">
+                        <FaUserPlus className="w-5 h-5" />
+                        <span className="font-medium">Registrasi</span>
+                      </div>
+                    </Link>
+                    <Link to="/login" className="block" onClick={() => setMenuMobileKebuka(false)}>
+                      <div className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-lg p-3 flex items-center justify-center space-x-2 transition-colors">
+                        <FaUser className="w-5 h-5" />
+                        <span className="font-medium">Login</span>
+                      </div>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -529,6 +535,13 @@ const Navbar: React.FC = () => {
             0% { transform: scale(1); }
             50% { transform: scale(1.03); }
             100% { transform: scale(1); }
+          }
+          @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+          }
+          .animate-slideIn {
+            animation: slideIn 0.2s ease-out forwards;
           }
         `}
       </style>
