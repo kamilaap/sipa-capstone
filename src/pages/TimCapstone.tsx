@@ -42,7 +42,7 @@ const TimCapstone: React.FC = () => {
       instagram: 'https://instagram.com/sipasff',
     },
     {
-      nama: 'Kamila Putri Herlambang', // ini aku, hehehe
+      nama: 'Kamila Putri Herlambang',
       posisi: 'Frontend Developer',
       foto: '/assets/kamila.jpg',
       github: 'https://github.com/kamilaap',
@@ -71,11 +71,11 @@ const TimCapstone: React.FC = () => {
     {
       nama: 'Bintang Raga Pratama',
       posisi: 'Machine Learning Engineer',
-      foto: '/assets/tokdalang.jpg', // nanti diupdate
+      foto: '/assets/bintang.jpg', 
       github: 'https://github.com/SuryakandaRagaWistara',
-      linkedin: 'https://linkedin.com/in/anitarahman',
-      email: 'bintang@sipa.id',
-      instagram: 'https://instagram.com/bintangraga',
+      linkedin: 'https://www.linkedin.com/in/bintang-raga-pratama-634081241/',
+      email: 'bintangraga152@gmail.com',
+      instagram: 'https://www.instagram.com/raga._.10/',
     },
     {
       nama: 'Yogi Kautsar Alnandeta',
@@ -112,12 +112,16 @@ const TimCapstone: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="bg-white rounded-xl shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg border border-purple-100"
       >
-        {/* Foto profil yang bisa diklik untuk diperbesar */}
+        {/* Foto profil yang bisa diklik untuk diperbesar - UPDATED for better photo display */}
         <div
-          className="relative h-48 w-full overflow-hidden cursor-pointer"
+          className="relative w-full aspect-square overflow-hidden cursor-pointer"
           onClick={() => setFotoTerpilih(foto)}
         >
-          <img src={foto} alt={nama} className="w-full h-full object-cover" />
+          <img 
+            src={foto} 
+            alt={nama} 
+            className="w-full h-full object-cover object-center" 
+          />
         </div>
         <div className="p-6">
           <h3 className="font-bold text-xl text-purple-800">{nama}</h3>
@@ -135,7 +139,7 @@ const TimCapstone: React.FC = () => {
             <p className="text-sm font-medium text-purple-600">{posisi}</p>
           </div>
 
-          {/* Link sosmed - kalo gamau hapus nih */}
+          {/* Link sosmed */}
           <div className="flex space-x-2">
             {github && (
               <a
@@ -332,14 +336,13 @@ Berdasarkan permasalahan tersebut, tim kami mengembangkan aplikasi SIPA (Sistem 
                 <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                   <li>
                     <strong>Frontend:</strong> React.js, TailwindCSS,
-                    Framer Motion
+                    Framer Motion, Axios
                   </li>
                   <li>
                     <strong>Backend:</strong> Node.js, Express, PostgreSQL,
                   </li>
                   <li>
-                    <strong>Machine Learning:</strong> TensorFlow, Python,
-                    Natural Language Processing
+                    <strong>Machine Learning:</strong> TensorFlow, Python
                   </li>
                   <li>
                     <strong>Keamanan:</strong> End-to-end encryption, anonymized
@@ -347,21 +350,18 @@ Berdasarkan permasalahan tersebut, tim kami mengembangkan aplikasi SIPA (Sistem 
                   </li>
                 </ul>
               </motion.div>
-
-              {/* Visi dan tujuan */}
-             
             </div>
           </div>
         </div>
 
-        {/* Modal untuk memperbesar foto - muncul ketika foto diklik */}
+        {/* Modal untuk memperbesar foto - UPDATED for better photo display */}
         {fotoTerpilih && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-8"
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 md:p-8"
             onClick={() => setFotoTerpilih(null)} // Tutup modal ketika klik background
           >
             <div
-              className="relative max-w-2xl w-full max-h-[80vh] bg-white rounded-lg overflow-hidden shadow-xl"
+              className="relative max-w-2xl w-full bg-white rounded-lg overflow-hidden shadow-xl"
               onClick={(e: React.MouseEvent<HTMLDivElement>) =>
                 e.stopPropagation()
               } // Mencegah modal tertutup saat klik gambar
@@ -378,11 +378,11 @@ Berdasarkan permasalahan tersebut, tim kami mengembangkan aplikasi SIPA (Sistem 
                   <FaTimes size={20} />
                 </button>
               </div>
-              <div className="p-4">
+              <div className="p-4 flex items-center justify-center">
                 <img
                   src={fotoTerpilih}
                   alt="Foto anggota tim"
-                  className="w-full h-auto max-h-[60vh] object-contain"
+                  className="w-auto max-w-full h-auto max-h-[70vh] object-contain"
                 />
               </div>
             </div>
